@@ -22,16 +22,16 @@ def parse_row(row):
     if type == 'DIST_D':
         t['amount'] = float(row[4])
         t['price'] = 0.0
-        t['count'] = 0.0
+        t['quantity'] = 0.0
     elif type == 'SPLIT':
         t['amount'] = float(row[4])
         t['price'] = 0.0
-        t['count'] = float(row[5])
+        t['quantity'] = float(row[5])
     else:
         price = float(row[4])
         count = float(row[5])
         t['price'] = price
-        t['count'] = count
+        t['quantity'] = count
         #t['amount'] = int((price * count) * 100 + 0.5) / 100.0
         t['amount'] = price * count
     t['note'] = row[7]
