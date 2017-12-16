@@ -14,31 +14,32 @@ from symbols.models import Symbol
 filename = sys.argv[1]
 
 if filename.endswith(".fmg"):
-    trans_list = fundmanagerparser.get_transactions(sys.argv[1])
+    t_list = fundmanagerparser.get_transactions(sys.argv[1])
 else:
     print "Unknown filetype"
 
-for t in trans_list:
+for t_dict in t_list:
     try:
-        symbol = Symbol.objects.get(name=t['symbol'])
+        symbol = Symbol.objects.get(name=t_dict['symbol'])
     except ObjectDoesNotExist:
-        symbol = Symbol(name=t['symbol'])
+        symbol = Symbol(name=t_dict['symbol'])
         symbol.save()
 
     try:
-        account = Account.objects.get(name=t['account_name'])
+        account = Account.objects.get(name=t_dict['account_name'])
     except ObjectDoesNotExist:
-        account = Account(name=t['account_name'])
+        account = Account(name=t_dict['account_name'])
         account.save()
 
     # Check for existing transaction with the same hash
-    hash = Transaction.get_hash(account=account, symbol=symbol, dict=dict)
+    hash = Transaction.get_hash(account=account, symbol=symbol, dict=t_dict)
     try:
-        db_t = Account.objects.get(hash=hash)
+        t_model = Transaction.objects.get(hash=hash)
+        continue # If we reach here and matching transaction already exists
     except ObjectDoesNotExist:
-        db_t = None
-    if db_t:
-        continue
+        pass
 
-    db_t = Transaction.create(account=account, symbol=symbol, dict=dict, hash=hash)
-    blart = 'debug'
+    t_model = Transaction.create(account=account, symbol=symbol, dict=t_dict, hash=hash)
+    t_model.save()
+
+blart = 'debug'

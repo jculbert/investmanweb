@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'accounts',
     'symbols',
     'transactions',
-    'prices'
+    'prices',
+    'reports'
 ]
 
 MIDDLEWARE = [

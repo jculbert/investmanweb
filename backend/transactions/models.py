@@ -27,11 +27,11 @@ class Transaction(models.Model):
         m.update(dict['date'].strftime("%Y%m%d"))
         m.update(dict['type'])
         if 'quantity' in dict:
-            m.update(dict['quantity'])
+            m.update(str(dict['quantity']))
         if 'price' in dict:
-            m.update(dict['price'])
+            m.update(str(dict['price']))
         if 'amount' in dict:
-            m.update(dict['amount'])
+            m.update(str(dict['amount']))
 
         return m.hexdigest()
 
@@ -39,4 +39,4 @@ class Transaction(models.Model):
     def create(account, symbol, dict, hash):
         dh = DictionaryHelper(dict)
         return Transaction(account=account, symbol=symbol, date=dh.get('date'), type=dh.get('type'), quantity=dh.get('quantity'),
-                        price=dh.get('price'), amount=dh.get('amount'), note=dh.get('amount'), hash=hash)
+                        price=dh.get('price'), amount=dh.get('amount'), note=dh.get('note'), hash=hash)
