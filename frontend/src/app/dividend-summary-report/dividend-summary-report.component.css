@@ -1,4 +1,15 @@
 /* Structure */
+.datepicker-container1 {
+  display: inline-block;
+  margin-right: 10px;
+}
+.datepicker-container2 > * {
+  display: inline-block;
+}
+
+#element1 {display:inline-block;margin-right:10px; width:200px} 
+#element2 {display:inline-block; width:200px} 
+
 .example-container {
     display: flex;
     flex-direction: column;

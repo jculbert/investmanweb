@@ -7,7 +7,11 @@ import { BackendService } from './backend.service';
 import { DividendSummaryReportComponent } from './dividend-summary-report/dividend-summary-report.component';
 import { AppRoutingModule } from './/app-routing.module';
 import {CdkTableModule} from '@angular/cdk/table';
-
+import {MatDialogModule} from '@angular/material/dialog';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatFormFieldModule} from '@angular/material/form-field'
+import {MatDatepickerModule, MatNativeDateModule, MatInputModule} from '@angular/material'
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -18,7 +22,15 @@ import {CdkTableModule} from '@angular/cdk/table';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    CdkTableModule
+    CdkTableModule,
+    MatDialogModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule,
+    BrowserAnimationsModule
   ],
   providers: [BackendService],
   bootstrap: [AppComponent]
