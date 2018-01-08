@@ -5,6 +5,7 @@ from transactions.models import Transaction
 class DividendSummarySerializer(serializers.Serializer):
     symbol = serializers.CharField(max_length=15)
     amount = serializers.FloatField()
+    us_amount = serializers.FloatField(allow_null=True)
 
 class DividendSerializer(serializers.Serializer):
     date = serializers.DateField()
