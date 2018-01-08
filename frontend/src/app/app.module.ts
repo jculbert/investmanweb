@@ -10,7 +10,7 @@ import {CdkTableModule} from '@angular/cdk/table';
 import {MatDialogModule} from '@angular/material/dialog';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field'
-import {MatDatepickerModule, MatNativeDateModule, MatInputModule} from '@angular/material'
+import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatTableModule} from '@angular/material'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -30,7 +30,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatNativeDateModule,
     MatFormFieldModule,
     MatInputModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatTableModule
   ],
   providers: [BackendService],
   bootstrap: [AppComponent]

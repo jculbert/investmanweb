@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 
 import { DividendSummaryData } from './dividend-summary-report/dividend-summary-report.component'
 
@@ -9,8 +10,10 @@ export class BackendService {
 
   constructor(private http: HttpClient) { }
 
-  dividendSummaryReport() : Observable<DividendSummaryData[]> {
-    return this.http.get<DividendSummaryData[]>('api/v1/dividends/?summary=true&startdate=20160701&enddate=20160930')
+  dividendSummaryReport(startdate: Date, enddate: Date) : Observable<DividendSummaryData[]> {
+    var start = new DatePipe('en-US').transform(startdate, 'yyyyMMdd');
+    var end = new DatePipe('en-US').transform(enddate, 'yyyyMMdd');
+    return this.http.get<DividendSummaryData[]>('api/v1/dividends/?summary=true&startdate=' + start + '&enddate=' + end)
   }
 
 }

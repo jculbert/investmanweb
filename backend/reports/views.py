@@ -36,13 +36,13 @@ class DividendSummaryViewSet(APIView):
             list = []
             name = None
             for t in t_list:
-                amount = t.amount if t.account.currency == 'CA' else t.amount * us_to_ca
+                amount = t.amount if t.account.currency == 'CA' else round(t.amount * us_to_ca, 2)
                 if t.symbol.name != name:
                     name = t.symbol.name
                     entry = {'symbol': name, 'amount': amount}
                     list.append(entry)
                 else:
-                    entry['amount'] = entry['amount'] + amount
+                    entry['amount'] = round(entry['amount'] + amount, 2)
 
             serializer = DividendSummarySerializer(instance=list, many=True)
         else:

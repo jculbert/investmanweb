@@ -1,34 +1,36 @@
 <div class="mat-elevation-z8">
     <mat-form-field class="datepicker-container1" >
-      <input matInput [matDatepicker]="startPicker" placeholder="Choose start date">
+      <input matInput [matDatepicker]="startPicker" placeholder="Choose start date" (dateChange)="startDateChange($event)">
       <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>
     </mat-form-field>
     <mat-form-field class="datepicker-container2">
-        <input matInput [matDatepicker]="endPicker" placeholder="Choose end date">
+        <input matInput [matDatepicker]="endPicker" placeholder="Choose end date" (dateChange)="endDateChange($event)">
         <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
         <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
+    </mat-form-field>
+    <button mat-raised-button (click)="refreshClick()" class="inline-container">Refresh</button>
   </div>
 
-<div class="example-container mat-elevation-z8">
-  <cdk-table #table [dataSource]="dataSource" class="example-table">
+<div *ngIf="dataSource.data.length != 0" class="example-container mat-elevation-z8">
+  <mat-table #table [dataSource]="dataSource" class="example-table">
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
     <ng-container cdkColumnDef="symbol">
-      <cdk-header-cell *cdkHeaderCellDef class="example-header-cell"> Symbol </cdk-header-cell>
-      <cdk-cell *cdkCellDef="let row" class="example-cell"> {{row.symbol}} </cdk-cell>
+      <mat-header-cell *cdkHeaderCellDef class="example-header-cell"> Symbol </mat-header-cell>
+      <mat-cell *cdkCellDef="let row" class="example-cell"> {{row.symbol}} </mat-cell>
     </ng-container>
 
     <!-- Progress Column -->
     <ng-container cdkColumnDef="amount">
-      <cdk-header-cell *cdkHeaderCellDef class="example-header-cell"> Amount </cdk-header-cell>
-      <cdk-cell *cdkCellDef="let row" class="example-cell"> {{row.amount}} </cdk-cell>
+      <mat-header-cell *cdkHeaderCellDef class="example-header-cell"> Amount </mat-header-cell>
+      <mat-cell *cdkCellDef="let row" class="example-cell"> {{row.amount | number:'1.2-2' }} </mat-cell>
     </ng-container>
 
 
-    <cdk-header-row *cdkHeaderRowDef="['symbol', 'amount']" class="example-header-row"></cdk-header-row>
-    <cdk-row *cdkRowDef="let row; columns: ['symbol', 'amount'];" class="example-row"></cdk-row>
-  </cdk-table>
+    <mat-header-row *cdkHeaderRowDef="['symbol', 'amount']" class="example-header-row"></mat-header-row>
+    <mat-row *cdkRowDef="let row; columns: ['symbol', 'amount'];" class="example-row"></mat-row>
+  </mat-table>
+  Total: {{total | number:'1.2-2'}}
 </div>
