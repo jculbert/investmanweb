@@ -17,7 +17,6 @@ if filename.endswith(".fmg"):
     t_list = fundmanagerparser.get_transactions(sys.argv[1])
 elif filename.endswith(".rbc"):
     t_list = rbcparser2.get_transactions(sys.argv[1])
-    exit()
 else:
     print "Unknown filetype"
 

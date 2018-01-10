@@ -47,7 +47,8 @@ typeDict = {
     "Transfers": None,
     "Deposits & Contributions": "Buy",
     "Withdrawals & De-registrations": None,
-    "Return of Capital": None
+    "Return of Capital": None,
+    "Taxes": None
 }
 
 def getFloat(strVal):
@@ -60,6 +61,7 @@ def getFloat(strVal):
 class transaction():
 
     def __init__(self, row):
+        self.row = row
         self.date = datetime.strptime(row[0], "%b %d, %Y")
 
         self.currency = row[8]
@@ -72,13 +74,17 @@ class transaction():
                 self.symbol += ".TO"
 
         self.acct = acctDict[row[6]]
+        mapType(self, row[1])
+
         if self.currency == "USD":
             self.acct += " US"
         self.amount = getFloat(row[7])
+        if self.amount < 0 and self.type != "DIST_D":
+            self.amount = round(self.amount * -1, 2)
         self.count = getFloat(row[3])
+        if self.count < 0:
+            self.count = round(self.count * -1, 2)
         self.price = getFloat(row[4])
-
-        mapType(self, row[1])
 
         self.description = row[9]
 
@@ -102,7 +108,7 @@ class transaction():
             return None # Not using CASH transactions
 
         if self.type != 'BUY' and self.type != 'SELL' and self.type != 'DIST_D' and self.type != 'SPLIT':
-            print "Ignoring type " + type + " row: " + str(row)
+            print "Ignoring type " + type + " row: " + str(self.row)
             return None
 
         t = {}
@@ -118,6 +124,11 @@ class transaction():
 
 
 def mapType(self, type):
+    if type not in typeDict:
+        self.type = None
+        print "Unknown type: " + str(self.row)
+        return None
+
     self.type = typeDict[type]
     if type == "Deposits & Contributions":
         self.type = "BUY"
@@ -139,6 +150,8 @@ def get_transactions(filename):
         reader = csv.reader(fp)
         for row in reader:
             t = transaction(row)
+            if not t.type:
+                continue
             dict = t.toDict()
             if dict:
                 transactions.append(dict)
