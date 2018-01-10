@@ -40,7 +40,7 @@ def parse_row(row):
 
 
 # Returns an array of transaction dictionaries
-# The dictionary keys match the field names of the transaction mode
+# The dictionary keys match the field names of the transaction model
 def get_transactions(filename):
 
     transactions = []

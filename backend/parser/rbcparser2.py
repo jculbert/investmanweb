@@ -50,7 +50,6 @@ typeDict = {
     "Return of Capital": None
 }
 
-
 def getFloat(strVal):
     if strVal == "":
         return 0.0
@@ -82,7 +81,6 @@ class transaction():
         mapType(self, row[1])
 
         self.description = row[9]
-        self.blart = "xxx"
 
     def toFundManager(self):
         line = self.acct + ","
@@ -98,6 +96,27 @@ class transaction():
 
         return line
 
+    # Returns a transaction dictionary given
+    def toDict(self):
+        if self.symbol == 'CASH':
+            return None # Not using CASH transactions
+
+        if self.type != 'BUY' and self.type != 'SELL' and self.type != 'DIST_D' and self.type != 'SPLIT':
+            print "Ignoring type " + type + " row: " + str(row)
+            return None
+
+        t = {}
+        t['account_name'] = self.acct
+        t['date'] = self.date
+        t['type'] = self.type
+        t['symbol'] = self.symbol
+        t['amount'] = self.amount
+        t['price'] = self.price
+        t['quantity'] = self.count
+        t['note'] = self.description
+        return t
+
+
 def mapType(self, type):
     self.type = typeDict[type]
     if type == "Deposits & Contributions":
@@ -111,34 +130,17 @@ def mapType(self, type):
         self.count = self.amount
         self.price = 1.0
 
-def parse(filename, dump):
+# Returns an array of transaction dictionaries
+# The dictionary keys match the field names of the transaction model
+def get_transactions(filename):
 
-    print "\nfile: " + filename
-    outfile = open(filename + "_parsed.csv", "w")
-
+    transactions = []
     with open(filename, "r") as fp:
         reader = csv.reader(fp)
         for row in reader:
             t = transaction(row)
-            if t.type:
-                line = t.toFundManager()
-                print line
-                outfile.write(line + "\r\n")
+            dict = t.toDict()
+            if dict:
+                transactions.append(dict)
 
-# main
-dump = False
-if len(sys.argv) > 1:
-    if sys.argv[1] == "-d":
-        dump = True
-        files = [sys.argv[2]]
-    else:
-        files = [sys.argv[1]]
-else:
-    files = []
-    for f in listdir("."):
-        if re.match("Activity.*", f):
-            files.append(f)
-
-print "Parsing: " + str(files)
-for filename in files:
-    parse(filename, dump)
+    return transactions

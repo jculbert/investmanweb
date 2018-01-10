@@ -4,7 +4,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 
 import sys
-from parser import fundmanagerparser
+from parser import fundmanagerparser, rbcparser2
 
 from django.core.exceptions import ObjectDoesNotExist
 from transactions.models import Transaction
@@ -15,6 +15,9 @@ filename = sys.argv[1]
 
 if filename.endswith(".fmg"):
     t_list = fundmanagerparser.get_transactions(sys.argv[1])
+elif filename.endswith(".rbc"):
+    t_list = rbcparser2.get_transactions(sys.argv[1])
+    exit()
 else:
     print "Unknown filetype"
 
