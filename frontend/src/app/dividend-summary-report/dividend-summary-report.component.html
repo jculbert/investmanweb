@@ -1,3 +1,4 @@
+<a routerLink=""><i class="material-icons">arrow_back</i></a>
 <div class="mat-elevation-z8">
     <mat-form-field class="datepicker-container1" >
       <input matInput [matDatepicker]="startPicker" placeholder="Choose start date" (dateChange)="startDateChange($event)"  [formControl]="startPickerControl">
@@ -22,12 +23,10 @@
       <mat-cell *cdkCellDef="let row" class="example-cell"> {{row.symbol}} </mat-cell>
     </ng-container>
 
-    <!-- Progress Column -->
     <ng-container cdkColumnDef="amount">
       <mat-header-cell *cdkHeaderCellDef class="example-header-cell"> Amount </mat-header-cell>
       <mat-cell *cdkCellDef="let row" class="example-cell"> {{row.amount | number:'1.2-2' }} </mat-cell>
     </ng-container>
-
 
     <mat-header-row *cdkHeaderRowDef="['symbol', 'amount']" class="example-header-row"></mat-header-row>
     <mat-row *cdkRowDef="let row; columns: ['symbol', 'amount'];" class="example-row"></mat-row>

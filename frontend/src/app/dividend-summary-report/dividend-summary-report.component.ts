@@ -67,25 +67,6 @@ export class DividendSummaryReportComponent implements OnInit {
   }
 }
 
-export interface DividendSummaryData {
-  symbol: string;
-  amount: number;
-  us_amount: number;
-}
-
-export class ThisDataSource extends DataSource<any> {
-  constructor(private backendService: BackendService) {
-    super();
-  }
-
-  /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<DividendSummaryData[]> {
-    return this.backendService.dividendSummaryReport(undefined, undefined)
-  }
-
-  disconnect() {}
-}
-
 function lastDayOfMonth(year : number, month: number ): number {
   return new Date(year, month+1, 0).getDate() // Gives last day of the month
 }

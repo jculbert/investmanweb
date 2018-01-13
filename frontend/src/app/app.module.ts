@@ -10,13 +10,17 @@ import {CdkTableModule} from '@angular/cdk/table';
 import {MatDialogModule} from '@angular/material/dialog';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field'
-import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatTableModule} from '@angular/material'
+import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatTableModule, MatSidenavModule} from '@angular/material'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { NavigationComponent } from './navigation/navigation.component';
+import { AccountsComponent } from './accounts/accounts.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DividendSummaryReportComponent
+    DividendSummaryReportComponent,
+    NavigationComponent,
+    AccountsComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +36,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatInputModule,
     BrowserAnimationsModule,
     MatButtonModule,
-    MatTableModule
+    MatTableModule,
+    MatSidenavModule
   ],
   providers: [BackendService],
   bootstrap: [AppComponent]

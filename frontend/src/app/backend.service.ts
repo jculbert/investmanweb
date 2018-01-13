@@ -3,7 +3,16 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 
-import { DividendSummaryData } from './dividend-summary-report/dividend-summary-report.component'
+export interface AccountData {
+  name: string;
+  currency: string;
+}
+
+export interface DividendSummaryData {
+  symbol: string;
+  amount: number;
+  us_amount: number;
+}
 
 @Injectable()
 export class BackendService {
@@ -16,4 +25,7 @@ export class BackendService {
     return this.http.get<DividendSummaryData[]>('api/v1/dividends/?summary=true&startdate=' + start + '&enddate=' + end)
   }
 
+  accounts() : Observable<AccountData[]> {
+    return this.http.get<AccountData[]>('api/v1/accounts/')
+  }
 }

@@ -3,8 +3,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { DividendSummaryReportComponent } from './dividend-summary-report/dividend-summary-report.component'
+import {AccountsComponent} from './accounts/accounts.component'
 
 const routes: Routes = [
+  { path: '', redirectTo: '/', pathMatch: 'full' },
+  { path: 'accounts', component: AccountsComponent },
   { path: 'dividendsummaryreport', component: DividendSummaryReportComponent }
 ];
 

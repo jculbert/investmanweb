@@ -1,0 +1,19 @@
+<a routerLink=""><i class="material-icons">arrow_back</i></a>
+<div class="mat-elevation-z8">
+  <div *ngIf="dataSource.data.length != 0" class="table-container">
+    <mat-table #table [dataSource]="dataSource" class="table">
+      <ng-container cdkColumnDef="name">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Name </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="currency">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Currency </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.currency}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *cdkHeaderRowDef="['name', 'currency']" class="table-header-row"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['name', 'currency'];" class="table-row"></mat-row>
+    </mat-table>
+  </div>
+</div>

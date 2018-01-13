@@ -18,14 +18,14 @@ from django.contrib import admin
 from rest_framework_nested import routers
 
 from reports.views import DividendSummaryViewSet
+from accounts.views import AccountViewSet
 
-
-#router = routers.SimpleRouter()
-#router.register(r'dividends', DividendSummaryViewSet, base_name=r'dividends')
+router = routers.SimpleRouter()
+router.register(r'accounts', AccountViewSet)
 #urlpatterns = router.urls
 
 urlpatterns = [
-    #url(r'^api/v1/', include(router.urls)),
+    url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/dividends/', DividendSummaryViewSet.as_view()),
 
     url(r'^admin/', admin.site.urls),
