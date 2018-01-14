@@ -13,18 +13,19 @@ import {MatFormFieldModule} from '@angular/material/form-field'
 import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatTableModule, MatSidenavModule} from '@angular/material'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NavigationComponent } from './navigation/navigation.component';
-import { AccountsComponent } from './accounts/accounts.component';
+
+import { AccountsModule } from './accounts/accounts.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     DividendSummaryReportComponent,
-    NavigationComponent,
-    AccountsComponent
+    NavigationComponent
   ],
   imports: [
-    BrowserModule,
+    AccountsModule,
     AppRoutingModule,
+    BrowserModule,
     HttpClientModule,
     CdkTableModule,
     MatDialogModule,
@@ -37,7 +38,7 @@ import { AccountsComponent } from './accounts/accounts.component';
     BrowserAnimationsModule,
     MatButtonModule,
     MatTableModule,
-    MatSidenavModule
+    MatSidenavModule,
   ],
   providers: [BackendService],
   bootstrap: [AppComponent]

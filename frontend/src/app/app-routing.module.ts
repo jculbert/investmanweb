@@ -6,8 +6,7 @@ import { DividendSummaryReportComponent } from './dividend-summary-report/divide
 import {AccountsComponent} from './accounts/accounts.component'
 
 const routes: Routes = [
-  { path: '', redirectTo: '/', pathMatch: 'full' },
-  { path: 'accounts', component: AccountsComponent },
+  { path: '', redirectTo: '/accounts', pathMatch: 'full' },
   { path: 'dividendsummaryreport', component: DividendSummaryReportComponent }
 ];
 
