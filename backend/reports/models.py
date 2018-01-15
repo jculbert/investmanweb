@@ -5,9 +5,9 @@ from __future__ import unicode_literals
 # approach described here: https://medium.com/django-rest-framework/django-rest-framework-viewset-when-you-don-t-have-a-model-335a0490ba6f
 
 # Dividend Summary contains the data for each symbol in a dividend summary report
-class DividendSummary(object):
+#class DividendSummary(object):
 
-    def __init__(self, **kwargs):
-        for field in ('symbol', 'amount'):
-            setattr(self, field, kwargs.get(field, None))
+#    def __init__(self, **kwargs):
+#        for field in ('symbol', 'amount'):
+#            setattr(self, field, kwargs.get(field, None))
 
