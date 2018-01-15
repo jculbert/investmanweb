@@ -14,8 +14,6 @@ import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModul
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NavigationComponent } from './navigation/navigation.component';
 
-import { AccountsModule } from './accounts/accounts.module';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,7 +21,6 @@ import { AccountsModule } from './accounts/accounts.module';
     NavigationComponent
   ],
   imports: [
-    AccountsModule,
     AppRoutingModule,
     BrowserModule,
     HttpClientModule,
