@@ -12,13 +12,15 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field'
 import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatTableModule, MatSidenavModule} from '@angular/material'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { NavigationComponent } from './navigation/navigation.component';
+import { AccountsComponent } from './accounts/accounts.component';
+import { HoldingsComponent } from './holdings/holdings.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DividendSummaryReportComponent,
-    NavigationComponent
+    AccountsComponent,
+    HoldingsComponent
   ],
   imports: [
     AppRoutingModule,

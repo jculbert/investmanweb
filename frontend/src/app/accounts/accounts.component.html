@@ -1,4 +1,3 @@
-<a routerLink=""><i class="material-icons">arrow_back</i></a>
 <div class="mat-elevation-z8">
   <div *ngIf="dataSource.data.length != 0" class="table-container">
     <mat-table #table [dataSource]="dataSource" class="table">
@@ -14,7 +13,7 @@
 
       <ng-container cdkColumnDef="holdings">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Holdings </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> <a routerLink="account-holdings">Holdings</a></mat-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['../holdings', row.name]">Holdings</a></mat-cell>
       </ng-container>
 
       <mat-header-row *cdkHeaderRowDef="['name', 'currency', 'holdings']" class="table-header-row"></mat-header-row>

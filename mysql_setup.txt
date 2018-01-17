@@ -1,0 +1,5 @@
+CREATE DATABASE investmanweb CHARACTER SET UTF8;
+
+CREATE USER django@localhost IDENTIFIED BY 'django';
+
+GRANT ALL PRIVILEGES ON investmanweb.* TO django@localhost;

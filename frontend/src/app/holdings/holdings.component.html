@@ -1,0 +1,29 @@
+<a routerLink="../"><i class="material-icons">arrow_back</i></a>
+<div class="mat-elevation-z8">
+  <div *ngIf="dataSource.data.length != 0" class="table-container">
+    <mat-table #table [dataSource]="dataSource" class="table">
+      <ng-container cdkColumnDef="symbol">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Symbol </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.symbol}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="quantity">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Quantity </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.quantity}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="amount">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Amount </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="transactions">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Transactions </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> <a routerLink="holding-transactions">...</a></mat-cell>
+      </ng-container>
+
+      <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'transactions']" class="table-header-row"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'transactions'];" class="table-row"></mat-row>
+    </mat-table>
+  </div>
+</div>

@@ -14,6 +14,12 @@ export interface DividendSummaryData {
   us_amount: number;
 }
 
+export interface HoldingData {
+  symbol: string;
+  quantity: number;
+  amount: number;
+}
+
 @Injectable()
 export class BackendService {
 
@@ -27,5 +33,9 @@ export class BackendService {
 
   accounts() : Observable<AccountData[]> {
     return this.http.get<AccountData[]>('api/v1/accounts/')
+  }
+
+  holdings(account: string) : Observable<HoldingData[]> {
+    return this.http.get<HoldingData[]>('api/v1/holdings?account=' + account)
   }
 }
