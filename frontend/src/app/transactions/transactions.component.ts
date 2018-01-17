@@ -9,13 +9,14 @@ import {BackendService} from '../backend.service'
 
 
 @Component({
-  selector: 'app-holdings',
-  templateUrl: './holdings.component.html',
-  styleUrls: ['./holdings.component.css']
+  selector: 'app-transactions',
+  templateUrl: './transactions.component.html',
+  styleUrls: ['./transactions.component.css']
 })
-export class HoldingsComponent implements OnInit {
+export class TransactionsComponent implements OnInit {
   dataSource = new MatTableDataSource()
   account : string
+  symbol : string
 
   constructor(
     private location: Location,
@@ -26,8 +27,9 @@ export class HoldingsComponent implements OnInit {
   ngOnInit() {
     this.dataSource.data = [];
 
-    this.account = this.route.snapshot.paramMap.get('account');
-    this.backendService.holdings(this.account).subscribe(data => 
+    this.account = this.route.snapshot.queryParams.account;
+    this.symbol = this.route.snapshot.queryParams.symbol;
+    this.backendService.transactions(this.account, this.symbol).subscribe(data => 
       {
         this.dataSource.data = data;
       }
@@ -38,3 +40,4 @@ export class HoldingsComponent implements OnInit {
     this.location.back();
   }
 }
+

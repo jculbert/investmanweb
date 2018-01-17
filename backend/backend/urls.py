@@ -20,10 +20,11 @@ from rest_framework_nested import routers
 from reports.views import DividendSummaryViewSet
 from accounts.views import AccountViewSet
 from holdings.views import HoldingsViewSet
+from transactions.views import TransactionViewSet
 
 router = routers.SimpleRouter()
 router.register(r'accounts', AccountViewSet)
-#urlpatterns = router.urls
+router.register(r'transactions', TransactionViewSet)
 
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),

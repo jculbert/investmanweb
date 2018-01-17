@@ -38,4 +38,8 @@ export class BackendService {
   holdings(account: string) : Observable<HoldingData[]> {
     return this.http.get<HoldingData[]>('api/v1/holdings?account=' + account)
   }
+
+  transactions(account: string, symbol: string) : Observable<HoldingData[]> {
+    return this.http.get<HoldingData[]>('api/v1/transactions?account=' + account + '&symbol=' + symbol)
+  }
 }

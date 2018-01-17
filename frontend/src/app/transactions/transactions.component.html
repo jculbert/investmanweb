@@ -1,0 +1,40 @@
+<h1>Transactions: {{account}} / {{symbol}} </h1>
+<a a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
+<div class="mat-elevation-z8">
+  <div *ngIf="dataSource.data.length != 0" class="table-container">
+    <mat-table #table [dataSource]="dataSource" class="table">
+      <ng-container cdkColumnDef="date">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Date </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.date}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="type">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Type </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.type}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="quantity">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Quantity </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.quantity}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="price">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.price}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="amount">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Amount </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="note">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Note </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.note}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'note']" class="table-header-row"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'note'];" class="table-row"></mat-row>
+    </mat-table>
+  </div>
+</div>

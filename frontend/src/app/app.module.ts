@@ -14,13 +14,15 @@ import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModul
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AccountsComponent } from './accounts/accounts.component';
 import { HoldingsComponent } from './holdings/holdings.component';
+import { TransactionsComponent } from './transactions/transactions.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DividendSummaryReportComponent,
     AccountsComponent,
-    HoldingsComponent
+    HoldingsComponent,
+    TransactionsComponent
   ],
   imports: [
     AppRoutingModule,
