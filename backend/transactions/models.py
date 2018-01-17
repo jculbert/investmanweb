@@ -16,7 +16,7 @@ class Transaction(models.Model):
     price = models.FloatField(null=True)
     amount = models.FloatField(null=True)
     account = models.ForeignKey(Account)
-    hash = models.TextField(db_index=True)
+    hash = models.CharField(db_index=True, max_length=50)
     note = models.TextField(null=True)
 
     @staticmethod
