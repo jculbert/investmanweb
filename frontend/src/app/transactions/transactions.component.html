@@ -28,13 +28,18 @@
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount}} </mat-cell>
       </ng-container>
 
+      <ng-container cdkColumnDef="capital_return">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Cap Ret </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.capital_return}} </mat-cell>
+      </ng-container>
+
       <ng-container cdkColumnDef="note">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Note </mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.note}} </mat-cell>
       </ng-container>
 
-      <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'note']" class="table-header-row"></mat-header-row>
-      <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'note'];" class="table-row"></mat-row>
+      <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'capital_return', 'note']" class="table-header-row"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'capital_return', 'note'];" class="table-row"></mat-row>
     </mat-table>
   </div>
 </div>
