@@ -20,6 +20,17 @@ export interface HoldingData {
   amount: number;
 }
 
+export interface TransactionData {
+  id: number;
+  date: string;
+  type: string;
+  quantity: number;
+  price: number;
+  amount: number;
+  capital_return: number;
+  note: string;
+}
+
 @Injectable()
 export class BackendService {
 
@@ -39,7 +50,14 @@ export class BackendService {
     return this.http.get<HoldingData[]>('api/v1/holdings?account=' + account)
   }
 
-  transactions(account: string, symbol: string) : Observable<HoldingData[]> {
-    return this.http.get<HoldingData[]>('api/v1/transactions?account=' + account + '&symbol=' + symbol)
+  transactions(account: string, symbol: string) : Observable<TransactionData[]> {
+    return this.http.get<TransactionData[]>('api/v1/transactions?account=' + account + '&symbol=' + symbol)
+  }
+
+  get_transaction(id: string) : Observable<TransactionData> {
+    return this.http.get<TransactionData>('api/v1/transactions/' + id + '/')
+  }
+  put_transaction(id: string, transaction: TransactionData) : Observable<TransactionData> {
+    return this.http.put<TransactionData>('api/v1/transactions/' + id + '/', transaction)
   }
 }

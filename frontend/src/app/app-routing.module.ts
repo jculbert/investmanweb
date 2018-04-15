@@ -5,6 +5,7 @@ import { DividendSummaryReportComponent } from './dividend-summary-report/divide
 import { AccountsComponent }    from './accounts/accounts.component';
 import { HoldingsComponent }    from './holdings/holdings.component';
 import { TransactionsComponent }    from './transactions/transactions.component';
+import { TransactionComponent }    from './transaction/transaction.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/accounts', pathMatch: 'full' },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'accounts',  component: AccountsComponent },
   { path: 'holdings/:account',  component: HoldingsComponent },
   { path: 'transactions',  component: TransactionsComponent },
+  { path: 'transaction/:id',  component: TransactionComponent },
 ];
 
 @NgModule({
