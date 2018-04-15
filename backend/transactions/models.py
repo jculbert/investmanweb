@@ -15,6 +15,7 @@ class Transaction(models.Model):
     quantity = models.FloatField(null=True)
     price = models.FloatField(null=True)
     amount = models.FloatField(null=True)
+    fee = models.FloatField(null=True)
     capital_return = models.FloatField(null=True)
     capital_gain = models.FloatField(null=True)
     acb = models.FloatField(null=True)

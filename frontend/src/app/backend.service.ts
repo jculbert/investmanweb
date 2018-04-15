@@ -27,6 +27,7 @@ export interface TransactionData {
   quantity: number;
   price: number;
   amount: number;
+  fee: number;
   capital_return: number;
   capital_gain: number;
   acb: number;
@@ -42,6 +43,7 @@ export class Transaction implements TransactionData {
   quantity: number;
   price: number;
   amount: number;
+  fee: number;
   capital_return: number;
   capital_gain: number;
   acb: number;

@@ -17,11 +17,17 @@ def update_acb(account, symbol):
     t_list = Transaction.objects.filter(account__name=account, symbol__name=symbol).order_by('date')
     for t in t_list:
         if t.type == 'BUY':
-            acb = acb + t.amount
+            acb = acb + t.price * t.quantity
+            if t.fee:
+                acb = acb + t.fee
             shares = shares + t.quantity
         elif t.type == 'SELL':
             t.capital_gain = t.price * t.quantity - (acb / shares) * t.quantity
+            if t.fee:
+                t.capital_gain = t.capital_gain - t.fee
+
             acb = acb * (shares - t.quantity) / shares
+
             shares = shares - t.quantity
         elif t.type == 'DIST_D' and t.capital_return:
             acb = acb - t.capital_return

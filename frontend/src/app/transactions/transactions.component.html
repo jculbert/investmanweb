@@ -28,7 +28,12 @@
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount | number:'1.2-2'}} </mat-cell>
       </ng-container>
 
-      <ng-container cdkColumnDef="capital_return">
+      <ng-container cdkColumnDef="fee">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Fee </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.fee | number:'1.2-2'}} </mat-cell>
+      </ng-container>
+  
+       <ng-container cdkColumnDef="capital_return">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Cap Ret </mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.capital_return | number:'1.2-2'}} </mat-cell>
       </ng-container>
@@ -55,8 +60,8 @@
         <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/transactions', row.id]" ><i class="material-icons">arrow_forward</i></a></mat-cell>
       </ng-container>
 
-      <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail']" class="table-header-row"></mat-header-row>
-      <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail'];" class="table-row"></mat-row>
+      <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'fee', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail']" class="table-header-row"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'fee', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail'];" class="table-row"></mat-row>
     </mat-table>
   </div>
 </div>
