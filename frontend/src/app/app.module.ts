@@ -16,6 +16,7 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { HoldingsComponent } from './holdings/holdings.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { TransactionComponent } from './transaction/transaction.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 
 @NgModule({
@@ -25,7 +26,11 @@ import { TransactionComponent } from './transaction/transaction.component';
     AccountsComponent,
     HoldingsComponent,
     TransactionsComponent,
-    TransactionComponent
+    TransactionComponent,
+    ConfirmDialogComponent
+  ],
+  entryComponents: [
+    ConfirmDialogComponent
   ],
   imports: [
     AppRoutingModule,

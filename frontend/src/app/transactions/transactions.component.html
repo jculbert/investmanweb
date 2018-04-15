@@ -33,18 +33,31 @@
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.capital_return | number:'1.2-2'}} </mat-cell>
       </ng-container>
 
-      <ng-container cdkColumnDef="note">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Note </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.note}} </mat-cell>
+      <ng-container cdkColumnDef="capital_gain">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Cap Gain </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.capital_gain | number:'1.2-2'}} </mat-cell>
+      </ng-container>
+  
+      <ng-container cdkColumnDef="acb">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> ACB </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.acb | number:'1.2-2'}} </mat-cell>
       </ng-container>
 
+      <ng-container cdkColumnDef="delete">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Delete </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell">
+            <button mat-button (click)="onDelete(row.id)">Del</button>
+          </mat-cell>
+      </ng-container>
+  
       <ng-container cdkColumnDef="detail">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Detail </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/transaction', row.id]" >...</a></mat-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/transactions', row.id]" ><i class="material-icons">arrow_forward</i></a></mat-cell>
       </ng-container>
 
-      <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'capital_return', 'note', 'detail']" class="table-header-row"></mat-header-row>
-      <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'capital_return', 'note', 'detail'];" class="table-row"></mat-row>
+      <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail']" class="table-header-row"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail'];" class="table-row"></mat-row>
     </mat-table>
   </div>
 </div>
+<button mat-button (click)="onAdd($event)">Add</button>

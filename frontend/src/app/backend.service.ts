@@ -28,7 +28,32 @@ export interface TransactionData {
   price: number;
   amount: number;
   capital_return: number;
+  capital_gain: number;
+  acb: number;
+  account: string;
+  symbol: string;
   note: string;
+}
+
+export class Transaction implements TransactionData {
+  id: number;
+  date: string;
+  type: string;
+  quantity: number;
+  price: number;
+  amount: number;
+  capital_return: number;
+  capital_gain: number;
+  acb: number;
+  note: string;
+
+  constructor(public account: string, public symbol: string) {
+    this.date = '2030-12-30';
+    this.type = 'DIST_D';
+    this.quantity = 0;
+    this.price = 0;
+    this.amount = 0;
+  }
 }
 
 @Injectable()
@@ -57,7 +82,16 @@ export class BackendService {
   get_transaction(id: string) : Observable<TransactionData> {
     return this.http.get<TransactionData>('api/v1/transactions/' + id + '/')
   }
+
   put_transaction(id: string, transaction: TransactionData) : Observable<TransactionData> {
     return this.http.put<TransactionData>('api/v1/transactions/' + id + '/', transaction)
+  }
+
+  add_transaction(transaction: TransactionData) : Observable<TransactionData> {
+    return this.http.post<TransactionData>('api/v1/transactions/', transaction)
+  }
+
+  delete_transaction(id: string) : Observable<any> {
+    return this.http.delete<any>('api/v1/transactions/' + id + '/')
   }
 }

@@ -16,6 +16,8 @@ class Transaction(models.Model):
     price = models.FloatField(null=True)
     amount = models.FloatField(null=True)
     capital_return = models.FloatField(null=True)
+    capital_gain = models.FloatField(null=True)
+    acb = models.FloatField(null=True)
     account = models.ForeignKey(Account)
     hash = models.CharField(db_index=True, max_length=50)
     note = models.TextField(null=True)
@@ -41,3 +43,14 @@ class Transaction(models.Model):
         dh = DictionaryHelper(dict)
         return Transaction(account=account, symbol=symbol, date=dh.get('date'), type=dh.get('type'), quantity=dh.get('quantity'),
                         price=dh.get('price'), amount=dh.get('amount'), note=dh.get('note'), hash=hash)
+
+    def update_hash(self):
+        dict = {}
+        dict['date'] = self.date
+        dict['type'] = self.type
+        dict['quantity'] = self.quantity
+        dict['price'] = self.price
+        dict['amount'] = self.amount
+
+        self.hash = Transaction.get_hash(self.account, self.symbol, dict)
+        self.save()

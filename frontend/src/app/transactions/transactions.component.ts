@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import {DataSource} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material';
 import {FormControl} from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import {Location} from '@angular/common';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 
-import {BackendService} from '../backend.service'
+import {BackendService, Transaction} from '../backend.service'
+import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component'
 
 
 @Component({
@@ -21,7 +23,9 @@ export class TransactionsComponent implements OnInit {
   constructor(
     private location: Location,
     private backendService: BackendService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private confirmDialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -34,6 +38,35 @@ export class TransactionsComponent implements OnInit {
         this.dataSource.data = data;
       }
     );
+  }
+
+  onAdd(event: any) {
+    var trans = new Transaction(this.account, this.symbol)
+    this.backendService.add_transaction(trans).subscribe(data => 
+      {
+        this.router.navigateByUrl('/transactions/' + data.id)
+      }
+    );
+  }
+
+  onDelete(id: string) {
+
+    let dialogRef = this.confirmDialog.open(ConfirmDialogComponent, {
+      data: {
+        prompt: "Delete Transaction?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+      if (result == 'yes') {
+        this.backendService.delete_transaction(id).subscribe(data => 
+        {
+          location.reload()
+        }
+      }
+    });
+
   }
 
   goback(){
