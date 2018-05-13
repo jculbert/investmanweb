@@ -45,10 +45,13 @@ class TransactionViewSet(viewsets.ModelViewSet):
         return (permissions.AllowAny(),)
 
     def list(self, request, *args, **kwargs):
-        account = request.query_params.get('account', None)
-        symbol = request.query_params.get('symbol', None)
-
-        args = {'account__exact': account, 'symbol__exact': symbol}
+        upload_id = request.query_params.get('upload_id', None)
+        if upload_id:
+            args = {'upload_id': upload_id}
+        else:
+            account = request.query_params.get('account', None)
+            symbol = request.query_params.get('symbol', None)
+            args = {'account__exact': account, 'symbol__exact': symbol}
 
         t_list = Transaction.objects.filter(**args).order_by('date')
 

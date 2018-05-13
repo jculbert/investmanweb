@@ -17,6 +17,7 @@ import { HoldingsComponent } from './holdings/holdings.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { TransactionComponent } from './transaction/transaction.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { UploadComponent } from './upload/upload.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     HoldingsComponent,
     TransactionsComponent,
     TransactionComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    UploadComponent
   ],
   entryComponents: [
     ConfirmDialogComponent

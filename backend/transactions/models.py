@@ -22,6 +22,7 @@ class Transaction(models.Model):
     account = models.ForeignKey(Account)
     hash = models.CharField(db_index=True, max_length=50)
     note = models.TextField(null=True)
+    upload_id = models.IntegerField(null=True)
 
     @staticmethod
     def get_hash(account, symbol, dict):
@@ -43,7 +44,7 @@ class Transaction(models.Model):
     def create(account, symbol, dict, hash):
         dh = DictionaryHelper(dict)
         return Transaction(account=account, symbol=symbol, date=dh.get('date'), type=dh.get('type'), quantity=dh.get('quantity'),
-                        price=dh.get('price'), amount=dh.get('amount'), note=dh.get('note'), hash=hash)
+                        price=dh.get('price'), amount=dh.get('amount'), note=dh.get('note'), hash=hash, upload_id=dh.get('upload_id'))
 
     def update_hash(self):
         dict = {}

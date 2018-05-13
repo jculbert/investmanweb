@@ -17,8 +17,9 @@ import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component
 })
 export class TransactionsComponent implements OnInit {
   dataSource = new MatTableDataSource()
-  account : string
-  symbol : string
+  account : string = undefined
+  symbol : string = undefined
+  upload_id: string = undefined
 
   constructor(
     private location: Location,
@@ -29,15 +30,25 @@ export class TransactionsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dataSource.data = [];
 
-    this.account = this.route.snapshot.queryParams.account;
-    this.symbol = this.route.snapshot.queryParams.symbol;
-    this.backendService.transactions(this.account, this.symbol).subscribe(data => 
-      {
-        this.dataSource.data = data;
-      }
-    );
+    this.dataSource.data = [];
+    
+    if (this.route.snapshot.queryParams.upload_id != undefined) {
+      this.upload_id = this.route.snapshot.queryParams.upload_id;
+      this.backendService.transactions_uploaded(this.upload_id).subscribe(data => 
+        {
+          this.dataSource.data = data;
+        }
+      );
+    } else {
+      this.account = this.route.snapshot.queryParams.account;
+      this.symbol = this.route.snapshot.queryParams.symbol;
+      this.backendService.transactions(this.account, this.symbol).subscribe(data => 
+        {
+          this.dataSource.data = data;
+        }
+      );
+    }
   }
 
   onAdd(event: any) {
@@ -63,7 +74,7 @@ export class TransactionsComponent implements OnInit {
         this.backendService.delete_transaction(id).subscribe(data => 
         {
           location.reload()
-        }
+        });
       }
     });
 

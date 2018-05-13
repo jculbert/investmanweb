@@ -6,6 +6,7 @@ import { AccountsComponent }    from './accounts/accounts.component';
 import { HoldingsComponent }    from './holdings/holdings.component';
 import { TransactionsComponent }    from './transactions/transactions.component';
 import { TransactionComponent }    from './transaction/transaction.component';
+import { UploadComponent }    from './upload/upload.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/accounts', pathMatch: 'full' },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'holdings/:account',  component: HoldingsComponent },
   { path: 'transactions',  component: TransactionsComponent },
   { path: 'transactions/:id',  component: TransactionComponent },
+  { path: 'upload',  component: UploadComponent },
 ];
 
 @NgModule({

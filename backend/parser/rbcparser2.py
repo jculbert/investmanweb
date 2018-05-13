@@ -60,9 +60,10 @@ def getFloat(strVal):
 
 class transaction():
 
-    def __init__(self, row):
+    def __init__(self, row, upload_id=None):
         self.row = row
         self.date = datetime.strptime(row[0], "%b %d, %Y")
+        self.upload_id=upload_id
 
         self.currency = row[8]
         self.symbol = row[2]
@@ -73,12 +74,12 @@ class transaction():
             if self.currency == "CAD":
                 self.symbol += ".TO"
 
-        self.acct = acctDict[row[6]]
+        self.amount = getFloat(row[7])
         mapType(self, row[1])
 
+        self.acct = acctDict[row[6]]
         if self.currency == "USD":
             self.acct += " US"
-        self.amount = getFloat(row[7])
         if self.amount < 0 and self.type != "DIST_D":
             self.amount = round(self.amount * -1, 2)
         self.count = getFloat(row[3])
@@ -120,6 +121,7 @@ class transaction():
         t['price'] = self.price
         t['quantity'] = self.count
         t['note'] = self.description
+        t['upload_id'] = self.upload_id
         return t
 
 
@@ -155,5 +157,37 @@ def get_transactions(filename):
             dict = t.toDict()
             if dict:
                 transactions.append(dict)
+
+    return transactions
+
+# Returns an array of transaction dictionaries
+# The dictionary keys match the field names of the transaction model
+
+def get_transactions(filename=None, file=None, upload_id=None):
+
+    if not file:
+        file = open(open(filename, "r"))
+
+    transactions = []
+    reader = csv.reader(file)
+    in_header = True
+    for row in reader:
+
+        # We are reading the header until transaction field name line is found
+        if in_header:
+            if len(row) > 0 and row[0] == 'Date':
+                in_header = False
+            continue
+
+        # Stop when a blank line is found
+        if len(row) < 2:
+            break
+
+        t = transaction(row, upload_id=upload_id)
+        if not t.type:
+            continue
+        dict = t.toDict()
+        if dict:
+            transactions.append(dict)
 
     return transactions

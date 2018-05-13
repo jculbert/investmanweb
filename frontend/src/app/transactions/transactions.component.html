@@ -1,4 +1,7 @@
-<h1>Transactions: {{account}} / {{symbol}} </h1>
+<h1>
+   <div *ngIf="account != undefined">Transactions: {{account}} / {{symbol}}</div>
+   <div *ngIf="upload_id != undefined">Transactions: Upload ID {{upload_id}}</div>
+</h1>
 <a a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
 <div class="mat-elevation-z8">
   <div *ngIf="dataSource.data.length != 0" class="table-container">

@@ -1,3 +1,5 @@
+#from transactions.models import Transaction
+
 class DictionaryHelper:
 
     def __init__(self, dict):
@@ -8,3 +10,8 @@ class DictionaryHelper:
             return self.dict[key]
         else:
             return None
+
+#def update_acb(account, symbol):
+#    t_list = Transaction.objects.filter(account__name=account, symbol__name=symbol).order_by('date')
+#    return
+

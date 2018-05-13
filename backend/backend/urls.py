@@ -21,10 +21,12 @@ from reports.views import DividendSummaryViewSet
 from accounts.views import AccountViewSet
 from holdings.views import HoldingsViewSet
 from transactions.views import TransactionViewSet
+from uploads.views import UploadViewSet
 
 router = routers.SimpleRouter()
 router.register(r'accounts', AccountViewSet)
 router.register(r'transactions', TransactionViewSet)
+router.register(r'uploads', UploadViewSet)
 
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),

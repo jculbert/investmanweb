@@ -58,6 +58,15 @@ export class Transaction implements TransactionData {
   }
 }
 
+export interface UploadData {
+  id: number;
+  date: string;
+  num_transactions: number;
+  result: string;
+  content: string
+}
+
+
 @Injectable()
 export class BackendService {
 
@@ -81,6 +90,10 @@ export class BackendService {
     return this.http.get<TransactionData[]>('api/v1/transactions?account=' + account + '&symbol=' + symbol)
   }
 
+  transactions_uploaded(upload_id: string) : Observable<TransactionData[]> {
+    return this.http.get<TransactionData[]>('api/v1/transactions?upload_id=' + upload_id)
+  }
+
   get_transaction(id: string) : Observable<TransactionData> {
     return this.http.get<TransactionData>('api/v1/transactions/' + id + '/')
   }
@@ -95,5 +108,13 @@ export class BackendService {
 
   delete_transaction(id: string) : Observable<any> {
     return this.http.delete<any>('api/v1/transactions/' + id + '/')
+  }
+
+  upload_file(file: any): Observable<UploadData[]> {
+
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+
+    return this.http.post<UploadData[]>('api/v1/uploads/', formData);
   }
 }
