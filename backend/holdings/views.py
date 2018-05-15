@@ -11,6 +11,11 @@ class HoldingsViewSet(APIView):
     # Required for the Browsable API renderer to have a nice form.
     serializer_class = HoldingSerializer
 
+    def add_holding(self, symbol, total, currency, holdings):
+        holding = {"symbol": symbol, "quantity": round(total, 2), "amount": 0.00}
+        holding['us_amount'] = 0.00 if currency == 'US' else None
+        holdings.append(holding)
+
     def get(self, request, format=None):
         account = request.query_params.get('account', None)
 
@@ -25,6 +30,7 @@ class HoldingsViewSet(APIView):
         holdings = []
         symbol = None
         total = 0.00
+        currency = None
         for t in t_list:
             if t.type == 'BUY':
                 quantity = t.quantity
@@ -40,15 +46,16 @@ class HoldingsViewSet(APIView):
                 total = total + quantity
                 continue
 
-            # New symbol, complete the previous symbol and init for this one
+            # New symbol, complete the previous symbol if necessary
             if symbol:
-                holding = {"symbol": symbol, "quantity": round(total, 2), "amount": 0.00}
-                holding['us_amount'] = 0.00 if t.account.currency == 'US' else None
-
-                holdings.append(holding)
+                self.add_holding(symbol, total, t.account.currency, holdings)
 
             symbol = t.symbol.name
             total = quantity
+            currency = t.account.currency
+
+        # Need to complete the last symbol upon loop exit
+        self.add_holding(symbol, total, currency, holdings)
 
         serializer = HoldingSerializer(instance=holdings, many=True)
         return Response(serializer.data)

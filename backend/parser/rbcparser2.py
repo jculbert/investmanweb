@@ -16,7 +16,8 @@ acctDict = {
     "26449377": "Barb TFSA",
     "69718112": "Barb RRSP",
     "69718147": "Barb RRSP Spousal",
-    "69059162": "Barb LIRA"
+    "69059162": "Barb LIRA",
+    "69400048": "Jeff RRSP 2"
 }
 
 # Symbol mapping special cases
