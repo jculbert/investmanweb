@@ -9,7 +9,7 @@ from transactions.serializers import TransactionSerializer
 from serializers import UploadSerializer
 from models import Upload
 
-from parser.rbcparser2 import get_transactions
+from parsers.rbcparser2 import get_transactions
 from backend.db_util import add_transaction
 
 # Create your views here.

@@ -75,39 +75,39 @@ export class BackendService {
   dividendSummaryReport(startdate: Date, enddate: Date) : Observable<DividendSummaryData[]> {
     var start = new DatePipe('en-US').transform(startdate, 'yyyyMMdd');
     var end = new DatePipe('en-US').transform(enddate, 'yyyyMMdd');
-    return this.http.get<DividendSummaryData[]>('api/v1/dividends/?summary=true&startdate=' + start + '&enddate=' + end)
+    return this.http.get<DividendSummaryData[]>('/investmanbackend/api/v1/dividends/?summary=true&startdate=' + start + '&enddate=' + end)
   }
 
   accounts() : Observable<AccountData[]> {
-    return this.http.get<AccountData[]>('api/v1/accounts/')
+    return this.http.get<AccountData[]>('/investmanbackend/api/v1/accounts/')
   }
 
   holdings(account: string) : Observable<HoldingData[]> {
-    return this.http.get<HoldingData[]>('api/v1/holdings?account=' + account)
+    return this.http.get<HoldingData[]>('/investmanbackend/api/v1/holdings?account=' + account)
   }
 
   transactions(account: string, symbol: string) : Observable<TransactionData[]> {
-    return this.http.get<TransactionData[]>('api/v1/transactions?account=' + account + '&symbol=' + symbol)
+    return this.http.get<TransactionData[]>('/investmanbackend/api/v1/transactions?account=' + account + '&symbol=' + symbol)
   }
 
   transactions_uploaded(upload_id: string) : Observable<TransactionData[]> {
-    return this.http.get<TransactionData[]>('api/v1/transactions?upload_id=' + upload_id)
+    return this.http.get<TransactionData[]>('/investmanbackend/api/v1/transactions?upload_id=' + upload_id)
   }
 
   get_transaction(id: string) : Observable<TransactionData> {
-    return this.http.get<TransactionData>('api/v1/transactions/' + id + '/')
+    return this.http.get<TransactionData>('/investmanbackend/api/v1/transactions/' + id + '/')
   }
 
   put_transaction(id: string, transaction: TransactionData) : Observable<TransactionData> {
-    return this.http.put<TransactionData>('api/v1/transactions/' + id + '/', transaction)
+    return this.http.put<TransactionData>('/investmanbackend/api/v1/transactions/' + id + '/', transaction)
   }
 
   add_transaction(transaction: TransactionData) : Observable<TransactionData> {
-    return this.http.post<TransactionData>('api/v1/transactions/', transaction)
+    return this.http.post<TransactionData>('/investmanbackend/api/v1/transactions/', transaction)
   }
 
   delete_transaction(id: string) : Observable<any> {
-    return this.http.delete<any>('api/v1/transactions/' + id + '/')
+    return this.http.delete<any>('/investmanbackend/api/v1/transactions/' + id + '/')
   }
 
   upload_file(file: any): Observable<UploadData[]> {

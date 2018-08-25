@@ -89,7 +89,7 @@ DATABASES = {
             'NAME': 'investmanweb',
             'USER': 'django',
             'PASSWORD': 'django',
-            'HOST': 'host.docker.internal',
+            'HOST': 'localhost',
             'PORT': '',
         }
 }
