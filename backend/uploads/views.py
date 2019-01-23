@@ -20,7 +20,8 @@ class UploadViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         file = request.data['file']
 
-        content = file.read()
+        content_str = file.read()
+        content = content_str.decode('utf-8')
 
         upload = Upload(file_name=file.name, content=content, num_transactions=0, result='Ok')
         upload.save()
