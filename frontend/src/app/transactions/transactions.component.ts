@@ -22,7 +22,7 @@ export class TransactionsComponent implements OnInit {
   upload_id: string = undefined
 
   constructor(
-    private location: Location,
+    public location: Location,
     private backendService: BackendService,
     private route: ActivatedRoute,
     private router: Router,

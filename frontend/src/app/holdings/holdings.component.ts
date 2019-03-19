@@ -18,7 +18,7 @@ export class HoldingsComponent implements OnInit {
   account : string
 
   constructor(
-    private location: Location,
+    public location: Location,
     private backendService: BackendService,
     private route: ActivatedRoute
   ) { }

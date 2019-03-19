@@ -14,7 +14,7 @@ export class TransactionComponent implements OnInit {
   transaction : TransactionData = undefined
 
   constructor(
-    private location: Location,
+    public location: Location,
     private backendService: BackendService,
     private route: ActivatedRoute
 

@@ -115,6 +115,6 @@ export class BackendService {
     const formData = new FormData();
     formData.append('file', file, file.name);
 
-    return this.http.post<UploadData[]>('api/v1/uploads/', formData);
+    return this.http.post<UploadData[]>('/investmanbackend/api/v1/uploads/', formData);
   }
 }
