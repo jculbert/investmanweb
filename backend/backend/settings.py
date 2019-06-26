@@ -25,7 +25,7 @@ SECRET_KEY = '8v&r#g$81%s13=x*@6!^=)g7xlkx@uzc0n!8osvw^_b5!9(w#7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dockervm']
 
 
 # Application definition
@@ -89,7 +89,7 @@ DATABASES = {
             'NAME': 'investmanweb',
             'USER': 'django',
             'PASSWORD': 'django',
-            'HOST': 'host.docker.internal',
+            'HOST': '127.0.0.1',
             'PORT': '',
         }
 }
