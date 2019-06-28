@@ -18,13 +18,24 @@
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount | number:'1.2-2'}} </mat-cell>
       </ng-container>
 
+      <ng-container cdkColumnDef="accounts">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Accounts </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.accounts}} </mat-cell>
+      </ng-container>
+
       <ng-container cdkColumnDef="transactions">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Transactions </mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="'/transactions'" [queryParams]="{account: account, symbol: row.symbol}">...</a></mat-cell>
       </ng-container>
 
-      <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'transactions']" class="table-header-row"></mat-header-row>
-      <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'transactions'];" class="table-row"></mat-row>
+      <div *ngIf="account != 'All'">
+        <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'transactions']" class="table-header-row"></mat-header-row>
+        <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'transactions'];" class="table-row"></mat-row>
+      </div>
+      <div *ngIf="account == 'All'">
+        <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'accounts', 'transactions']" class="table-header-row"></mat-header-row>
+        <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'accounts', 'transactions'];" class="table-row"></mat-row>
+      </div>
     </mat-table>
   </div>
 </div>

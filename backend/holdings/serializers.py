@@ -7,3 +7,4 @@ class HoldingSerializer(serializers.Serializer):
     quantity = serializers.FloatField()
     amount = serializers.FloatField()
     us_amount = serializers.FloatField(allow_null=True)
+    accounts = serializers.ListField() # List of accounts holding the symbol

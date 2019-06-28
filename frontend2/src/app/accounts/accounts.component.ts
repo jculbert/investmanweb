@@ -23,7 +23,9 @@ export class AccountsComponent implements OnInit {
 
     this.backendService.accounts().subscribe(data => 
       {
-        this.dataSource.data = data;
+        var accounts = [{name: "All", currency: "-"}];
+        accounts = accounts.concat(data);
+        this.dataSource.data = accounts;
       }
     );
   }
