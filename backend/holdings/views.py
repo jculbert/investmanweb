@@ -6,14 +6,19 @@ from rest_framework.views import APIView
 
 from serializers import HoldingSerializer
 from transactions.models import Transaction
+from prices.models import Price
 
 class HoldingsViewSet(APIView):
     # Required for the Browsable API renderer to have a nice form.
     serializer_class = HoldingSerializer
 
     def add_holding(self, symbol, total, currency, accounts, holdings):
-        holding = {"symbol": symbol, "quantity": round(total, 2), "amount": 0.00, "accounts": accounts}
-        holding['us_amount'] = 0.00 if currency == 'US' else None
+        holding = {"symbol": symbol.name, "quantity": round(total, 2), "accounts": accounts}
+
+        amount = total * Price.get_price(symbol, None)
+        holding['amount'] = round(amount/0.75, 2) if currency == 'US' else amount
+        holding['us_amount'] = round(amount, 2) if currency == 'US' else None
+
         holdings.append(holding)
 
     def get(self, request, format=None):
@@ -35,6 +40,7 @@ class HoldingsViewSet(APIView):
         total = 0.00
         currency = None
         accounts = []
+        amount = 0
         for t in t_list:
             if t.type == 'BUY':
                 quantity = t.quantity
@@ -46,17 +52,17 @@ class HoldingsViewSet(APIView):
             else:
                 continue
 
-            if t.symbol.name == symbol:
-                total = total + quantity
-                if not t.account_id in accounts:
-                    accounts.append(t.account_id)
-                continue
-
-            # New symbol, complete the previous symbol if necessary
             if symbol:
-                self.add_holding(symbol, total, t.account.currency, accounts, holdings)
+                if t.symbol.name == symbol.name:
+                    total = total + quantity
+                    if not t.account_id in accounts:
+                        accounts.append(t.account_id)
+                    continue
 
-            symbol = t.symbol.name
+                # New symbol, complete the previous
+                self.add_holding(symbol, total, symbol, accounts, holdings)
+
+            symbol = t.symbol
             total = quantity
             currency = t.account.currency
             accounts = [t.account_id]
