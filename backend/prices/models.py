@@ -13,6 +13,7 @@ class Price(models.Model):
     av_params = {"function": "GLOBAL_QUOTE", "apikey": "LGK04YBYGJND5R6N"}
 
     # Static method that returns a Price float for a given symbol object and date
+    # Not using this due to API call rate limit (5 per minute)
     @staticmethod
     def get_price(symbol, date):
 

@@ -15,7 +15,10 @@ class HoldingsViewSet(APIView):
     def add_holding(self, symbol, total, currency, accounts, holdings):
         holding = {"symbol": symbol.name, "quantity": round(total, 2), "accounts": accounts}
 
-        amount = total * Price.get_price(symbol, None)
+        if symbol.last_price:
+            amount = total * symbol.last_price
+        else:
+            amount = 0.0
         holding['amount'] = round(amount/0.75, 2) if currency == 'US' else amount
         holding['us_amount'] = round(amount, 2) if currency == 'US' else None
 
