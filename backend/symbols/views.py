@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from rest_framework import permissions, viewsets
 
-# Create your views here.
+from serializers import SymbolSerializer
+from models import Symbol
+
+class SymbolViewSet(viewsets.ModelViewSet):
+    queryset = Symbol.objects.order_by('name')
+    serializer_class = SymbolSerializer
+
+    def get_permissions(self):
+        return (permissions.AllowAny(),)

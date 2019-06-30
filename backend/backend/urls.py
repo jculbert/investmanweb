@@ -22,11 +22,13 @@ from accounts.views import AccountViewSet
 from holdings.views import HoldingsViewSet
 from transactions.views import TransactionViewSet
 from uploads.views import UploadViewSet
+from symbols.views import SymbolViewSet
 
 router = routers.SimpleRouter()
 router.register(r'accounts', AccountViewSet)
 router.register(r'transactions', TransactionViewSet)
 router.register(r'uploads', UploadViewSet)
+router.register(r'symbols', SymbolViewSet)
 
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),

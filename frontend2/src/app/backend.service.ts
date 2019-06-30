@@ -36,6 +36,13 @@ export interface TransactionData {
   note: string;
 }
 
+export interface SymbolData {
+  name: string;
+  description: string;
+  last_price: number;
+  last_price_data: string;
+}
+
 export class Transaction implements TransactionData {
   id: number;
   date: string;
@@ -88,6 +95,10 @@ export class BackendService {
 
   transactions(account: string, symbol: string) : Observable<TransactionData[]> {
     return this.http.get<TransactionData[]>('/investmanbackend/api/v1/transactions/?account=' + account + '&symbol=' + symbol)
+  }
+
+  symbols() : Observable<SymbolData[]> {
+    return this.http.get<SymbolData[]>('/investmanbackend/api/v1/symbols/')
   }
 
   transactions_uploaded(upload_id: string) : Observable<TransactionData[]> {

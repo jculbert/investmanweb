@@ -20,6 +20,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { UploadComponent } from './upload/upload.component';
 import { RootnavComponent } from './rootnav/rootnav.component';
 import { LayoutModule } from '@angular/cdk/layout';
+import { SymbolsComponent } from './symbols/symbols.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { LayoutModule } from '@angular/cdk/layout';
     TransactionComponent,
     ConfirmDialogComponent,
     UploadComponent,
-    RootnavComponent
+    RootnavComponent,
+    SymbolsComponent
   ],
   entryComponents: [
     ConfirmDialogComponent

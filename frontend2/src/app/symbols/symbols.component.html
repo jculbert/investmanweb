@@ -1,0 +1,29 @@
+<h1>Symbols</h1>
+<div class="mat-elevation-z8">
+  <div *ngIf="dataSource.data.length != 0" class="table-container">
+    <mat-table #table [dataSource]="dataSource" class="table">
+      <ng-container cdkColumnDef="name">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Name </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.name}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="description">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Description </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.description}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="price">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.last_price | number:'1.2-2'}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="price_date">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price Date </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.last_price_date}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *cdkHeaderRowDef="['name', 'description', 'price', 'price_date']" class="table-header-row"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['name', 'description', 'price', 'price_date'];" class="table-row"></mat-row>
+    </mat-table>
+  </div>
+</div>
