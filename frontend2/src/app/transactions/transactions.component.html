@@ -3,9 +3,9 @@
    <div *ngIf="upload_id != undefined">Transactions: Upload ID {{upload_id}}</div>
 </h1>
 <a a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8 app-content">
   <div *ngIf="dataSource.data.length != 0" class="table-container">
-    <mat-table #table [dataSource]="dataSource" class="table">
+    <mat-table #table [dataSource]="dataSource" class="table app-table">
       <ng-container cdkColumnDef="date">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Date </mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.date}} </mat-cell>
@@ -67,5 +67,5 @@
       <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'fee', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail'];" class="table-row"></mat-row>
     </mat-table>
   </div>
+  <button mat-raised-button (click)="onAdd($event)">Add</button>
 </div>
-<button mat-button (click)="onAdd($event)">Add</button>

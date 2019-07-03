@@ -47,3 +47,26 @@ body {
   font-size: 13px;
   color: rgba(0, 0, 0, 0.87);
 }
+
+.app-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.app-full-width {
+  width: 100%;
+}
+
+.app-card {
+  max-width: 400px;
+  margin-bottom: 10px;
+}
+
+.app-table {
+  margin-bottom: 10px;
+}
+
+.app-content {
+  margin-bottom: 10px;
+}

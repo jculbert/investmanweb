@@ -8,6 +8,7 @@ import { TransactionsComponent }    from './transactions/transactions.component'
 import { TransactionComponent }    from './transaction/transaction.component';
 import { UploadComponent }    from './upload/upload.component';
 import { SymbolsComponent }    from './symbols/symbols.component';
+import { SymbolComponent }    from './symbol/symbol.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/accounts', pathMatch: 'full' },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'transactions',  component: TransactionsComponent },
   { path: 'transactions/:id',  component: TransactionComponent },
   { path: 'symbols',  component: SymbolsComponent },
+  { path: 'symbols/:name',  component: SymbolComponent },
   { path: 'upload',  component: UploadComponent },
 ];
 

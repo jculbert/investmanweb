@@ -21,6 +21,7 @@ import { UploadComponent } from './upload/upload.component';
 import { RootnavComponent } from './rootnav/rootnav.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { SymbolsComponent } from './symbols/symbols.component';
+import { SymbolComponent } from './symbol/symbol.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { SymbolsComponent } from './symbols/symbols.component';
     ConfirmDialogComponent,
     UploadComponent,
     RootnavComponent,
-    SymbolsComponent
+    SymbolsComponent,
+    SymbolComponent
   ],
   entryComponents: [
     ConfirmDialogComponent

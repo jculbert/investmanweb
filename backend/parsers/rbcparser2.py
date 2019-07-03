@@ -17,7 +17,7 @@ acctDict = {
     "69718112": "Barb RRSP",
     "69718147": "Barb RRSP Spousal",
     "69059162": "Barb LIRA",
-    "69400048": "Jeff RRSP 2"
+    "69400048": "Jeff RRSP"
 }
 
 # Symbol mapping special cases
@@ -43,6 +43,7 @@ symbolMapDict = { # Mainly for US stocks held in $C
 # Transaction type mapping
 typeDict = {
     "Dividends": "DIST_D",
+    "Interest": "DIST_D",
     "Buy": "BUY",
     "Sell": "SELL",
     "Transfers": None,

@@ -121,6 +121,14 @@ export class BackendService {
     return this.http.delete<any>('/investmanbackend/api/v1/transactions/' + id + '/')
   }
 
+  get_symbol(name: string) : Observable<SymbolData> {
+    return this.http.get<SymbolData>('/investmanbackend/api/v1/symbols/' + name + '/')
+  }
+
+  put_symbol(name: string, symbol: SymbolData) : Observable<SymbolData> {
+    return this.http.put<SymbolData>('/investmanbackend/api/v1/symbols/' + name + '/', symbol)
+  }
+
   upload_file(file: any): Observable<UploadData[]> {
 
     const formData = new FormData();

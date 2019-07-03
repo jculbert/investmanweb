@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {Location} from '@angular/common';
 
 import {BackendService, TransactionData} from '../backend.service'
@@ -30,7 +30,22 @@ export class TransactionComponent implements OnInit {
 
   }
 
+  static notSet(value: any) {
+    return value == undefined || value == null;
+  }
+
   onSave(event: {}) {
+    // Fill in values not set
+    if (TransactionComponent.notSet(this.transaction.fee)) {
+      this.transaction.fee = 0.00
+    }
+    if (TransactionComponent.notSet(this.transaction.quantity)) {
+      this.transaction.quantity = 0
+    }
+    if (TransactionComponent.notSet(this.transaction.price)) {
+      this.transaction.price = 0.00
+    }
+
     this.backendService.put_transaction(this.id, this.transaction).subscribe(result =>
       {
         this.location.back();
