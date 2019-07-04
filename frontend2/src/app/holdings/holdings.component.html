@@ -1,11 +1,16 @@
 <h1>Holdings: {{account}}</h1>
 <a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8 app-content">
   <div *ngIf="dataSource.data.length != 0" class="table-container">
     <mat-table #table [dataSource]="dataSource" class="table">
       <ng-container cdkColumnDef="symbol">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Symbol </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.symbol}} </mat-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell">
+            <ul style="list-style: none;">
+                <li><a [routerLink]="['/symbols', row.symbol]">{{row.symbol}}</a></li>
+                <li>{{row.description}}</li>
+            </ul>
+        </mat-cell>
       </ng-container>
 
       <ng-container cdkColumnDef="quantity">

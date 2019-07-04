@@ -4,6 +4,7 @@ from transactions.models import Transaction
 
 class HoldingSerializer(serializers.Serializer):
     symbol = serializers.CharField(max_length=15)
+    description = serializers.CharField(max_length=50)
     quantity = serializers.FloatField()
     amount = serializers.FloatField()
     us_amount = serializers.FloatField(allow_null=True)

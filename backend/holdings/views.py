@@ -13,7 +13,16 @@ class HoldingsViewSet(APIView):
     serializer_class = HoldingSerializer
 
     def add_holding(self, symbol, total, currency, accounts, holdings):
-        holding = {"symbol": symbol.name, "quantity": round(total, 2), "accounts": accounts}
+        holding = {"symbol": symbol.name, "quantity": round(total, 2)}
+
+        holding['description'] = symbol.description if symbol.description else '-'
+
+        # Build list of accounts that have non-zero quantity
+        account_list = []
+        for acc in accounts:
+            if accounts[acc] != 0:
+                account_list.append(acc)
+        holding['accounts'] = account_list
 
         if symbol.last_price:
             amount = total * symbol.last_price
@@ -42,7 +51,7 @@ class HoldingsViewSet(APIView):
         symbol = None
         total = 0.00
         currency = None
-        accounts = []
+        accounts = {}
         amount = 0
         for t in t_list:
             if t.type == 'BUY':
@@ -59,7 +68,9 @@ class HoldingsViewSet(APIView):
                 if t.symbol.name == symbol.name:
                     total = total + quantity
                     if not t.account_id in accounts:
-                        accounts.append(t.account_id)
+                        accounts[t.account_id] = quantity
+                    else:
+                        accounts[t.account_id] += quantity
                     continue
 
                 # New symbol, complete the previous
@@ -68,7 +79,7 @@ class HoldingsViewSet(APIView):
             symbol = t.symbol
             total = quantity
             currency = t.account.currency
-            accounts = [t.account_id]
+            accounts = {t.account_id: quantity}
 
         # Need to complete the last symbol upon loop exit
         self.add_holding(symbol, total, currency, accounts, holdings)
