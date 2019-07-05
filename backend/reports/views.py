@@ -5,7 +5,7 @@ from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from serializers import DividendSummarySerializer, DividendSerializer
+from serializers import DividendSummarySerializer, DividendSerializer, SymbolDividendSerializer
 from transactions.models import Transaction
 
 us_to_ca = 1.0 / 0.78
@@ -59,4 +59,42 @@ class DividendSummaryViewSet(APIView):
         else:
             serializer = DividendSerializer(instance=t_list, many=True)
 
+        return Response(serializer.data)
+
+class SymbolDividendsViewSet(APIView):
+
+    def get(self, request, format=None):
+        summary = False
+        symbol_name = request.query_params.get('symbol', None)
+        if not symbol_name:
+            raise Exception('Symbol Dividend repors requires the symbol query parameter')
+
+        # For each sybmol...
+        # Walk the transactions, summing buys and sells for each accountand calcuating dividend per share for each dividend transaction
+        t_list = Transaction.objects.filter(symbol_id=symbol_name).order_by('date')
+
+        dividends = []
+        symbol = None
+        for t in t_list:
+
+            if not symbol or t.symbol.name != symbol.name:
+                # New symbol
+                quantities = {}
+                symbol = t.symbol
+
+            if t.type == 'BUY' or t.type == 'SELL':
+                quantity = t.quantity if t.type == 'BUY' else -t.quantity
+
+                if t.account_id not in quantities:
+                    quantities[t.account_id] = quantity
+                else:
+                    quantities[t.account_id] += quantity
+            elif t.type == 'DIST_D':
+                if t.account_id in quantities: # Ignore this dividend if no buy for account
+                    dividends.append({"date": t.date, "amount": t.amount / quantities[t.account_id], "account": t.account_id})
+            elif t.type == 'SPLIT':
+                if t.account_id in quantities: # Ignore this split if no buy for account
+                    quantities[t.account_id] *= t.amount # Update previous total to according to split factor
+
+        serializer = SymbolDividendSerializer(instance=dividends, many=True)
         return Response(serializer.data)

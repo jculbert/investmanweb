@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework_nested import routers
 
-from reports.views import DividendSummaryViewSet
+from reports.views import DividendSummaryViewSet, SymbolDividendsViewSet
 from accounts.views import AccountViewSet
 from holdings.views import HoldingsViewSet
 from transactions.views import TransactionViewSet
@@ -33,6 +33,7 @@ router.register(r'symbols', SymbolViewSet)
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/dividends/', DividendSummaryViewSet.as_view()),
+    url(r'^api/v1/symboldividends/', SymbolDividendsViewSet.as_view()),
     url(r'^api/v1/holdings/', HoldingsViewSet.as_view()),
 
     url(r'^admin/', admin.site.urls),

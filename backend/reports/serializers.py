@@ -12,3 +12,8 @@ class DividendSerializer(serializers.Serializer):
     account = serializers.ModelField(model_field=Transaction()._meta.get_field('account'))
     symbol = serializers.ModelField(model_field=Transaction()._meta.get_field('symbol'))
     amount = serializers.FloatField()
+
+class SymbolDividendSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    account = serializers.CharField(max_length=50)
+    amount = serializers.FloatField()
