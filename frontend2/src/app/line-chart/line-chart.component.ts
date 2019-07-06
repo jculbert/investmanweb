@@ -15,7 +15,7 @@ export class LineChartComponent implements OnInit {
   public lineChartData: ChartDataSets[] = [];
   //public lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   public lineChartLabels: Label[] = [];
-  public lineChartOptions: (ChartOptions & { annotation: any }) = {
+  public lineChartOptions: ChartOptions = {
     responsive: true,
     scales: {
       // We use this empty structure as a placeholder for dynamic theming.
