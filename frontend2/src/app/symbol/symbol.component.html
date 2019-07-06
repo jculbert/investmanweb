@@ -1,0 +1,22 @@
+<h1>Symbol: {{name}} </h1>
+<a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
+<div *ngIf="symbol != undefined">
+    <mat-card class="app-card">
+        <mat-card-content>
+          <form class="app-form" #symbolForm="ngForm">
+            <mat-form-field class="app-full-width">
+              <input matInput placeholder="Description" [(ngModel)]="symbol.description" name="description">
+            </mat-form-field>
+            <mat-form-field class="app-full-width">
+              <input matInput placeholder="Price" [(ngModel)]="symbol.last_price" name="last_price">
+            </mat-form-field>
+            <mat-form-field class="app-full-width">
+              <input matInput placeholder="Price Date" [(ngModel)]="symbol.last_price_date" name="last_price_date">
+            </mat-form-field>
+          </form>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button (click)="onSave($event)">Save</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

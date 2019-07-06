@@ -70,3 +70,8 @@ body {
 .app-content {
   margin-bottom: 10px;
 }
+
+.text-inside-grid {
+  position: absolute;
+  left: 5px;
+}
