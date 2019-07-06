@@ -24,7 +24,8 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { SymbolsComponent } from './symbols/symbols.component';
 import { SymbolComponent } from './symbol/symbol.component';
 import { SymbolDividendReportComponent } from './symbol-dividend-report/symbol-dividend-report.component';
-
+import { LineChartComponent } from './line-chart/line-chart.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { SymbolDividendReportComponent } from './symbol-dividend-report/symbol-d
     RootnavComponent,
     SymbolsComponent,
     SymbolComponent,
-    SymbolDividendReportComponent
+    SymbolDividendReportComponent,
+    LineChartComponent
   ],
   entryComponents: [
     ConfirmDialogComponent
@@ -65,7 +67,8 @@ import { SymbolDividendReportComponent } from './symbol-dividend-report/symbol-d
     MatToolbarModule,
     MatIconModule,
     MatListModule,
-    MatGridListModule
+    MatGridListModule,
+    ChartsModule
   ],
   providers: [BackendService],
   bootstrap: [AppComponent]

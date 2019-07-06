@@ -35,10 +35,13 @@ class DividendsViewSet(APIView):
 
             if not symbol or t.symbol.name != symbol.name:
                 # New symbol
-                quantities = {}
+                quantities = {}  # Dict of quantity for each account
+                lastBuySellDate = {} # Dict of last buy or sell date for each account
+                lastAmount = None
                 symbol = t.symbol
 
             if t.type == 'BUY' or t.type == 'SELL':
+                lastBuySellDate[t.account_id] = t.date
                 quantity = t.quantity if t.type == 'BUY' else -t.quantity
 
                 if t.account_id not in quantities:
@@ -47,7 +50,17 @@ class DividendsViewSet(APIView):
                     quantities[t.account_id] += quantity
             elif t.type == 'DIST_D':
                 if t.account_id in quantities: # Ignore this dividend if no buy for account
-                    dividends.append({"date": t.date, "amount": t.amount / quantities[t.account_id], "account": t.account_id})
+
+                    amount = t.amount / quantities[t.account_id]
+
+                    # Use the previous dividend amount if dividend date is close to a buy or sell
+                    if lastAmount and t.account_id in lastBuySellDate:
+                        delta = t.date - lastBuySellDate[t.account_id]
+                        if delta.days >= -3 and delta.days <= 3:
+                            amount = lastAmount
+
+                    dividends.append({"date": t.date, "amount": amount, "account": t.account_id})
+                    lastAmount = amount
             elif t.type == 'SPLIT':
                 if t.account_id in quantities: # Ignore this split if no buy for account
                     quantities[t.account_id] *= t.amount # Update previous total to according to split factor

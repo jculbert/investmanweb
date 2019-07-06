@@ -1,0 +1,15 @@
+<div class="flex">
+        <div class="flex-item">
+          <div style="display: block;">
+          <canvas baseChart width="400" height="200"
+                      [datasets]="lineChartData"
+                      [options]="lineChartOptions"
+                      [colors]="lineChartColors"
+                      [chartType]="lineChartType"
+                      (chartClick)="chartClicked($event)"></canvas>
+          </div>
+        </div>
+        <div class="flex-item">
+          <button mat-button mat-raised-button color="primary" (click)="randomize()">Randomize</button>
+        </div>
+      </div>
