@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 
 export interface AccountData {
@@ -12,6 +12,18 @@ export interface DividendSummaryData {
   symbol: string;
   amount: number;
   us_amount: number;
+}
+
+export interface SymbolDividendData {
+  date: string;
+  amount: number;
+  account: string;
+}
+
+export interface SymbolDividendReportData {
+  growth: number;
+  yeeld: number;
+  dividends: SymbolDividendData[];
 }
 
 export interface HoldingData {
@@ -80,9 +92,15 @@ export class BackendService {
   constructor(private http: HttpClient) { }
 
   dividendSummaryReport(startdate: Date, enddate: Date) : Observable<DividendSummaryData[]> {
-    var start = new DatePipe('en-US').transform(startdate, 'yyyyMMdd');
-    var end = new DatePipe('en-US').transform(enddate, 'yyyyMMdd');
-    return this.http.get<DividendSummaryData[]>('/investmanbackend/api/v1/dividends/?summary=true&startdate=' + start + '&enddate=' + end)
+    let params = new HttpParams().append('summary', 'true')
+    params = params.append('startdate', new DatePipe('en-US').transform(startdate, 'yyyyMMdd'))
+    params = params.append('enddate', new DatePipe('en-US').transform(enddate, 'yyyyMMdd'))
+    return this.http.get<DividendSummaryData[]>('/investmanbackend/api/v1/dividends/', {params: params})
+  }
+
+  symbolDividendReport(symbol: string) : Observable<SymbolDividendReportData> {
+    let params = new HttpParams().append("symbol", symbol)
+    return this.http.get<SymbolDividendReportData>('/investmanbackend/api/v1/dividends/', {params: params})
   }
 
   accounts() : Observable<AccountData[]> {

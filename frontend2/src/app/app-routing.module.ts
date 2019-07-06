@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { DividendSummaryReportComponent } from './dividend-summary-report/dividend-summary-report.component'
+import { SymbolDividendReportComponent } from './symbol-dividend-report/symbol-dividend-report.component'
 import { AccountsComponent }    from './accounts/accounts.component';
 import { HoldingsComponent }    from './holdings/holdings.component';
 import { TransactionsComponent }    from './transactions/transactions.component';
@@ -13,6 +14,7 @@ import { SymbolComponent }    from './symbol/symbol.component';
 const routes: Routes = [
   { path: '', redirectTo: '/accounts', pathMatch: 'full' },
   { path: 'dividendsummaryreport', component: DividendSummaryReportComponent },
+  { path: 'symboldividendreport/:name', component: SymbolDividendReportComponent },
   { path: 'accounts',  component: AccountsComponent },
   { path: 'holdings/:account',  component: HoldingsComponent },
   { path: 'transactions',  component: TransactionsComponent },

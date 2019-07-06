@@ -10,7 +10,8 @@ import {CdkTableModule} from '@angular/cdk/table';
 import {MatDialogModule} from '@angular/material/dialog';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field'
-import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatTableModule, MatSidenavModule, MatCardModule, MatToolbarModule, MatIconModule, MatListModule} from '@angular/material'
+import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatTableModule, MatSidenavModule,
+   MatCardModule, MatToolbarModule, MatIconModule, MatListModule, MatGridListModule, MatGrid} from '@angular/material'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AccountsComponent } from './accounts/accounts.component';
 import { HoldingsComponent } from './holdings/holdings.component';
@@ -22,6 +23,7 @@ import { RootnavComponent } from './rootnav/rootnav.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { SymbolsComponent } from './symbols/symbols.component';
 import { SymbolComponent } from './symbol/symbol.component';
+import { SymbolDividendReportComponent } from './symbol-dividend-report/symbol-dividend-report.component';
 
 
 @NgModule({
@@ -36,7 +38,8 @@ import { SymbolComponent } from './symbol/symbol.component';
     UploadComponent,
     RootnavComponent,
     SymbolsComponent,
-    SymbolComponent
+    SymbolComponent,
+    SymbolDividendReportComponent
   ],
   entryComponents: [
     ConfirmDialogComponent
@@ -62,6 +65,7 @@ import { SymbolComponent } from './symbol/symbol.component';
     MatToolbarModule,
     MatIconModule,
     MatListModule,
+    MatGridListModule
   ],
   providers: [BackendService],
   bootstrap: [AppComponent]

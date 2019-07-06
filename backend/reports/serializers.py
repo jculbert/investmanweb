@@ -17,3 +17,8 @@ class SymbolDividendSerializer(serializers.Serializer):
     date = serializers.DateField()
     account = serializers.CharField(max_length=50)
     amount = serializers.FloatField()
+
+class SymbolDividendReportSerializer(serializers.Serializer):
+    growth = serializers.FloatField()
+    yeeld = serializers.FloatField()
+    dividends = SymbolDividendSerializer(many=True)

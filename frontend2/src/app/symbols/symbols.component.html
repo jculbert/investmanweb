@@ -22,13 +22,18 @@
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.last_price_date}} </mat-cell>
       </ng-container>
 
+      <ng-container cdkColumnDef="dividends">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"></mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/symboldividendreport', row.name]" >dividends</a></mat-cell>
+      </ng-container>
+
       <ng-container cdkColumnDef="detail">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"></mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/symbols', row.name]" ><i class="material-icons">arrow_forward</i></a></mat-cell>
       </ng-container>
 
-      <mat-header-row *cdkHeaderRowDef="['name', 'description', 'price', 'price_date', 'detail']" class="table-header-row"></mat-header-row>
-      <mat-row *cdkRowDef="let row; columns: ['name', 'description', 'price', 'price_date', 'detail'];" class="table-row"></mat-row>
+      <mat-header-row *cdkHeaderRowDef="['name', 'description', 'price', 'price_date', 'dividends', 'detail']" class="table-header-row"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: ['name', 'description', 'price', 'price_date', 'dividends', 'detail'];" class="table-row"></mat-row>
     </mat-table>
   </div>
 </div>

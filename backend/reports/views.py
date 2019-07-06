@@ -5,20 +5,58 @@ from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from serializers import DividendSummarySerializer, DividendSerializer, SymbolDividendSerializer
+from serializers import DividendSummarySerializer, DividendSerializer, SymbolDividendSerializer, SymbolDividendReportSerializer
 from transactions.models import Transaction
 
 us_to_ca = 1.0 / 0.78
 
-class DividendSummaryViewSet(APIView):
-    # Required for the Browsable API renderer to have a nice form.
-    serializer_class = DividendSummarySerializer
+class DividendsViewSet(APIView):
 
     def get(self, request, format=None):
-        summary = False
-        p = request.query_params.get('summary', None)
-        if p and p == 'true':
-            summary = True
+        # Determine type of request based on query params provided
+        symbol_name = request.query_params.get('symbol', None)
+        if symbol_name:
+            return self.get_symbol_dividends(symbol_name, request, format)
+        summary = request.query_params.get('summary', None)
+        if summary:
+            return self.get_dividend_summary(True if summary == 'true' else False, request, format)
+
+        raise Exception('Invalid dividends request')
+
+    def get_symbol_dividends(self, symbol_name, request, format=None):
+
+        # For each symbol...
+        # Walk the transactions, summing buys and sells for each accountand calcuating dividend per share for each dividend transaction
+        t_list = Transaction.objects.filter(symbol_id=symbol_name).order_by('date')
+
+        dividends = []
+        symbol = None
+        for t in t_list:
+
+            if not symbol or t.symbol.name != symbol.name:
+                # New symbol
+                quantities = {}
+                symbol = t.symbol
+
+            if t.type == 'BUY' or t.type == 'SELL':
+                quantity = t.quantity if t.type == 'BUY' else -t.quantity
+
+                if t.account_id not in quantities:
+                    quantities[t.account_id] = quantity
+                else:
+                    quantities[t.account_id] += quantity
+            elif t.type == 'DIST_D':
+                if t.account_id in quantities: # Ignore this dividend if no buy for account
+                    dividends.append({"date": t.date, "amount": t.amount / quantities[t.account_id], "account": t.account_id})
+            elif t.type == 'SPLIT':
+                if t.account_id in quantities: # Ignore this split if no buy for account
+                    quantities[t.account_id] *= t.amount # Update previous total to according to split factor
+
+        serializer = SymbolDividendReportSerializer(data={'growth': 5.2, 'yeeld': 3.9, 'dividends': dividends})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data)
+
+    def get_dividend_summary(self, summary, request, format=None):
 
         args = {'type__exact': 'DIST_D'}
         p = request.query_params.get('startdate', None)
@@ -59,42 +97,4 @@ class DividendSummaryViewSet(APIView):
         else:
             serializer = DividendSerializer(instance=t_list, many=True)
 
-        return Response(serializer.data)
-
-class SymbolDividendsViewSet(APIView):
-
-    def get(self, request, format=None):
-        summary = False
-        symbol_name = request.query_params.get('symbol', None)
-        if not symbol_name:
-            raise Exception('Symbol Dividend repors requires the symbol query parameter')
-
-        # For each sybmol...
-        # Walk the transactions, summing buys and sells for each accountand calcuating dividend per share for each dividend transaction
-        t_list = Transaction.objects.filter(symbol_id=symbol_name).order_by('date')
-
-        dividends = []
-        symbol = None
-        for t in t_list:
-
-            if not symbol or t.symbol.name != symbol.name:
-                # New symbol
-                quantities = {}
-                symbol = t.symbol
-
-            if t.type == 'BUY' or t.type == 'SELL':
-                quantity = t.quantity if t.type == 'BUY' else -t.quantity
-
-                if t.account_id not in quantities:
-                    quantities[t.account_id] = quantity
-                else:
-                    quantities[t.account_id] += quantity
-            elif t.type == 'DIST_D':
-                if t.account_id in quantities: # Ignore this dividend if no buy for account
-                    dividends.append({"date": t.date, "amount": t.amount / quantities[t.account_id], "account": t.account_id})
-            elif t.type == 'SPLIT':
-                if t.account_id in quantities: # Ignore this split if no buy for account
-                    quantities[t.account_id] *= t.amount # Update previous total to according to split factor
-
-        serializer = SymbolDividendSerializer(instance=dividends, many=True)
         return Response(serializer.data)
