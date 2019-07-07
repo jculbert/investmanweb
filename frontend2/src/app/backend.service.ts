@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
+import { yearsPerPage } from '@angular/material';
 
 export interface AccountData {
   name: string;
@@ -21,7 +22,7 @@ export interface SymbolDividendData {
 }
 
 export interface SymbolDividendReportData {
-  growth: number;
+  growths: number[]; // 1 year, 2 years, and full period dividend growths 
   yeeld: number;
   dividends: SymbolDividendData[];
 }

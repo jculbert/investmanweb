@@ -1,11 +1,24 @@
 <h1>{{name}} Dividends</h1>
 <a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
-<div class="mat-elevation-z8 app-content">
-        <mat-grid-list cols="2" rowHeight="25px">
-                <mat-grid-tile><div class="text-inside-grid">Growth 1 Year: {{growth}}</div></mat-grid-tile>
-                <mat-grid-tile><div class="text-inside-grid">Yield: {{yield}}</div></mat-grid-tile>
-                <mat-grid-tile><div class="text-inside-grid">Growth All: {{growth}}</div></mat-grid-tile>
-        </mat-grid-list>
+<div *ngIf="dataSource.data.length != 0" class="mat-elevation-z8 app-content">
+  <mat-grid-list cols="2"  rowHeight="80px">
+      <mat-grid-tile>
+        <div class="text-inside-grid">
+          <ul>
+            <li>Growth 1 Year: {{growths[0] | number:'1.2-2'}}</li>
+            <li>Growth 2 Year: {{growths[1] | number:'1.2-2'}}</li>
+            <li>Growth All: {{growths[2] | number:'1.2-2'}}</li>
+          </ul>
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div class="text-inside-grid">
+          <ul>
+            <li>Yield: {{yield | number:'1.2-2'}}</li>
+          </ul>
+        </div>
+      </mat-grid-tile>
+  </mat-grid-list>
 </div>
 <div class="mat-elevation-z8 app-content">
   <div *ngIf="dataSource.data.length != 0" class="table-container">

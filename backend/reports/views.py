@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import math, re
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -31,6 +32,8 @@ class DividendsViewSet(APIView):
 
         dividends = []
         symbol = None
+        noteregex1 = re.compile('.* ON[\s]+([0-9]+) SHS.*')
+        noteregex2 = re.compile('Retrieved Dividend: ([0-9]+.[0-9]+) per share')
         for t in t_list:
 
             if not symbol or t.symbol.name != symbol.name:
@@ -51,13 +54,25 @@ class DividendsViewSet(APIView):
             elif t.type == 'DIST_D':
                 if t.account_id in quantities: # Ignore this dividend if no buy for account
 
-                    amount = t.amount / quantities[t.account_id]
+                    # Try to get the number of shares from the transaction note
+                    amount = None
+                    if t.note:
+                        r = noteregex1.match(t.note)
+                        if r:
+                            amount = t.amount / int(r.group(1))
+                        else:
+                            r = noteregex2.match(t.note)
+                            if r:
+                                amount = float(r.group(1))
 
-                    # Use the previous dividend amount if dividend date is close to a buy or sell
-                    if lastAmount and t.account_id in lastBuySellDate:
-                        delta = t.date - lastBuySellDate[t.account_id]
-                        if delta.days >= -3 and delta.days <= 3:
-                            amount = lastAmount
+                    if not amount:
+                        amount = t.amount / quantities[t.account_id]
+
+                        # Use the previous dividend amount if dividend date is close to a buy or sell
+                        if lastAmount and t.account_id in lastBuySellDate:
+                            delta = t.date - lastBuySellDate[t.account_id]
+                            if delta.days >= -3 and delta.days <= 15:
+                                amount = lastAmount
 
                     dividends.append({"date": t.date, "amount": amount, "account": t.account_id})
                     lastAmount = amount
@@ -65,7 +80,41 @@ class DividendsViewSet(APIView):
                 if t.account_id in quantities: # Ignore this split if no buy for account
                     quantities[t.account_id] *= t.amount # Update previous total to according to split factor
 
-        serializer = SymbolDividendReportSerializer(data={'growth': 5.2, 'yeeld': 3.9, 'dividends': dividends})
+        # Calculate the dividend growth rates
+        latest = None
+        lastDate = None
+        growths = [None, None, None] # 1 year, 2 year and full period growths
+        dividendsPerYead = 4
+        i = 1
+        for d in reversed(dividends):
+            if d['date'] == lastDate:
+                continue # ignore duplicates - happens when stock held in multiple accounts
+            lastDate = d['date']
+            if not latest:
+                latest = d
+                continue
+
+            delta = latest['date'] - d['date']
+            if delta.days > 345 and delta.days < 385:
+                growths[0] = (latest['amount'] - d['amount']) / d['amount'] * 100
+                dividendsPerYead = i
+            elif delta.days > 719 and delta.days < 759:
+                change = (latest['amount'] - d['amount']) / d['amount']
+                if change > 0:
+                    growths[1] = (math.sqrt(1 + change) - 1) * 100
+
+            i = i+1
+
+        # Calculate growth over full period
+        oldest = dividends[0]
+        change = latest['amount'] - oldest['amount']
+        if change > 0:
+            years = float((latest['date'] - oldest['date']).days / 365) # Make sure its a float for next line
+            growths[2] = (((1 + change) ** (1/years)) - 1) * 100
+
+        yeeld = latest['amount'] / symbol.last_price * dividendsPerYead * 100 if symbol.last_price else None
+
+        serializer = SymbolDividendReportSerializer(data={'growths': growths, 'yeeld': yeeld, 'dividends': dividends})
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 

@@ -14,7 +14,7 @@ import { LineChartService} from '../line-chart//line-chart-service';
 })
 export class SymbolDividendReportComponent implements OnInit {
   name : string
-  growth : number
+  growths : number[]
   yield : number
   dataSource = new MatTableDataSource()
 
@@ -32,7 +32,7 @@ export class SymbolDividendReportComponent implements OnInit {
     this.name = this.route.snapshot.paramMap.get('name');
     this.backendService.symbolDividendReport(this.name).subscribe(data => 
       {
-        this.growth = data.growth;
+        this.growths = data.growths;
         this.yield = data.yeeld;
         this.lineChartService.data = new Array();
         var lastDate = undefined;
