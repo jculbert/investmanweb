@@ -1,6 +1,15 @@
 <h1>Symbol: {{name}} </h1>
 <a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
-<div *ngIf="symbol != undefined">
+<div *ngIf="symbol != undefined" class="mat-elevation-z8 app-content">
+  <mat-grid-list cols="2"  rowHeight="30px">
+    <mat-grid-tile>
+      <div class="text-inside-grid">
+          <a [routerLink]="['/symboldividendreport', name]" >Dividends</a>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+<div *ngIf="symbol != undefined" class="mat-elevation-z8 app-content">
     <mat-card class="app-card">
         <mat-card-content>
           <form class="app-form" #symbolForm="ngForm">
