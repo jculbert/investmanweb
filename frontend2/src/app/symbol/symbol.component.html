@@ -22,6 +22,20 @@
             <mat-form-field class="app-full-width">
               <input matInput placeholder="Price Date" [(ngModel)]="symbol.last_price_date" name="last_price_date">
             </mat-form-field>
+            <mat-form-field class="app-full-width">
+              <input matInput placeholder="Reviewed Date" [(ngModel)]="symbol.reviewed_date" name="reviewed_date">
+            </mat-form-field>
+            <mat-form-field class="app-full-width">
+              <textarea matInput 
+                placeholder="Notes" 
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="2"
+                cdkAutosizeMaxRows="20"
+                #autosize="cdkTextareaAutosize"
+                [(ngModel)]="symbol.notes"
+                name="notes">
+              </textarea>
+            </mat-form-field>
           </form>
         </mat-card-content>
         <mat-card-actions>

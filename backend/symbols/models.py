@@ -8,4 +8,5 @@ class Symbol(models.Model):
     description = models.CharField(null=True, max_length=50)
     last_price = models.FloatField(null=True)
     last_price_date = models.DateField(null=True)
-
+    notes = models.TextField(null=True)
+    reviewed_date = models.DateField(null=True)

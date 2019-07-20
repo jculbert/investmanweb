@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {Location} from '@angular/common';
+import { FormControl } from '@angular/forms';
 
 import {BackendService, SymbolData} from '../backend.service'
 
@@ -12,12 +13,12 @@ import {BackendService, SymbolData} from '../backend.service'
 export class SymbolComponent implements OnInit {
   name : string
   symbol : SymbolData = undefined
+  //public notesFC = new FormControl()
 
   constructor(
     public location: Location,
     private backendService: BackendService,
     private route: ActivatedRoute
-
   ) {}
 
   ngOnInit() {
@@ -28,6 +29,10 @@ export class SymbolComponent implements OnInit {
       }
     );
   }
+
+  //onNotesChange() {
+    //this.symbol.notes = this.notesFC.value;
+  //} 
 
   onSave(event: {}) {
     this.backendService.put_symbol(this.name, this.symbol).subscribe(result =>

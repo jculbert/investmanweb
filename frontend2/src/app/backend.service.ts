@@ -54,6 +54,8 @@ export interface SymbolData {
   description: string;
   last_price: number;
   last_price_data: string;
+  reviewed_date: string;
+  notes: string;
 }
 
 export class Transaction implements TransactionData {
