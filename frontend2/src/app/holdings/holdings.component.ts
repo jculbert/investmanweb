@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import {DataSource} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material';
 import {FormControl} from '@angular/forms';
@@ -26,13 +26,19 @@ export class HoldingsComponent implements OnInit {
   ngOnInit() {
     this.dataSource.data = [];
 
-    this.account = this.route.snapshot.paramMap.get('account');
-    this.backendService.holdings(this.account).subscribe(data => 
-      {
-        this.dataSource.data = data;
+    this.route.params.subscribe(
+      params => {
+        this.dataSource.data = [];
+        this.account = params['account'];
+        this.backendService.holdings(this.account).subscribe(data => 
+          {
+            this.dataSource.data = data;
+          }
+        );
       }
     );
   }
+
 
   goback(){
     this.location.back();

@@ -23,9 +23,13 @@
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount | number:'1.2-2'}} </mat-cell>
       </ng-container>
 
-      <ng-container cdkColumnDef="accounts">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Accounts </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.accounts}} </mat-cell>
+      <ng-container cdkColumnDef="holdings">
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Holdings </mat-header-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell">
+          <ng-container *ngFor="let acc of row.accounts">
+              <div style="margin-right:3px"><a [routerLink]="['/holdings', acc]">{{acc}}</a></div>
+          </ng-container>
+        </mat-cell>
       </ng-container>
 
       <ng-container cdkColumnDef="transactions">
@@ -38,8 +42,8 @@
         <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'transactions'];" class="table-row"></mat-row>
       </div>
       <div *ngIf="account == 'All'">
-        <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'accounts', 'transactions']" class="table-header-row"></mat-header-row>
-        <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'accounts', 'transactions'];" class="table-row"></mat-row>
+        <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'holdings']" class="table-header-row"></mat-header-row>
+        <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'holdings'];" class="table-row"></mat-row>
       </div>
     </mat-table>
   </div>
