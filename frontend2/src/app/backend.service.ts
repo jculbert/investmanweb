@@ -31,6 +31,9 @@ export interface HoldingData {
   symbol: string;
   quantity: number;
   amount: number;
+  accounts: [];
+  reviewed_date: string;
+  review_result: string;
 }
 
 export interface TransactionData {
@@ -55,6 +58,7 @@ export interface SymbolData {
   last_price: number;
   last_price_data: string;
   reviewed_date: string;
+  review_result: string;
   notes: string;
 }
 

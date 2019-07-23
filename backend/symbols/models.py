@@ -10,3 +10,4 @@ class Symbol(models.Model):
     last_price_date = models.DateField(null=True)
     notes = models.TextField(null=True)
     reviewed_date = models.DateField(null=True)
+    review_result = models.CharField(null=True, max_length=25)

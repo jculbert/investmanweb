@@ -6,7 +6,7 @@
       <ng-container cdkColumnDef="symbol">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Symbol </mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell">
-            <ul style="list-style: none;">
+            <ul style="list-style: none; padding-left: 0px">
                 <li><a [routerLink]="['/symbols', row.symbol]">{{row.symbol}}</a></li>
                 <li>{{row.description}}</li>
             </ul>
@@ -21,6 +21,16 @@
       <ng-container cdkColumnDef="amount">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Amount </mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount | number:'1.2-2'}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="reviewed_date">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Reviewed Date </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.reviewed_date}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="review_result">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Review Result </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.review_result}} </mat-cell>
       </ng-container>
 
       <ng-container cdkColumnDef="holdings">
@@ -38,12 +48,12 @@
       </ng-container>
 
       <div *ngIf="account != 'All'">
-        <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'transactions']" class="table-header-row"></mat-header-row>
-        <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'transactions'];" class="table-row"></mat-row>
+        <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'transactions']" class="table-header-row"></mat-header-row>
+        <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'transactions'];" class="table-row"></mat-row>
       </div>
       <div *ngIf="account == 'All'">
-        <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'holdings']" class="table-header-row"></mat-header-row>
-        <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'holdings'];" class="table-row"></mat-row>
+        <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'holdings']" class="table-header-row"></mat-header-row>
+        <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'holdings'];" class="table-row"></mat-row>
       </div>
     </mat-table>
   </div>
