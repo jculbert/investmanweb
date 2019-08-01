@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {DataSource} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material';
 import {FormControl} from '@angular/forms';
@@ -6,7 +6,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import {Location} from '@angular/common';
 
 import {BackendService} from '../backend.service'
-
+import { SymbolComponent } from '../symbol/symbol.component';
 
 @Component({
   selector: 'app-holdings',
@@ -16,6 +16,9 @@ import {BackendService} from '../backend.service'
 export class HoldingsComponent implements OnInit {
   dataSource = new MatTableDataSource()
   account : string
+  symbol: string = null
+  @ViewChild(SymbolComponent, {static: false})
+  private symbolComponent: SymbolComponent;
 
   constructor(
     public location: Location,
@@ -39,6 +42,14 @@ export class HoldingsComponent implements OnInit {
     );
   }
 
+  setSymbol(symbol) {
+    this.symbol = symbol;
+    this.symbolComponent.setSymbol(symbol);
+  }
+
+  onSymbolClosed(closed: boolean) {
+    this.symbol = null
+  }
 
   goback(){
     this.location.back();

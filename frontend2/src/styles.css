@@ -76,3 +76,14 @@ body {
   left: 5px;
   top: 0px;
 }
+
+.z1 {
+  z-index: 1;
+}
+
+.z2 {
+  z-index: 2;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}

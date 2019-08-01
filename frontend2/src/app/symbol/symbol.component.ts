@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {Location} from '@angular/common';
 import { FormControl } from '@angular/forms';
@@ -13,6 +13,8 @@ import {BackendService, SymbolData} from '../backend.service'
 export class SymbolComponent implements OnInit {
   name : string
   symbol : SymbolData = undefined
+  @Output() symbolClosed = new EventEmitter<boolean>();
+
   //public notesFC = new FormControl()
 
   constructor(
@@ -22,8 +24,11 @@ export class SymbolComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.name = this.route.snapshot.paramMap.get('name');
-    this.backendService.get_symbol(this.name).subscribe(data => 
+  }
+
+  setSymbol(name: string) {
+    this.name = name;
+    this.backendService.get_symbol(name).subscribe(data => 
       {
         this.symbol = data;
       }
@@ -37,8 +42,12 @@ export class SymbolComponent implements OnInit {
   onSave(event: {}) {
     this.backendService.put_symbol(this.name, this.symbol).subscribe(result =>
       {
-        this.location.back();
+        this.symbolClosed.emit(true);
       }
     );
-  }    
+  }
+  
+  close() {
+    this.symbolClosed.emit(true);
+  }
 }
