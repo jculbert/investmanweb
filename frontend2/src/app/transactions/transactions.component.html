@@ -1,8 +1,8 @@
+<a mat-button (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
 <h1>
    <div *ngIf="account != undefined">Transactions: {{account}} / {{symbol}}</div>
    <div *ngIf="upload_id != undefined">Transactions: Upload ID {{upload_id}}</div>
 </h1>
-<a a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
 <div class="mat-elevation-z8 app-content">
   <div *ngIf="dataSource.data.length != 0" class="table-container">
     <mat-table #table [dataSource]="dataSource" class="table app-table">
@@ -59,7 +59,7 @@
       </ng-container>
   
       <ng-container cdkColumnDef="detail">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Detail </mat-header-cell>
+        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Details </mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/transactions', row.id]" ><i class="material-icons">arrow_forward</i></a></mat-cell>
       </ng-container>
 

@@ -1,49 +1,49 @@
-<h1>Symbols</h1>
-<div class="mat-elevation-z8 app-content">
-  <div *ngIf="dataSource.data.length != 0" class="table-container">
-    <mat-table #table [dataSource]="dataSource" class="table">
-      <ng-container cdkColumnDef="name">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Name </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.name}} </mat-cell>
-      </ng-container>
+<div [hidden]="showingSymbol == true">
+  <h1>Symbols</h1>
+  <div class="mat-elevation-z8 app-content">
+    <div *ngIf="dataSource.data.length != 0" class="table-container">
+      <mat-table #table [dataSource]="dataSource" class="table">
+        <ng-container cdkColumnDef="name">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Name </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.name}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="description">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Description </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.description}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="description">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Description </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.description}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="price">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.last_price | number:'1.2-2'}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="price">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.last_price | number:'1.2-2'}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="price_date">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price Date </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.last_price_date}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="price_date">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price Date </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.last_price_date}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="reviewed_date">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Reviewed Date </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.reviewed_date}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="reviewed_date">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Reviewed Date </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.reviewed_date}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="review_result">
-          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Review Result </mat-header-cell>
-          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.review_result}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="review_result">
+            <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Review Result </mat-header-cell>
+            <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.review_result}} </mat-cell>
+        </ng-container>
 
-        <ng-container cdkColumnDef="dividends">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"></mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/symboldividendreport', row.name]" >dividends</a></mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="detail">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell">Details</mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"><a (click)="showSymbol(row)" [routerLink]=""><i class="material-icons">arrow_forward</i></a></mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="detail">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"></mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/symbols', row.name]" ><i class="material-icons">arrow_forward</i></a></mat-cell>
-      </ng-container>
-
-      <mat-header-row *cdkHeaderRowDef="['name', 'description', 'price', 'price_date', 'reviewed_date', 'review_result', 'dividends', 'detail']" class="table-header-row"></mat-header-row>
-      <mat-row *cdkRowDef="let row; columns: ['name', 'description', 'price', 'price_date', 'reviewed_date', 'review_result', 'dividends', 'detail'];" class="table-row"></mat-row>
-    </mat-table>
+        <mat-header-row *cdkHeaderRowDef="['name', 'description', 'price', 'price_date', 'reviewed_date', 'review_result', 'detail']" class="table-header-row"></mat-header-row>
+        <mat-row *cdkRowDef="let row; columns: ['name', 'description', 'price', 'price_date', 'reviewed_date', 'review_result', 'detail'];" class="table-row"></mat-row>
+      </mat-table>
+    </div>
   </div>
+</div>
+<div [hidden]="showingSymbol == false">
+    <app-symbol (symbolClosed)="onSymbolClosed()"></app-symbol>
 </div>

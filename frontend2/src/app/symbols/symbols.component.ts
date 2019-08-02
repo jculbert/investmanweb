@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 
 import {BackendService} from '../backend.service'
+import {SymbolComponent} from '../symbol/symbol.component'
 
 @Component({
   selector: 'app-symbols',
@@ -10,6 +11,9 @@ import {BackendService} from '../backend.service'
 })
 export class SymbolsComponent implements OnInit {
   dataSource = new MatTableDataSource()
+  showingSymbol = false;
+  @ViewChild(SymbolComponent, {static: false})
+  private symbolComponent: SymbolComponent;
 
   constructor(private backendService: BackendService) { }
 
@@ -23,4 +27,12 @@ export class SymbolsComponent implements OnInit {
     );
   }
 
+  showSymbol(symbol) {
+    this.symbolComponent.setSymbol(symbol);
+    this.showingSymbol = true;
+  }
+
+  onSymbolClosed(closed: boolean) {
+    this.showingSymbol = false;
+  }
 }

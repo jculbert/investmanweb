@@ -1,6 +1,6 @@
-<h1>{{name}} Dividends</h1>
-<a (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
+<a mat-button (click) = "close()"><i class="material-icons">arrow_back</i></a>
 <div *ngIf="dataSource.data.length != 0" class="mat-elevation-z8 app-content">
+  <h1>Dividends: {{symbol.name}}</h1>
   <mat-grid-list cols="2"  rowHeight="80px">
       <mat-grid-tile>
         <div class="text-inside-grid">

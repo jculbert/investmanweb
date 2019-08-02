@@ -1,9 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import {Location} from '@angular/common';
-import { FormControl } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 
 import {BackendService, SymbolData} from '../backend.service'
+import {SymbolDividendReportComponent} from '../symbol-dividend-report/symbol-dividend-report.component'
 
 @Component({
   selector: 'app-symbol',
@@ -12,14 +10,16 @@ import {BackendService, SymbolData} from '../backend.service'
 })
 export class SymbolComponent implements OnInit {
   symbol : SymbolData = undefined
+  showingDividends = false;
+  @ViewChild(SymbolDividendReportComponent, {static: false})
+  private dividendsComponent: SymbolDividendReportComponent;
+
   @Output() symbolClosed = new EventEmitter<boolean>();
 
   //public notesFC = new FormControl()
 
   constructor(
-    public location: Location,
     private backendService: BackendService,
-    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -29,9 +29,14 @@ export class SymbolComponent implements OnInit {
     this.symbol = symbol;
   }
 
-  //onNotesChange() {
-    //this.symbol.notes = this.notesFC.value;
-  //} 
+  showDividends() {
+    this.dividendsComponent.setSymbol(this.symbol)
+    this.showingDividends = true;
+  }
+
+  onDividendReportClosed() {
+    this.showingDividends = false;
+  }
 
   onSave(event: {}) {
     this.backendService.put_symbol(this.symbol.name, this.symbol).subscribe(result =>
@@ -40,7 +45,7 @@ export class SymbolComponent implements OnInit {
       }
     );
   }
-  
+    
   close() {
     this.symbolClosed.emit(true);
   }

@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import {Location} from '@angular/common';
 
-import {BackendService} from '../backend.service'
+import {BackendService, SymbolData} from '../backend.service'
 import { LineChartService} from '../line-chart//line-chart-service';
 
 @Component({
@@ -13,24 +12,27 @@ import { LineChartService} from '../line-chart//line-chart-service';
   providers: [LineChartService]
 })
 export class SymbolDividendReportComponent implements OnInit {
-  name : string
-  growths : number[]
-  yield : number
-  dataSource = new MatTableDataSource()
+  symbol : SymbolData;
+  growths : number[];
+  yield : number;
+  dataSource = new MatTableDataSource();
+  @Output() dividendReportClosed = new EventEmitter<boolean>();
 
   constructor(
     private backendService: BackendService,
-    private route: ActivatedRoute,
     public location: Location,
     public lineChartService: LineChartService
     )
   { }
   
   ngOnInit() {
+  }
+
+  setSymbol(symbol: SymbolData) {
+    this.symbol = symbol;
     this.dataSource.data = [];
 
-    this.name = this.route.snapshot.paramMap.get('name');
-    this.backendService.symbolDividendReport(this.name).subscribe(data => 
+    this.backendService.symbolDividendReport(this.symbol.name).subscribe(data => 
       {
         this.growths = data.growths;
         this.yield = data.yeeld;
@@ -46,5 +48,9 @@ export class SymbolDividendReportComponent implements OnInit {
         this.dataSource.data = data.dividends;
       }
     );
+  }
+
+  close() {
+    this.dividendReportClosed.emit(true);
   }
 }

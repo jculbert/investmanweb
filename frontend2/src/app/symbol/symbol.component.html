@@ -1,48 +1,54 @@
-<h1>Symbol: {{name}} </h1>
-<a (click) = "close()"><i class="material-icons">arrow_back</i></a>
-<div *ngIf="symbol != undefined" class="mat-elevation-z8 app-content">
-  <mat-grid-list cols="2"  rowHeight="30px">
-    <mat-grid-tile>
-      <div class="text-inside-grid">
-          <a [routerLink]="['/symboldividendreport', name]" >Dividends</a>
-      </div>
-    </mat-grid-tile>
-  </mat-grid-list>
-</div>
-<div *ngIf="symbol != undefined" class="mat-elevation-z8 app-content">
-    <mat-card class="app-card">
-        <mat-card-content>
-          <form class="app-form" #symbolForm="ngForm">
-            <mat-form-field class="app-full-width">
-              <input matInput placeholder="Description" [(ngModel)]="symbol.description" name="description">
-            </mat-form-field>
-            <mat-form-field class="app-full-width">
-              <input matInput placeholder="Price" [(ngModel)]="symbol.last_price" name="last_price">
-            </mat-form-field>
-            <mat-form-field class="app-full-width">
-              <input matInput placeholder="Price Date" [(ngModel)]="symbol.last_price_date" name="last_price_date">
-            </mat-form-field>
-            <mat-form-field class="app-full-width">
-              <input matInput placeholder="Reviewed Date" [(ngModel)]="symbol.reviewed_date" name="reviewed_date">
-            </mat-form-field>
-            <mat-form-field class="app-full-width">
-                <input matInput placeholder="Review Result" [(ngModel)]="symbol.review_result" name="review_result">
+<div [hidden]="showingDividends == true">
+    <a mat-button (click) = "close()"><i class="material-icons">arrow_back</i></a>
+    <div *ngIf="symbol != undefined" class="mat-elevation-z8 app-content">
+      <h1>Symbol: {{symbol.name}} </h1>
+      <mat-grid-list cols="2"  rowHeight="30px">
+      <mat-grid-tile>
+        <div class="text-inside-grid">
+            <a (click)="showDividends()" [routerLink]="">Dividends</a>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <div *ngIf="symbol != undefined" class="mat-elevation-z8 app-content">
+      <mat-card class="app-card">
+          <mat-card-content>
+            <form class="app-form" #symbolForm="ngForm">
+              <mat-form-field class="app-full-width">
+                <input matInput placeholder="Description" [(ngModel)]="symbol.description" name="description">
               </mat-form-field>
               <mat-form-field class="app-full-width">
-              <textarea matInput 
-                placeholder="Notes" 
-                cdkTextareaAutosize
-                cdkAutosizeMinRows="2"
-                cdkAutosizeMaxRows="20"
-                #autosize="cdkTextareaAutosize"
-                [(ngModel)]="symbol.notes"
-                name="notes">
-              </textarea>
-            </mat-form-field>
-          </form>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button (click)="onSave($event)">Save</button>
-        </mat-card-actions>
-    </mat-card>
+                <input matInput placeholder="Price" [(ngModel)]="symbol.last_price" name="last_price">
+              </mat-form-field>
+              <mat-form-field class="app-full-width">
+                <input matInput placeholder="Price Date" [(ngModel)]="symbol.last_price_date" name="last_price_date">
+              </mat-form-field>
+              <mat-form-field class="app-full-width">
+                <input matInput placeholder="Reviewed Date" [(ngModel)]="symbol.reviewed_date" name="reviewed_date">
+              </mat-form-field>
+              <mat-form-field class="app-full-width">
+                  <input matInput placeholder="Review Result" [(ngModel)]="symbol.review_result" name="review_result">
+                </mat-form-field>
+                <mat-form-field class="app-full-width">
+                <textarea matInput 
+                  placeholder="Notes" 
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="2"
+                  cdkAutosizeMaxRows="20"
+                  #autosize="cdkTextareaAutosize"
+                  [(ngModel)]="symbol.notes"
+                  name="notes">
+                </textarea>
+              </mat-form-field>
+            </form>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button (click)="onSave($event)">Save</button>
+          </mat-card-actions>
+      </mat-card>
+  </div>
 </div>
+<div [hidden]="showingDividends == false">
+    <app-symbol-dividend-report (dividendReportClosed)="onDividendReportClosed()"></app-symbol-dividend-report>
+</div>
+
