@@ -27,13 +27,21 @@ export interface SymbolDividendReportData {
   dividends: SymbolDividendData[];
 }
 
+export interface SymbolData {
+  name: string;
+  description: string;
+  last_price: number;
+  last_price_data: string;
+  reviewed_date: string;
+  review_result: string;
+  notes: string;
+}
+
 export interface HoldingData {
-  symbol: string;
+  symbol: SymbolData
   quantity: number;
   amount: number;
   accounts: [];
-  reviewed_date: string;
-  review_result: string;
 }
 
 export interface TransactionData {
@@ -52,15 +60,6 @@ export interface TransactionData {
   note: string;
 }
 
-export interface SymbolData {
-  name: string;
-  description: string;
-  last_price: number;
-  last_price_data: string;
-  reviewed_date: string;
-  review_result: string;
-  notes: string;
-}
 
 export class Transaction implements TransactionData {
   id: number;

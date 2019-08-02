@@ -13,10 +13,8 @@ class HoldingsViewSet(APIView):
     serializer_class = HoldingSerializer
 
     def add_holding(self, symbol, total, currency, accounts, holdings):
-        holding = {"symbol": symbol.name, "quantity": round(total, 2), "reviewed_date": symbol.reviewed_date,
-                   "review_result": symbol.review_result}
+        holding = {"symbol": symbol, "quantity": round(total, 2)}
 
-        holding['description'] = symbol.description if symbol.description else '-'
 
         # Build list of accounts that have non-zero quantity
         account_list = []

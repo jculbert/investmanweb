@@ -11,7 +11,6 @@ import {BackendService, SymbolData} from '../backend.service'
   styleUrls: ['./symbol.component.css']
 })
 export class SymbolComponent implements OnInit {
-  name : string
   symbol : SymbolData = undefined
   @Output() symbolClosed = new EventEmitter<boolean>();
 
@@ -26,13 +25,8 @@ export class SymbolComponent implements OnInit {
   ngOnInit() {
   }
 
-  setSymbol(name: string) {
-    this.name = name;
-    this.backendService.get_symbol(name).subscribe(data => 
-      {
-        this.symbol = data;
-      }
-    );
+  setSymbol(symbol: SymbolData) {
+    this.symbol = symbol;
   }
 
   //onNotesChange() {
@@ -40,7 +34,7 @@ export class SymbolComponent implements OnInit {
   //} 
 
   onSave(event: {}) {
-    this.backendService.put_symbol(this.name, this.symbol).subscribe(result =>
+    this.backendService.put_symbol(this.symbol.name, this.symbol).subscribe(result =>
       {
         this.symbolClosed.emit(true);
       }

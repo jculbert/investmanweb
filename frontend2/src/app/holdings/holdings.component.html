@@ -8,8 +8,8 @@
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Symbol </mat-header-cell>
         <mat-cell *cdkCellDef="let row" class="table-cell">
             <ul style="list-style: none; padding-left: 0px">
-                <li><a [routerLink]="" (click)="setSymbol(row.symbol)">{{row.symbol}}</a></li>
-                <li>{{row.description}}</li>
+                <li><a [routerLink]="" (click)="setSymbol(row.symbol)">{{row.symbol.name}}</a></li>
+                <li>{{row.symbol.description}}</li>
             </ul>
         </mat-cell>
       </ng-container>
@@ -26,12 +26,12 @@
 
       <ng-container cdkColumnDef="reviewed_date">
           <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Reviewed Date </mat-header-cell>
-          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.reviewed_date}} </mat-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.symbol.reviewed_date}} </mat-cell>
       </ng-container>
 
       <ng-container cdkColumnDef="review_result">
           <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Review Result </mat-header-cell>
-          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.review_result}} </mat-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.symbol.review_result}} </mat-cell>
       </ng-container>
 
       <ng-container cdkColumnDef="holdings">
@@ -45,7 +45,7 @@
 
       <ng-container cdkColumnDef="transactions">
         <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Transactions </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="'/transactions'" [queryParams]="{account: account, symbol: row.symbol}">...</a></mat-cell>
+        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="'/transactions'" [queryParams]="{account: account, symbol: row.symbol.name}">...</a></mat-cell>
       </ng-container>
 
       <div *ngIf="account != 'All'">
