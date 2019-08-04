@@ -1,4 +1,4 @@
-<div [hidden]="showingSymbol == true">
+<div [hidden]="showingSymbol == true || showingTransactions == true">
   <a mat-button (click) = "close()"><i class="material-icons">arrow_back</i></a>
   <h1>Holdings: {{account}}</h1>
   <div class="mat-elevation-z8 app-content">
@@ -45,7 +45,7 @@
 
         <ng-container cdkColumnDef="transactions">
           <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Transactions </mat-header-cell>
-          <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="'/transactions'" [queryParams]="{account: account, symbol: row.symbol.name}"><i class="material-icons">arrow_forward</i></a></mat-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> <a (click)="showTransactions(account, row.symbol)" [routerLink]=""><i class="material-icons">arrow_forward</i></a></mat-cell>
         </ng-container>
 
         <div *ngIf="account != 'All'">
@@ -62,5 +62,8 @@
 </div>
 <div [hidden]="showingSymbol == false">
     <app-symbol (symbolClosed)="onSymbolClosed()"></app-symbol>
+</div>
+<div [hidden]="showingTransactions == false">
+    <app-transactions (transactionsClosed)="onTransactionsClosed()"></app-transactions>
 </div>
   

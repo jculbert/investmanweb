@@ -1,6 +1,6 @@
-<a mat-button (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
+<a mat-button (click) = "close()"><i class="material-icons">arrow_back</i></a>
 <h1>
-   <div *ngIf="account != undefined">Transactions: {{account}} / {{symbol}}</div>
+   <div *ngIf="account != undefined">Transactions: {{account}} / {{symbol.name}}</div>
    <div *ngIf="upload_id != undefined">Transactions: Upload ID {{upload_id}}</div>
 </h1>
 <div class="mat-elevation-z8 app-content">

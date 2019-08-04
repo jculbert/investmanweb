@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
-import {MatTableDataSource} from '@angular/material';
+import { Component, OnInit, ViewChild, EventEmitter, Output } from '@angular/core'
+import {MatTableDataSource} from '@angular/material'
 
-import {BackendService} from '../backend.service'
-import { SymbolComponent } from '../symbol/symbol.component';
+import {BackendService, SymbolData} from '../backend.service'
+import { SymbolComponent } from '../symbol/symbol.component'
+import {TransactionsComponent} from '../transactions/transactions.component'
 
 @Component({
   selector: 'app-holdings',
@@ -13,8 +14,11 @@ export class HoldingsComponent implements OnInit {
   dataSource = new MatTableDataSource()
   account : string
   showingSymbol = false
+  showingTransactions = false;
   @ViewChild(SymbolComponent, {static: false})
   private symbolComponent: SymbolComponent;
+  @ViewChild(TransactionsComponent, {static: false})
+  private transactionsComponent: TransactionsComponent;
   @Output() holdingsClosed = new EventEmitter<boolean>();
   @Output() accountHoldingsClicked = new EventEmitter<string>();
 
@@ -36,9 +40,14 @@ export class HoldingsComponent implements OnInit {
     );
   }
 
-  showSymbol(symbol) {
+  showSymbol(symbol: SymbolData) {
     this.symbolComponent.setSymbol(symbol);
     this.showingSymbol = true;
+  }
+
+  showTransactions(account: string, symbol: SymbolData) {
+    this.transactionsComponent.setAccountAndSymbol(account, symbol)
+    this.showingTransactions = true;
   }
 
   accountHoldingsClick(account: string) {
@@ -47,6 +56,10 @@ export class HoldingsComponent implements OnInit {
 
   onSymbolClosed(closed: boolean) {
     this.showingSymbol = false;
+  }
+
+  onTransactionsClosed(closed: boolean) {
+    this.showingTransactions = false;
   }
 
   close(){

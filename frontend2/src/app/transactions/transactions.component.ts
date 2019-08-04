@@ -1,14 +1,11 @@
-import { Component, OnInit} from '@angular/core';
-import {DataSource} from '@angular/cdk/collections';
+import { Component, OnInit, Output, EventEmitter} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
-import {FormControl} from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import {Location} from '@angular/common';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {MatDialog} from '@angular/material';
 
-import {BackendService, Transaction} from '../backend.service'
+import {BackendService, Transaction, SymbolData} from '../backend.service'
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component'
-
 
 @Component({
   selector: 'app-transactions',
@@ -18,8 +15,9 @@ import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component
 export class TransactionsComponent implements OnInit {
   dataSource = new MatTableDataSource()
   account : string = undefined
-  symbol : string = undefined
+  symbol : SymbolData = undefined
   upload_id: string = undefined
+  @Output() transactionsClosed = new EventEmitter<boolean>();
 
   constructor(
     public location: Location,
@@ -40,15 +38,17 @@ export class TransactionsComponent implements OnInit {
           this.dataSource.data = data;
         }
       );
-    } else {
-      this.account = this.route.snapshot.queryParams.account;
-      this.symbol = this.route.snapshot.queryParams.symbol;
-      this.backendService.transactions(this.account, this.symbol).subscribe(data => 
-        {
-          this.dataSource.data = data;
-        }
-      );
     }
+  }
+
+  setAccountAndSymbol(account: string, symbol: SymbolData) {
+    this.account = account;
+    this.symbol = symbol;
+    this.backendService.transactions(this.account, this.symbol.name).subscribe(data => 
+      {
+        this.dataSource.data = data;
+      }
+    );
   }
 
   onAdd(event: any) {
@@ -77,11 +77,11 @@ export class TransactionsComponent implements OnInit {
         });
       }
     });
-
   }
 
-  goback(){
-    this.location.back();
+  close(){
+    this.dataSource.data = [];
+    this.transactionsClosed.emit(true);
   }
 }
 
