@@ -1,24 +1,29 @@
-<h1>Accounts</h1>
-<div class="mat-elevation-z8 app-content">
-  <div *ngIf="dataSource.data.length != 0" class="table-container">
-    <mat-table #table [dataSource]="dataSource" class="table">
-      <ng-container cdkColumnDef="name">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Name </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.name}} </mat-cell>
-      </ng-container>
+<div [hidden]="showingHoldings == true">
+  <h1>Accounts</h1>
+  <div class="mat-elevation-z8 app-content">
+    <div *ngIf="dataSource.data.length != 0" class="table-container">
+      <mat-table #table [dataSource]="dataSource" class="table">
+        <ng-container cdkColumnDef="name">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Name </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.name}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="currency">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Currency </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.currency}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="currency">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Currency </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.currency}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="holdings">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Holdings </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/holdings', row.name]">Holdings</a></mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="holdings">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Holdings </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> <a (click)="showHoldings(row.name)" [routerLink]="">Holdings</a></mat-cell>
+        </ng-container>
 
-      <mat-header-row *cdkHeaderRowDef="['name', 'currency', 'holdings']" class="table-header-row"></mat-header-row>
-      <mat-row *cdkRowDef="let row; columns: ['name', 'currency', 'holdings'];" class="table-row"></mat-row>
-    </mat-table>
+        <mat-header-row *cdkHeaderRowDef="['name', 'currency', 'holdings']" class="table-header-row"></mat-header-row>
+        <mat-row *cdkRowDef="let row; columns: ['name', 'currency', 'holdings'];" class="table-row"></mat-row>
+      </mat-table>
+    </div>
   </div>
+</div>
+<div [hidden]="showingHoldings == false">
+    <app-dual-holdings (dualHoldingsClosed)="onDualHoldingsClosed()"></app-dual-holdings>
 </div>

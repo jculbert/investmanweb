@@ -1,5 +1,5 @@
-<div [hidden]="symbol != null">
-  <a mat-button (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
+<div [hidden]="showingSymbol == true">
+  <a mat-button (click) = "close()"><i class="material-icons">arrow_back</i></a>
   <h1>Holdings: {{account}}</h1>
   <div class="mat-elevation-z8 app-content">
     <div *ngIf="dataSource.data.length != 0" class="table-container">
@@ -8,7 +8,7 @@
           <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Symbol </mat-header-cell>
           <mat-cell *cdkCellDef="let row" class="table-cell">
               <ul style="list-style: none; padding-left: 0px">
-                  <li><a [routerLink]="" (click)="setSymbol(row.symbol)">{{row.symbol.name}}</a></li>
+                  <li><a [routerLink]="" (click)="showSymbol(row.symbol)">{{row.symbol.name}}</a></li>
                   <li>{{row.symbol.description}}</li>
               </ul>
           </mat-cell>
@@ -34,11 +34,11 @@
             <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.symbol.review_result}} </mat-cell>
         </ng-container>
 
-        <ng-container cdkColumnDef="holdings">
-          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Holdings </mat-header-cell>
+        <ng-container cdkColumnDef="accounts">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Accounts </mat-header-cell>
           <mat-cell *cdkCellDef="let row" class="table-cell">
             <ng-container *ngFor="let acc of row.accounts">
-                <div style="margin-right:3px"><a [routerLink]="['/holdings', acc]">{{acc}}</a></div>
+                <div style="margin-right:3px"><a (click)="accountHoldingsClick(acc)" [routerLink]="">{{acc}}</a></div>
             </ng-container>
           </mat-cell>
         </ng-container>
@@ -53,14 +53,14 @@
           <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'transactions'];" class="table-row"></mat-row>
         </div>
         <div *ngIf="account == 'All'">
-          <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'holdings']" class="table-header-row"></mat-header-row>
-          <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'holdings'];" class="table-row"></mat-row>
+          <mat-header-row *cdkHeaderRowDef="['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'accounts']" class="table-header-row"></mat-header-row>
+          <mat-row *cdkRowDef="let row; columns: ['symbol', 'quantity', 'amount', 'reviewed_date', 'review_result', 'accounts'];" class="table-row"></mat-row>
         </div>
       </mat-table>
     </div>
   </div>
 </div>
-<div [hidden]="symbol==null">
+<div [hidden]="showingSymbol == false">
     <app-symbol (symbolClosed)="onSymbolClosed()"></app-symbol>
 </div>
   

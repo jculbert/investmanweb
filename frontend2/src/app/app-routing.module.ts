@@ -16,7 +16,6 @@ const routes: Routes = [
   { path: 'dividendsummaryreport', component: DividendSummaryReportComponent },
   { path: 'symboldividendreport/:name', component: SymbolDividendReportComponent },
   { path: 'accounts',  component: AccountsComponent },
-  { path: 'holdings/:account', component: HoldingsComponent},
   { path: 'transactions',  component: TransactionsComponent },
   { path: 'transactions/:id',  component: TransactionComponent },
   { path: 'symbols',  component: SymbolsComponent },

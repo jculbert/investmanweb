@@ -26,6 +26,7 @@ import { SymbolComponent } from './symbol/symbol.component';
 import { SymbolDividendReportComponent } from './symbol-dividend-report/symbol-dividend-report.component';
 import { LineChartComponent } from './line-chart/line-chart.component';
 import { ChartsModule } from 'ng2-charts';
+import {DualHoldingsComponent } from './dual-holdings/dual-holdings.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { ChartsModule } from 'ng2-charts';
     SymbolsComponent,
     SymbolComponent,
     SymbolDividendReportComponent,
-    LineChartComponent
+    LineChartComponent,
+    DualHoldingsComponent
   ],
   entryComponents: [
     ConfirmDialogComponent

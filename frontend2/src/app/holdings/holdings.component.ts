@@ -1,9 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {DataSource} from '@angular/cdk/collections';
+import { Component, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
-import {FormControl} from '@angular/forms';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import {Location} from '@angular/common';
 
 import {BackendService} from '../backend.service'
 import { SymbolComponent } from '../symbol/symbol.component';
@@ -16,42 +12,45 @@ import { SymbolComponent } from '../symbol/symbol.component';
 export class HoldingsComponent implements OnInit {
   dataSource = new MatTableDataSource()
   account : string
-  symbol: string = null
+  showingSymbol = false
   @ViewChild(SymbolComponent, {static: false})
   private symbolComponent: SymbolComponent;
+  @Output() holdingsClosed = new EventEmitter<boolean>();
+  @Output() accountHoldingsClicked = new EventEmitter<string>();
 
   constructor(
-    public location: Location,
     private backendService: BackendService,
-    private route: ActivatedRoute
-  ) { }
+  ) {
+    this.dataSource.data = [];
+  }
 
   ngOnInit() {
-    this.dataSource.data = [];
+  }
 
-    this.route.params.subscribe(
-      params => {
-        this.dataSource.data = [];
-        this.account = params['account'];
-        this.backendService.holdings(this.account).subscribe(data => 
-          {
-            this.dataSource.data = data;
-          }
-        );
+  setAccount(account: string) {
+    this.account = account;
+    this.backendService.holdings(this.account).subscribe(data => 
+      {
+        this.dataSource.data = data;
       }
     );
   }
 
-  setSymbol(symbol) {
-    this.symbol = symbol;
+  showSymbol(symbol) {
     this.symbolComponent.setSymbol(symbol);
+    this.showingSymbol = true;
+  }
+
+  accountHoldingsClick(account: string) {
+    this.accountHoldingsClicked.emit(account);
   }
 
   onSymbolClosed(closed: boolean) {
-    this.symbol = null
+    this.showingSymbol = false;
   }
 
-  goback(){
-    this.location.back();
+  close(){
+    this.dataSource.data = [];
+    this.holdingsClosed.emit(true);
   }
 }

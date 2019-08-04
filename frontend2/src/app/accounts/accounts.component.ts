@@ -1,12 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import {DataSource} from '@angular/cdk/collections';
+import { Component, OnInit, ViewChild } from '@angular/core';
 //import { Observable } from 'rxjs/Observable';
-import { Injectable, Inject } from '@angular/core';
-import {MatDatepickerInputEvent} from '@angular/material/datepicker';
 import {MatTableDataSource} from '@angular/material';
-import {FormControl} from '@angular/forms';
 
 import {BackendService} from '../backend.service'
+import { DualHoldingsComponent } from '../dual-holdings/dual-holdings.component';
 
 @Component({
   selector: 'app-accounts',
@@ -14,7 +11,10 @@ import {BackendService} from '../backend.service'
   styleUrls: ['./accounts.component.css']
 })
 export class AccountsComponent implements OnInit {
+  showingHoldings = false;
   dataSource = new MatTableDataSource()
+  @ViewChild(DualHoldingsComponent, {static: true})
+  private holdingsComponent: DualHoldingsComponent;
 
   constructor(private backendService: BackendService) { }
 
@@ -28,6 +28,15 @@ export class AccountsComponent implements OnInit {
         this.dataSource.data = accounts;
       }
     );
+  }
+
+  showHoldings(account: string) {
+    this.holdingsComponent.setMainAccount(account);
+    this.showingHoldings = true;
+  }
+
+  onDualHoldingsClosed() {
+    this.showingHoldings = false;
   }
 }
 
