@@ -32,7 +32,7 @@ export class SymbolsComponent implements OnInit {
     this.showingSymbol = true;
   }
 
-  onSymbolClosed(closed: boolean) {
+  onSymbolClosed() {
     this.showingSymbol = false;
   }
 }

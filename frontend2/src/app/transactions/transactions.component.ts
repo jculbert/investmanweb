@@ -52,7 +52,7 @@ export class TransactionsComponent implements OnInit {
   }
 
   onAdd(event: any) {
-    var trans = new Transaction(this.account, this.symbol)
+    var trans = new Transaction(this.account, this.symbol.name)
     this.backendService.add_transaction(trans).subscribe(data => 
       {
         this.router.navigateByUrl('/transactions/' + data.id)

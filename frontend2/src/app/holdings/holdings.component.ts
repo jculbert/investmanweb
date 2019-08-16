@@ -54,11 +54,11 @@ export class HoldingsComponent implements OnInit {
     this.accountHoldingsClicked.emit(account);
   }
 
-  onSymbolClosed(closed: boolean) {
+  onSymbolClosed() {
     this.showingSymbol = false;
   }
 
-  onTransactionsClosed(closed: boolean) {
+  onTransactionsClosed() {
     this.showingTransactions = false;
   }
 
