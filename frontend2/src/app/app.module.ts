@@ -12,6 +12,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field'
 import {MatDatepickerModule, MatNativeDateModule, MatInputModule, MatButtonModule, MatTableModule, MatSidenavModule,
    MatCardModule, MatToolbarModule, MatIconModule, MatListModule, MatGridListModule} from '@angular/material'
+import {MatSelectModule} from '@angular/material/select';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AccountsComponent } from './accounts/accounts.component';
 import { HoldingsComponent } from './holdings/holdings.component';
@@ -70,7 +71,8 @@ import {DualHoldingsComponent } from './dual-holdings/dual-holdings.component';
     MatIconModule,
     MatListModule,
     MatGridListModule,
-    ChartsModule
+    ChartsModule,
+    MatSelectModule
   ],
   providers: [BackendService],
   bootstrap: [AppComponent]

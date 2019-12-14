@@ -10,7 +10,15 @@
         <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
         <mat-datepicker #endPicker></mat-datepicker>
     </mat-form-field>
-    <button mat-raised-button (click)="refreshClick()" class="inline-container">Refresh</button>
+    <mat-form-field>
+        <mat-label>Account</mat-label>
+        <mat-select [(value)]="accountName">
+        <mat-option *ngFor="let acct of accounts" [value]="acct.name">
+              {{acct.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  <button mat-raised-button (click)="refreshClick()" class="inline-container">Refresh</button>
   </div>
 
 <div *ngIf="dataSource.data.length != 0" class="example-container mat-elevation-z8">

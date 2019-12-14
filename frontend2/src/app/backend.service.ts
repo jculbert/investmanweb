@@ -97,10 +97,13 @@ export class BackendService {
 
   constructor(private http: HttpClient) { }
 
-  dividendSummaryReport(startdate: Date, enddate: Date) : Observable<DividendSummaryData[]> {
+  dividendSummaryReport(startdate: Date, enddate: Date, account: string) : Observable<DividendSummaryData[]> {
     let params = new HttpParams().append('summary', 'true')
     params = params.append('startdate', new DatePipe('en-US').transform(startdate, 'yyyyMMdd'))
     params = params.append('enddate', new DatePipe('en-US').transform(enddate, 'yyyyMMdd'))
+    if (account != 'All') {
+      params = params.append('account', account)
+    }
     return this.http.get<DividendSummaryData[]>('/investmanbackend/api/v1/dividends/', {params: params})
   }
 

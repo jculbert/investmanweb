@@ -129,6 +129,10 @@ class DividendsViewSet(APIView):
         if p:
             args['date__lte'] = datetime.strptime(p, '%Y%m%d')
 
+        p = request.query_params.get('account', None)
+        if p:
+            args['account__exact'] = p
+
         t_list = Transaction.objects.filter(**args).order_by('symbol', 'date')
 
         if summary:

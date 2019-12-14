@@ -14,6 +14,8 @@ import {BackendService} from '../backend.service'
   styleUrls: ['./dividend-summary-report.component.css']
 })
 export class DividendSummaryReportComponent implements OnInit {
+  accountName = "All"
+  accounts = [{name: "All"}];
   dataSource = new MatTableDataSource()
   startdate : Date
   enddate : Date
@@ -34,6 +36,12 @@ export class DividendSummaryReportComponent implements OnInit {
     this.endPickerControl = new FormControl(this.enddate.toISOString())
   
     this.dataSource.data = [];
+
+    this.backendService.accounts().subscribe(data => 
+      {
+        this.accounts = this.accounts.concat(data);
+      }
+    );
   }
 
   startDateChange(event: MatDatepickerInputEvent<Date>) {
@@ -47,7 +55,7 @@ export class DividendSummaryReportComponent implements OnInit {
   }
 
   refreshClick() {
-    this.backendService.dividendSummaryReport(this.startdate, this.enddate).subscribe(data => 
+    this.backendService.dividendSummaryReport(this.startdate, this.enddate, this.accountName).subscribe(data => 
       {
         this.dataSource.data = data;
 
