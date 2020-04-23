@@ -1,5 +1,9 @@
-<a mat-button (click) = "location.back()"><i class="material-icons">arrow_back</i></a>
-<h1>Transaction: {{id}} </h1>
+<a mat-button (click) = "close()"><i class="material-icons">arrow_back</i></a>
+<h1>
+  <div *ngIf="transaction != undefined">
+    Transaction: {{transaction.id}}
+  </div>
+</h1>
 <div *ngIf="transaction != undefined">
     <mat-card class="app-card">
         <mat-card-content>

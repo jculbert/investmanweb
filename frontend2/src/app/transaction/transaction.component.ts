@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {Location} from '@angular/common';
 
 import {BackendService, TransactionData} from '../backend.service'
 
@@ -10,28 +9,28 @@ import {BackendService, TransactionData} from '../backend.service'
   styleUrls: ['./transaction.component.css']
 })
 export class TransactionComponent implements OnInit {
-  id : string
   transaction : TransactionData = undefined
+  @Output() transactionClosed = new EventEmitter<boolean>();
 
   constructor(
-    public location: Location,
     private backendService: BackendService,
     private route: ActivatedRoute
 
   ) {}
 
   ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
-    this.backendService.get_transaction(this.id).subscribe(data => 
-      {
-        this.transaction = data;
-      }
-    );
+  }
 
+  setTransaction(trans : TransactionData) {
+    this.transaction = trans;
   }
 
   static notSet(value: any) {
     return value == undefined || value == null;
+  }
+
+  close(){
+    this.transactionClosed.emit(true);
   }
 
   onSave(event: {}) {
@@ -46,9 +45,9 @@ export class TransactionComponent implements OnInit {
       this.transaction.price = 0.00
     }
 
-    this.backendService.put_transaction(this.id, this.transaction).subscribe(result =>
+    this.backendService.put_transaction(String(this.transaction.id), this.transaction).subscribe(result =>
       {
-        this.location.back();
+        this.transactionClosed.emit(true);
       }
     );
   }    

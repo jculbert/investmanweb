@@ -1,11 +1,12 @@
-import { Component, OnInit, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import {Location} from '@angular/common';
 import {MatDialog} from '@angular/material';
 
-import {BackendService, Transaction, SymbolData} from '../backend.service'
+import {BackendService, Transaction, TransactionData, SymbolData} from '../backend.service'
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component'
+import {TransactionComponent} from '../transaction/transaction.component'
 
 @Component({
   selector: 'app-transactions',
@@ -17,6 +18,10 @@ export class TransactionsComponent implements OnInit {
   account : string = undefined
   symbol : SymbolData = undefined
   upload_id: string = undefined
+  showingTransaction = false;
+  @ViewChild(TransactionComponent, {static: false})
+  private transactionComponent: TransactionComponent;
+
   @Output() transactionsClosed = new EventEmitter<boolean>();
 
   constructor(
@@ -51,11 +56,21 @@ export class TransactionsComponent implements OnInit {
     );
   }
 
+  showTransaction(transaction: TransactionData) {
+    this.transactionComponent.setTransaction(transaction)
+    this.showingTransaction = true;
+  }
+
+  onTransactionClosed() {
+    this.showingTransaction = false;
+  }
+
   onAdd(event: any) {
     var trans = new Transaction(this.account, this.symbol.name)
     this.backendService.add_transaction(trans).subscribe(data => 
       {
-        this.router.navigateByUrl('/transactions/' + data.id)
+        this.transactionComponent.setTransaction(data);
+        this.showingTransaction = true;
       }
     );
   }

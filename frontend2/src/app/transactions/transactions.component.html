@@ -1,71 +1,77 @@
-<a mat-button (click) = "close()"><i class="material-icons">arrow_back</i></a>
-<h1>
-   <div *ngIf="account != undefined">Transactions: {{account}} / {{symbol.name}}</div>
-   <div *ngIf="upload_id != undefined">Transactions: Upload ID {{upload_id}}</div>
-</h1>
-<div class="mat-elevation-z8 app-content">
-  <div *ngIf="dataSource.data.length != 0" class="table-container">
-    <mat-table #table [dataSource]="dataSource" class="table app-table">
-      <ng-container cdkColumnDef="date">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Date </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.date}} </mat-cell>
-      </ng-container>
+<div [hidden]="showingTransaction == true">
+  <a mat-button (click) = "close()"><i class="material-icons">arrow_back</i></a>
+  <h1>
+    <div *ngIf="account != undefined">Transactions: {{account}} / {{symbol.name}}</div>
+    <div *ngIf="upload_id != undefined">Transactions: Upload ID {{upload_id}}</div>
+  </h1>
+  <div class="mat-elevation-z8 app-content">
+    <div *ngIf="dataSource.data.length != 0" class="table-container">
+      <mat-table #table [dataSource]="dataSource" class="table app-table">
+        <ng-container cdkColumnDef="date">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Date </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.date}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="type">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Type </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.type}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="type">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Type </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.type}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="quantity">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Quantity </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.quantity}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="quantity">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Quantity </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.quantity}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="price">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.price | number:'1.2-2'}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="price">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Price </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.price | number:'1.2-2'}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="amount">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Amount </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount | number:'1.2-2'}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="amount">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Amount </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.amount | number:'1.2-2'}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="fee">
-          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Fee </mat-header-cell>
-          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.fee | number:'1.2-2'}} </mat-cell>
-      </ng-container>
-  
-       <ng-container cdkColumnDef="capital_return">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Cap Ret </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.capital_return | number:'1.2-2'}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="fee">
+            <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Fee </mat-header-cell>
+            <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.fee | number:'1.2-2'}} </mat-cell>
+        </ng-container>
+    
+        <ng-container cdkColumnDef="capital_return">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Cap Ret </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.capital_return | number:'1.2-2'}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="capital_gain">
-          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Cap Gain </mat-header-cell>
-          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.capital_gain | number:'1.2-2'}} </mat-cell>
-      </ng-container>
-  
-      <ng-container cdkColumnDef="acb">
-          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> ACB </mat-header-cell>
-          <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.acb | number:'1.2-2'}} </mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="capital_gain">
+            <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Cap Gain </mat-header-cell>
+            <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.capital_gain | number:'1.2-2'}} </mat-cell>
+        </ng-container>
+    
+        <ng-container cdkColumnDef="acb">
+            <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> ACB </mat-header-cell>
+            <mat-cell *cdkCellDef="let row" class="table-cell"> {{row.acb | number:'1.2-2'}} </mat-cell>
+        </ng-container>
 
-      <ng-container cdkColumnDef="delete">
-          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Delete </mat-header-cell>
-          <mat-cell *cdkCellDef="let row" class="table-cell">
-            <button mat-button (click)="onDelete(row.id)">Del</button>
-          </mat-cell>
-      </ng-container>
-  
-      <ng-container cdkColumnDef="detail">
-        <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Details </mat-header-cell>
-        <mat-cell *cdkCellDef="let row" class="table-cell"> <a [routerLink]="['/transactions', row.id]" ><i class="material-icons">arrow_forward</i></a></mat-cell>
-      </ng-container>
+        <ng-container cdkColumnDef="delete">
+            <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Delete </mat-header-cell>
+            <mat-cell *cdkCellDef="let row" class="table-cell">
+              <button mat-button (click)="onDelete(row.id)">Del</button>
+            </mat-cell>
+        </ng-container>
+    
+        <ng-container cdkColumnDef="detail">
+          <mat-header-cell *cdkHeaderCellDef class="table-header-cell"> Details </mat-header-cell>
+          <mat-cell *cdkCellDef="let row" class="table-cell"> <a (click)="showTransaction(row)" [routerLink]=""><i class="material-icons">arrow_forward</i></a></mat-cell>
+        </ng-container>
 
-      <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'fee', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail']" class="table-header-row"></mat-header-row>
-      <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'fee', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail'];" class="table-row"></mat-row>
-    </mat-table>
+        <mat-header-row *cdkHeaderRowDef="['date', 'type', 'quantity', 'price', 'amount', 'fee', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail']" class="table-header-row"></mat-header-row>
+        <mat-row *cdkRowDef="let row; columns: ['date', 'type', 'quantity', 'price', 'amount', 'fee', 'capital_return', 'capital_gain', 'acb', 'delete', 'detail'];" class="table-row"></mat-row>
+      </mat-table>
+    </div>
+    <button mat-raised-button (click)="onAdd($event)">Add</button>
   </div>
-  <button mat-raised-button (click)="onAdd($event)">Add</button>
 </div>
+<div [hidden]="showingTransaction == false">
+  <app-transaction (transactionClosed)="onTransactionClosed()"></app-transaction>
+</div>
+
