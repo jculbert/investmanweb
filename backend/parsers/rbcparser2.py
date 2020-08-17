@@ -64,7 +64,7 @@ class transaction():
 
     def __init__(self, row, upload_id=None):
         self.row = row
-        self.date = datetime.strptime(row[0], "%b %d, %Y")
+        self.date = datetime.strptime(row[0], "%B %d, %Y")
         self.upload_id=upload_id
 
         self.currency = row[8]
