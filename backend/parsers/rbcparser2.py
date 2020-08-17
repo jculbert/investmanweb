@@ -67,7 +67,7 @@ class transaction():
         self.date = datetime.strptime(row[0], "%B %d, %Y")
         self.upload_id=upload_id
 
-        self.currency = row[8]
+        self.currency = row[9]
         self.symbol = row[2]
         if self.symbol in symbolMapDict:
             self.symbol = symbolMapDict[self.symbol]
@@ -76,20 +76,20 @@ class transaction():
             if self.currency == "CAD":
                 self.symbol += ".TO"
 
-        self.amount = getFloat(row[7])
+        self.amount = getFloat(row[8])
         mapType(self, row[1])
 
-        self.acct = acctDict[row[6]]
+        self.acct = acctDict[row[7]]
         if self.currency == "USD":
             self.acct += " US"
         if self.amount < 0 and self.type != "DIST_D":
             self.amount = round(self.amount * -1, 2)
-        self.count = getFloat(row[3])
+        self.count = getFloat(row[4])
         if self.count < 0:
             self.count = round(self.count * -1, 2)
-        self.price = getFloat(row[4])
+        self.price = getFloat(row[5])
 
-        self.description = row[9]
+        self.description = row[10]
 
     def toFundManager(self):
         line = self.acct + ","
@@ -168,7 +168,7 @@ def get_transactions(filename):
 def get_transactions(filename=None, file=None, upload_id=None):
 
     if not file:
-        file = open(open(filename, "r"))
+        file = open(filename, "r")
 
     transactions = []
     reader = csv.reader(file)
@@ -193,3 +193,8 @@ def get_transactions(filename=None, file=None, upload_id=None):
             transactions.append(dict)
 
     return transactions
+
+if __name__ == '__main__':
+    import json
+    for t in get_transactions(sys.argv[1]):
+        print json.dumps(t)
