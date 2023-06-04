@@ -89,7 +89,7 @@ DATABASES = {
             'NAME': 'investmanweb',
             'USER': 'django',
             'PASSWORD': 'django',
-            'HOST': '127.0.0.1',
+            'HOST': 'macmini2',
             'PORT': '',
         }
 }
