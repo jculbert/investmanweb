@@ -44,6 +44,7 @@ symbolMapDict = { # Mainly for US stocks held in $C
 typeDict = {
     "Dividends": "DIST_D",
     "Interest": "DIST_D",
+    "Distribution": "DIST_D",
     "Buy": "BUY",
     "Sell": "SELL",
     "Transfers": None,
@@ -88,6 +89,10 @@ class transaction():
         if self.count < 0:
             self.count = round(self.count * -1, 2)
         self.price = getFloat(row[5])
+        
+        # Handle RBF2020 distribution which does not set amount
+        if self.symbol == "RBF2020.TO" and self.type == "DIST_D":
+           self.amount = self.count * 10.00
 
         self.description = row[10]
 
@@ -196,5 +201,6 @@ def get_transactions(filename=None, file=None, upload_id=None):
 
 if __name__ == '__main__':
     import json
-    for t in get_transactions(sys.argv[1]):
-        print json.dumps(t)
+    print "rbcparser: " + str(sys.argv[1])
+    for t in get_transactions(filename=sys.argv[1], file=None, upload_id=123):
+        print str(t)
