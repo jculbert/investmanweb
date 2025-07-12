@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, viewsets
 
 from transactions.serializers import TransactionSerializer
-from serializers import UploadSerializer
+from serializers import UploadListSerializer, UploadDetailSerializer
 from models import Upload
 
 from parsers.rbcparser2 import get_transactions
@@ -14,8 +14,17 @@ from backend.db_util import add_transaction
 
 # Create your views here.
 class UploadViewSet(viewsets.ModelViewSet):
-    queryset = Upload.objects.order_by('name') # Only used for URL mapping?
-    serializer_class = UploadSerializer # Only used for URL mappong
+    queryset = Upload.objects.order_by('date') # Only used for URL mapping?
+    serializer_class = UploadDetailSerializer # Only used for URL mappong
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return UploadListSerializer
+        elif self.action == 'retrieve':
+            return UploadDetailSerializer
+        elif self.action == 'create':
+            return UploadDetailSerializer
+        return UploadDetailSerializer  # fallback
 
     def create(self, request, *args, **kwargs):
         file = request.data['file']
@@ -33,5 +42,5 @@ class UploadViewSet(viewsets.ModelViewSet):
         upload.num_transactions = len(t_list)
         upload.save()
 
-        serializer = UploadSerializer(instance=upload, many=False)
+        serializer = UploadDetailSerializer(instance=upload, many=False)
         return Response(serializer.data)
