@@ -9,7 +9,7 @@ from transactions.serializers import TransactionSerializer
 from serializers import UploadListSerializer, UploadDetailSerializer
 from models import Upload
 
-from parsers.rbcparser2 import get_transactions
+from parsers.rbcparser2 import process_file
 from backend.db_util import add_transaction
 
 # Create your views here.
@@ -35,8 +35,8 @@ class UploadViewSet(viewsets.ModelViewSet):
         upload = Upload(file_name=file.name, content=content, num_transactions=0, result='Ok')
         upload.save()
 
-        t_list = get_transactions(file=file, upload_id=upload.id)
-        for t_dict in t_list:
+        result = process_file(file=file, upload_id=upload.id)
+        for t_dict in result["transactions"]:
             add_transaction(t_dict)
 
         upload.num_transactions = len(t_list)

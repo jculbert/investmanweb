@@ -167,40 +167,51 @@ def get_transactions(filename):
 
     return transactions
 
-# Returns an array of transaction dictionaries
+# Returns an dictionary with an array of transaction dictionaries
+# and an array of skipped lines.
 # The dictionary keys match the field names of the transaction model
 
-def get_transactions(filename=None, file=None, upload_id=None):
+def process_file(filename=None, file=None, upload_id=None):
+
+    result = {"transactions": [], "skipped": []}
 
     if not file:
         file = open(filename, "r")
 
-    transactions = []
-    reader = csv.reader(file)
+    rows = file.readlines()
+    parsed_rows = list(csv.reader(rows))
+
     in_header = True
-    for row in reader:
+    for raw_row, parsed_row in zip(rows, parsed_rows):
 
         # We are reading the header until transaction field name line is found
         if in_header:
-            if len(row) > 0 and row[0] == 'Date':
+            if len(parsed_row) > 0 and parsed_row[0] == 'Date':
                 in_header = False
             continue
 
         # Stop when a blank line is found
-        if len(row) < 2:
+        if len(parsed_row) < 2:
             break
 
-        t = transaction(row, upload_id=upload_id)
-        if not t.type:
+        t = transaction(parsed_row, upload_id=upload_id)
+        if t.type:
+            dict = t.toDict()
+        if not t.type or not dict:
+            result["skipped"].append(raw_row)
             continue
-        dict = t.toDict()
-        if dict:
-            transactions.append(dict)
 
-    return transactions
+        result["transactions"].append(dict)
+
+    return result
 
 if __name__ == '__main__':
     import json
     print "rbcparser: " + str(sys.argv[1])
-    for t in get_transactions(filename=sys.argv[1], file=None, upload_id=123):
+    result = process_file(filename=sys.argv[1], file=None, upload_id=123)
+
+    for skipped in result["skipped"]:
+        print str(skipped)
+    print "\n"
+    for t in result["transactions"]:
         print str(t)
