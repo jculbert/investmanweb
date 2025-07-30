@@ -35,11 +35,20 @@ class UploadViewSet(viewsets.ModelViewSet):
         upload = Upload(file_name=file.name, content=content, num_transactions=0, result='Ok')
         upload.save()
 
+        file.seek(0)
         result = process_file(file=file, upload_id=upload.id)
         for t_dict in result["transactions"]:
             add_transaction(t_dict)
 
-        upload.num_transactions = len(t_list)
+        upload.num_transactions = len(result["transactions"])
+
+        skipped = len(result["skipped"])
+        notes = "Skipped: " + str(skipped) + "\n"
+        if skipped != 0:
+            for s in result["skipped"]:
+                notes += str(s) + "\n"
+        upload.notes = notes
+
         upload.save()
 
         serializer = UploadDetailSerializer(instance=upload, many=False)
