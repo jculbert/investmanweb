@@ -46,7 +46,7 @@ class UploadViewSet(viewsets.ModelViewSet):
         notes = "Skipped: " + str(skipped) + "\n"
         if skipped != 0:
             for s in result["skipped"]:
-                notes += str(s) + "\n"
+                notes += str(s)
         upload.notes = notes
 
         upload.save()
