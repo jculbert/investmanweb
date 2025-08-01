@@ -54,6 +54,11 @@ typeDict = {
     "Taxes": None
 }
 
+def is_rbc_file(filename, file):
+    line = file.readline()
+    file.seek(0)
+    return "Activity Export" in line
+
 def getFloat(strVal):
     if strVal == "":
         return 0.0
