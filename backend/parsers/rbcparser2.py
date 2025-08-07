@@ -7,18 +7,7 @@ import csv
 from datetime import datetime
 from os import listdir
 from os.path import isfile, join
-
-acctDict = {
-    "68059274": "Jeff RBC",
-    "26449306": "Jeff TFSA",
-    "69232133": "Jeff RRSP",
-    "68379993": "Barb RBC",
-    "26449377": "Barb TFSA",
-    "69718112": "Barb RRSP",
-    "69718147": "Barb RRSP Spousal",
-    "69059162": "Barb LIRA",
-    "69400048": "Jeff RRSP"
-}
+import rbcaccountdict
 
 # Symbol mapping special cases
 symbolMapDict = { # Mainly for US stocks held in $C
@@ -85,7 +74,7 @@ class transaction():
         self.amount = getFloat(row[8])
         mapType(self, row[1])
 
-        self.acct = acctDict[row[7]]
+        self.acct = rbcaccountdict.acctDict[row[7]]
         if self.currency == "USD":
             self.acct += " US"
         if self.amount < 0 and self.type != "DIST_D":
@@ -134,6 +123,7 @@ class transaction():
         t['quantity'] = self.count
         t['note'] = self.description
         t['upload_id'] = self.upload_id
+        t['currency'] = self.currency
         return t
 
 

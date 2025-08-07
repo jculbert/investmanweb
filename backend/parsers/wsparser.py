@@ -8,13 +8,7 @@ from datetime import datetime
 from os import listdir
 from os.path import isfile, join
 import json
-
-acctDict = {
-    "HQ8CNY309CAD": "Barb WS",
-    "HQ8D3J5K6CAD": "Barb WS TFSA",
-    "HQ8C25HK6CAD": "Jeff WS TFSA",
-    "HQ0FS4P07CAD": "Jeff WS",
-}
+import wsaccountdict
 
 # Symbol mapping special cases
 symbolMapDict = { # Mainly for US stocks held in $C
@@ -57,9 +51,9 @@ class transaction():
         self.upload_id=upload_id
         self.acct = account
         if account.endswith("USD"):
-            self.currency = "CAD"
-        else:
             self.currency = "USD"
+        else:
+            self.currency = "CAD"
 
         if self.type == "BUY":
             self.parse_buy_description(row[2])
@@ -68,6 +62,8 @@ class transaction():
 
         if self.symbol in symbolMapDict:
             self.symbol = symbolMapDict[self.symbol]
+        elif self.currency == "CAD":
+            self.symbol += ".TO"
 
     def parse_buy_description(self, desc):
         match = buy_desc_pattern.match(desc)
@@ -102,27 +98,28 @@ class transaction():
         t['quantity'] = self.count
         t['note'] = self.description
         t['upload_id'] = self.upload_id
+        t['currency'] = self.currency
         return t
 
 # Returns an dictionary with an array of transaction dictionaries
 # and an array of skipped lines.
-# The dictionary keys match the field names of the transaction model
+# The dictionary keys match the field names of twsaccountdict.he transaction model
 
 def process_file(filename, file, upload_id=None):
 
     result = {"transactions": [], "skipped": []}
 
     # Get account from file name
-    match = filename_pattern.match(sys.argv[1])
+    match = filename_pattern.match(filename)
     if not match:
         print "Could not parse file name \n"
         return result
  
     account = match.group(1)
-    if account not in acctDict:
+    if account not in wsaccountdict.acctDict:
         print "Account not supported \n"
         return result
-    account = acctDict[account]
+    account = wsaccountdict.acctDict[account]
 
     rows = file.readlines()
     parsed_rows = list(csv.reader(rows))

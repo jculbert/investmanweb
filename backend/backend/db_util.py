@@ -14,6 +14,10 @@ def add_transaction(t_dict):
         account = Account.objects.get(name=t_dict['account_name'])
     except ObjectDoesNotExist:
         account = Account(name=t_dict['account_name'])
+        if t_dict['currency'] == "USD":
+            account.currency = "US"
+        else:
+            account.currency = "CA"
         account.save()
 
     # Check for existing transaction with the same hash

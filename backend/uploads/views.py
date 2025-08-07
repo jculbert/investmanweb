@@ -36,7 +36,7 @@ class UploadViewSet(viewsets.ModelViewSet):
         upload.save()
 
         file.seek(0)
-        result = process_file(file=file, upload_id=upload.id)
+        result = process_file(filename=file.name, file=file, upload_id=upload.id)
         for t_dict in result["transactions"]:
             add_transaction(t_dict)
 
