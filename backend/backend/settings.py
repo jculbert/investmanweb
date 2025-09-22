@@ -25,7 +25,7 @@ SECRET_KEY = '8v&r#g$81%s13=x*@6!^=)g7xlkx@uzc0n!8osvw^_b5!9(w#7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'macmini2', 'macmini2.rkbj.ca', 'ubuntu1']
+ALLOWED_HOSTS = ['localhost', 'linux1']
 
 
 # Application definition
@@ -89,7 +89,7 @@ DATABASES = {
             'NAME': 'investmanweb',
             'USER': 'django',
             'PASSWORD': 'django',
-            'HOST': 'macmini2',
+            'HOST': 'localhost',
             'PORT': '',
         }
 }
