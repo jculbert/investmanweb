@@ -22,6 +22,15 @@ def update_acb(account, symbol):
                 acb = acb + t.fee
             shares = shares + t.quantity
         elif t.type == 'SELL':
+            if shares <= 0:
+                # Something is wrong in the transaction history
+                # reset ACB and capital gain to 0
+                acb = 0.0
+                shares = 0
+                t.acb = 0.0
+                t.capital_gain = 0.0
+                t.save()
+                continue
             t.capital_gain = t.price * t.quantity - (acb / shares) * t.quantity
             if t.fee:
                 t.capital_gain = t.capital_gain - t.fee
