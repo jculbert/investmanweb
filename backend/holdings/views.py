@@ -12,15 +12,17 @@ class HoldingsViewSet(APIView):
     # Required for the Browsable API renderer to have a nice form.
     serializer_class = HoldingSerializer
 
-    def add_holding(self, symbol, total, currency, accounts, holdings):
-        holding = {"symbol": symbol, "quantity": round(total, 2)}
-
-
+    def add_holding(self, symbol, currency, accounts, holdings):
+    
         # Build list of accounts that have non-zero quantity
         account_list = []
+        total = 0.0
         for acc in accounts:
             if accounts[acc] != 0:
                 account_list.append(acc)
+                total = total + accounts[acc]
+    
+        holding = {"symbol": symbol, "quantity": round(total, 2)}
         holding['accounts'] = account_list
 
         if symbol.last_price:
@@ -48,7 +50,6 @@ class HoldingsViewSet(APIView):
 
         holdings = []
         symbol = None
-        total = 0.00
         currency = None
         accounts = {}
         amount = 0
@@ -58,14 +59,15 @@ class HoldingsViewSet(APIView):
             elif t.type == 'SELL':
                 quantity = -t.quantity
             elif t.type == 'SPLIT':
-                total = total * t.amount # Update previous total to according to split factor
+                # Update previous account quantity according to split factor
+                if t.account_id in accounts:
+                    accounts[t.account_id] = accounts[t.account_id] * t.amount
                 continue
             else:
                 continue
 
             if symbol:
                 if t.symbol.name == symbol.name:
-                    total = total + quantity
                     if not t.account_id in accounts:
                         accounts[t.account_id] = quantity
                     else:
@@ -73,15 +75,14 @@ class HoldingsViewSet(APIView):
                     continue
 
                 # New symbol, complete the previous
-                self.add_holding(symbol, total, symbol, accounts, holdings)
+                self.add_holding(symbol, symbol, accounts, holdings)
 
             symbol = t.symbol
-            total = quantity
             currency = t.account.currency
             accounts = {t.account_id: quantity}
 
         # Need to complete the last symbol upon loop exit
-        self.add_holding(symbol, total, currency, accounts, holdings)
+        self.add_holding(symbol, currency, accounts, holdings)
 
         serializer = HoldingSerializer(instance=holdings, many=True)
         return Response(serializer.data)
