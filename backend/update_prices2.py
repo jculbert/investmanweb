@@ -166,18 +166,11 @@ def _parse_date_to_date(date_str):
     return None
 
 
-def update_symbol_prices_from_url(url, setup_django=True):
+def update_symbol_prices_from_url(url):
     """
     Fetch symbol names from `url`, request prices in batches of 20 using
     `fetch_stock_prices`, and update the `last_price` and `last_price_date`
     fields directly in the MySQL database (no Django ORM).
-
-    Database connection parameters are read from environment variables:
-      - MYSQL_HOST (default: 'localhost')
-      - MYSQL_PORT (default: 3306)
-      - MYSQL_USER (default: 'root')
-      - MYSQL_PASSWORD (default: '')
-      - MYSQL_DB (default: 'investmanweb')
 
     The function updates the `symbols_symbol` table which is the default
     Django table name for the `symbols.Symbol` model. If your project uses a
@@ -188,8 +181,8 @@ def update_symbol_prices_from_url(url, setup_django=True):
     # Hard-coded DB connection info
     db_host = '127.0.0.1'
     db_port = 3306
-    db_user = 'myuser'
-    db_pass = 'mypassword'
+    db_user = 'django'
+    db_pass = 'django'
     db_name = 'investmanweb'
 
     # Default Django table for Symbol model
@@ -256,6 +249,7 @@ def update_symbol_prices_from_url(url, setup_django=True):
         if params_list:
             try:
                 for params in params_list:
+                    print(update_sql, params)
                     cursor.execute(update_sql, params)
                     if cursor.rowcount == 0:
                         # symbol not present in table
@@ -285,14 +279,15 @@ def main():
     import sys
 
     url = "http://linux1/investmanbackend/api/v1/holdings/?account=All"
+    #url = "http://linux1/investmanbackend/api/v1/holdings/?account=Barb%20RBC"
 
     # Hard-coded URL to fetch holdings from
-    #url = 'https://api.example.com/holdings'
-    #print(f"Updating symbol prices from: {url}")
-    #result = update_symbol_prices_from_url(url, setup_django=False)
-    #print("Result:", result)
+    print(f"Updating symbol prices from: {url}")
+    result = update_symbol_prices_from_url(url)
+    print("Result:", result)
 
-    result = fetch_symbol_names_from_url(url)
+    #result = fetch_symbol_names_from_url(url)
+    #print(str(result))
 
 if __name__ == '__main__':
     main()
