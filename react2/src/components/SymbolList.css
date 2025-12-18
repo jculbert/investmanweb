@@ -1,0 +1,33 @@
+.symbol-list {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.symbol-list h2 {
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.symbol-name {
+  font-weight: 700;
+}
+
+.symbol-desc {
+  color: #555;
+}
+
+.symbol-list.loading, .symbol-list.error {
+  text-align: center;
+  padding: 24px;
+}
