@@ -13,3 +13,18 @@ export async function fetchSymbols(): Promise<SymbolItem[]> {
     throw err;
   }
 }
+
+export async function updateSymbol(name: string, symbol: SymbolItem): Promise<SymbolItem> {
+  try {
+    const res = await fetch(`${API_URL}${encodeURIComponent(name)}/`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(symbol),
+    });
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error('Failed to update symbol:', err);
+    throw err;
+  }
+}
