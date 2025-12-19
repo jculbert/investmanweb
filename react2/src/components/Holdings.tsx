@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { Account } from '../types/Account';
-import { fetchAccounts } from '../services/accountService';
-import './AccountList.css';
+import { fetchAccounts } from '../services/holdingsService';
+import './Holdings.css';
 
-export function AccountList() {
+export function Holdings() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +48,7 @@ export function AccountList() {
 
   return (
     <div className="account-list">
-      <h2>Investment Accounts</h2>
+      <h2>Holdings</h2>
       {Object.entries(groupedAccounts).map(([owner, ownerAccounts]) => (
         <div key={owner} className="owner-group">
           <h3>{owner}'s Accounts</h3>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AccountList } from './components/AccountList'
+import { Holdings } from './components/Holdings'
 import SymbolList from './components/SymbolList'
 import './App.css'
 
@@ -7,7 +7,7 @@ type TabKey = 'accounts' | 'symbols'
 type Tab = { id: string; key: TabKey; title: string }
 
 function App() {
-  const [tabs, setTabs] = useState<Tab[]>([{ id: 'tab-accounts', key: 'accounts', title: 'Accounts' }])
+  const [tabs, setTabs] = useState<Tab[]>([{ id: 'tab-accounts', key: 'accounts', title: 'Holdings' }])
   const [activeId, setActiveId] = useState<string>('tab-accounts')
 
   function openTab(key: TabKey) {
@@ -43,7 +43,7 @@ function App() {
         <div className="nav-title">Investments</div>
         <nav>
           <button className="nav-btn" onClick={() => openTab('accounts')}>
-            Accounts
+            Holdings
           </button>
           <button className="nav-btn" onClick={() => openTab('symbols')}>
             Symbols
@@ -66,7 +66,7 @@ function App() {
         </div>
 
         <main>
-          {activeTab.key === 'accounts' && <AccountList />}
+          {activeTab.key === 'accounts' && <Holdings />}
           {activeTab.key === 'symbols' && <SymbolList />}
         </main>
       </div>
