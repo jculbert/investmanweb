@@ -31,3 +31,72 @@ th, td {
   text-align: center;
   padding: 24px;
 }
+
+/* Back button */
+.back-btn {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.back-btn:hover {
+  background: #e0e0e0;
+}
+
+/* Details view */
+.symbol-details {
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.symbol-details h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 28px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.detail-value {
+  color: #555;
+  font-size: 16px;
+  word-break: break-word;
+}
+
+/* Details link in table */
+.details-link {
+  background: transparent;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: 14px;
+}
+
+.details-link:hover {
+  color: #0052a3;
+}
+

@@ -43,10 +43,10 @@ function App() {
         <div className="nav-title">Investments</div>
         <nav>
           <button className="nav-btn" onClick={() => openTab('accounts')}>
-            Open Accounts
+            Accounts
           </button>
           <button className="nav-btn" onClick={() => openTab('symbols')}>
-            Open Symbols
+            Symbols
           </button>
         </nav>
       </aside>
