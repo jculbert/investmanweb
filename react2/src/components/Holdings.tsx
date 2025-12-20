@@ -4,7 +4,7 @@ import type { HoldingItem } from '../types/HoldingItem';
 import type { TransactionItem } from '../types/TransactionItem';
 import { fetchAccounts } from '../services/holdingsService';
 import { fetchHoldingsByAccount } from '../services/holdingsDetailService';
-import { fetchTransactionsByAccountAndSymbol } from '../services/transactionsService';
+import { fetchTransactionsByAccountAndSymbol, updateTransaction } from '../services/transactionsService';
 import './Holdings.css';
 
 export function Holdings() {
@@ -21,6 +21,10 @@ export function Holdings() {
   const [transactions, setTransactions] = useState<TransactionItem[]>([]);
   const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [transactionsError, setTransactionsError] = useState<string | null>(null);
+  const [editingTransaction, setEditingTransaction] = useState<TransactionItem | null>(null);
+  const [originalTransaction, setOriginalTransaction] = useState<TransactionItem | null>(null);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAccounts = async () => {
@@ -96,39 +100,141 @@ export function Holdings() {
 
     // If we're viewing transactions for a holding, render that view
     if (viewingTransactions && transactionSymbol) {
+      const openEdit = (t: TransactionItem) => {
+        setOriginalTransaction(t);
+        setEditingTransaction({ ...t });
+        setSaveError(null);
+      };
+
+      const cancelEdit = () => {
+        setEditingTransaction(null);
+        setOriginalTransaction(null);
+        setSaveError(null);
+      };
+
+      const isDirty = () => {
+        if (!editingTransaction || !originalTransaction) return false;
+        return JSON.stringify(editingTransaction) !== JSON.stringify(originalTransaction);
+      };
+
+      const handleFieldChange = (field: keyof TransactionItem, value: any) => {
+        if (!editingTransaction) return;
+        setEditingTransaction({ ...editingTransaction, [field]: value });
+      };
+
+      const doSave = async () => {
+        if (!editingTransaction) return;
+        try {
+          setSaveLoading(true);
+          setSaveError(null);
+          // Use the edited transaction as payload
+          const payload: TransactionItem = { ...editingTransaction };
+
+          await updateTransaction(payload);
+          // refresh list
+          const refreshed = await fetchTransactionsByAccountAndSymbol(selectedAccount.name, transactionSymbol);
+          setTransactions(refreshed);
+          // close editor and return to list
+          cancelEdit();
+        } catch (err) {
+          setSaveError(err instanceof Error ? err.message : 'Failed to save transaction');
+        } finally {
+          setSaveLoading(false);
+        }
+      };
+
       return (
         <div className="account-list">
           <button className="back-btn" onClick={closeTransactions}>← Back</button>
           <div className="holdings-details">
             <h2>Transactions for {transactionSymbol} — {selectedAccount.name}</h2>
             {transactionsError && <div className="error-msg">{transactionsError}</div>}
-            {transactionsLoading ? (
-              <div className="loading-msg">Loading transactions...</div>
+            {editingTransaction ? (
+              <div className="symbol-details">
+                <h3>Transaction #{editingTransaction.id}</h3>
+                {saveError && <div className="error-msg">{saveError}</div>}
+                <div className="details-grid">
+                  <div className="detail-row">
+                    <label>Date</label>
+                    <input value={editingTransaction.date ?? ''} onChange={(e) => handleFieldChange('date', e.target.value)} />
+                  </div>
+                  <div className="detail-row">
+                    <label>Type</label>
+                    <input value={editingTransaction.type ?? ''} onChange={(e) => handleFieldChange('type', e.target.value)} />
+                  </div>
+                  <div className="detail-row">
+                    <label>Quantity</label>
+                    <input type="number" step="any" value={editingTransaction.quantity ?? ''} onChange={(e) => handleFieldChange('quantity', e.target.value === '' ? null : parseFloat(e.target.value))} />
+                  </div>
+                  <div className="detail-row">
+                    <label>Price</label>
+                    <input type="number" step="any" value={editingTransaction.price ?? ''} onChange={(e) => handleFieldChange('price', e.target.value === '' ? null : parseFloat(e.target.value))} />
+                  </div>
+                  <div className="detail-row">
+                    <label>Amount</label>
+                    <input type="number" step="any" value={editingTransaction.amount ?? ''} onChange={(e) => handleFieldChange('amount', e.target.value === '' ? null : parseFloat(e.target.value))} />
+                  </div>
+                  <div className="detail-row">
+                    <label>Fee</label>
+                    <input type="number" step="any" value={editingTransaction.fee ?? ''} onChange={(e) => handleFieldChange('fee', e.target.value === '' ? null : parseFloat(e.target.value))} />
+                  </div>
+                  <div className="detail-row">
+                    <label>Capital Return</label>
+                    <input type="number" step="any" value={editingTransaction.capital_return ?? ''} onChange={(e) => handleFieldChange('capital_return', e.target.value === '' ? null : parseFloat(e.target.value))} />
+                  </div>
+                  <div className="detail-row">
+                    <label>Capital Gain</label>
+                    <input type="number" step="any" value={editingTransaction.capital_gain ?? ''} onChange={(e) => handleFieldChange('capital_gain', e.target.value === '' ? null : parseFloat(e.target.value))} />
+                  </div>
+                  <div className="detail-row">
+                    <label>ACB</label>
+                    <input type="number" step="any" value={editingTransaction.acb ?? ''} onChange={(e) => handleFieldChange('acb', e.target.value === '' ? null : parseFloat(e.target.value))} />
+                  </div>
+                  <div className="detail-row">
+                    <label>Note</label>
+                    <textarea rows={6} value={editingTransaction.note ?? ''} onChange={(e) => handleFieldChange('note', e.target.value)} />
+                  </div>
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <button className="back-btn" onClick={cancelEdit} disabled={saveLoading}>Back</button>
+                  <button className="toggle-btn" onClick={doSave} disabled={!isDirty() || saveLoading} style={{ marginLeft: 8 }}>
+                    {saveLoading ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
+              </div>
             ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Amount</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {transactions.map((t) => (
-                    <tr key={t.id}>
-                      <td>{t.date}</td>
-                      <td>{t.type}</td>
-                      <td>{t.quantity != null ? t.quantity.toFixed(2) : '-'}</td>
-                      <td>{t.price != null ? t.price.toFixed(2) : '-'}</td>
-                      <td>{t.amount != null ? t.amount.toFixed(2) : '-'}</td>
-                      <td className="txn-note">{t.note || '-'}</td>
+              (transactionsLoading ? (
+                <div className="loading-msg">Loading transactions...</div>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Type</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Amount</th>
+                      <th>Note</th>
+                      <th>Details</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {transactions.map((t) => (
+                      <tr key={t.id}>
+                        <td>{t.date}</td>
+                        <td>{t.type}</td>
+                        <td>{t.quantity != null ? t.quantity.toFixed(2) : '-'}</td>
+                        <td>{t.price != null ? t.price.toFixed(2) : '-'}</td>
+                        <td>{t.amount != null ? t.amount.toFixed(2) : '-'}</td>
+                        <td className="txn-note">{t.note || '-'}</td>
+                        <td>
+                          <button className="details-link" onClick={() => openEdit(t)}>Details</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ))
             )}
           </div>
         </div>

@@ -19,3 +19,22 @@ export async function fetchTransactionsByAccountAndSymbol(
     throw error;
   }
 }
+
+export async function updateTransaction(transaction: TransactionItem): Promise<TransactionItem> {
+  try {
+    // Assuming the API supports PUT to /api/v1/transactions/{id}/
+    const url = `${API_BASE_URL}${encodeURIComponent(String(transaction.id))}/`;
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(transaction),
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to update transaction:', error);
+    throw error;
+  }
+}
