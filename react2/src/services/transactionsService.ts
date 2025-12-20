@@ -38,3 +38,21 @@ export async function updateTransaction(transaction: TransactionItem): Promise<T
     throw error;
   }
 }
+
+export async function createTransaction(transaction: TransactionItem): Promise<TransactionItem> {
+  try {
+    const url = API_BASE_URL; // POST to base endpoint
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(transaction),
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to create transaction:', error);
+    throw error;
+  }
+}

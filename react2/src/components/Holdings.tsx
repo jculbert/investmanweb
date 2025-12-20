@@ -4,7 +4,7 @@ import type { HoldingItem } from '../types/HoldingItem';
 import type { TransactionItem } from '../types/TransactionItem';
 import { fetchAccounts } from '../services/holdingsService';
 import { fetchHoldingsByAccount } from '../services/holdingsDetailService';
-import { fetchTransactionsByAccountAndSymbol, updateTransaction } from '../services/transactionsService';
+import { fetchTransactionsByAccountAndSymbol, updateTransaction, createTransaction } from '../services/transactionsService';
 import './Holdings.css';
 
 export function Holdings() {
@@ -106,6 +106,29 @@ export function Holdings() {
         setSaveError(null);
       };
 
+      const openNew = () => {
+        // Create a new TransactionItem with minimal required fields
+        const t: TransactionItem = {
+          id: 0,
+          date: '',
+          type: '',
+          quantity: null,
+          price: null,
+          amount: null,
+          fee: null,
+          capital_return: null,
+          capital_gain: null,
+          acb: null,
+          symbol: transactionSymbol || '',
+          account: selectedAccount.name,
+          upload_id: null,
+          note: '',
+        };
+        setOriginalTransaction(null);
+        setEditingTransaction(t);
+        setSaveError(null);
+      };
+
       const cancelEdit = () => {
         setEditingTransaction(null);
         setOriginalTransaction(null);
@@ -113,7 +136,11 @@ export function Holdings() {
       };
 
       const isDirty = () => {
-        if (!editingTransaction || !originalTransaction) return false;
+        if (!editingTransaction) return false;
+        if (!originalTransaction) {
+          // new transaction: require date and type to enable save
+          return Boolean(editingTransaction.date && editingTransaction.type);
+        }
         return JSON.stringify(editingTransaction) !== JSON.stringify(originalTransaction);
       };
 
@@ -127,12 +154,19 @@ export function Holdings() {
         try {
           setSaveLoading(true);
           setSaveError(null);
-          // Use the edited transaction as payload
+
           const payload: TransactionItem = { ...editingTransaction };
 
-          await updateTransaction(payload);
+          if (!originalTransaction) {
+            // create new
+            await createTransaction(payload);
+          } else {
+            // update existing
+            await updateTransaction(payload);
+          }
+
           // refresh list
-          const refreshed = await fetchTransactionsByAccountAndSymbol(selectedAccount.name, transactionSymbol);
+          const refreshed = await fetchTransactionsByAccountAndSymbol(selectedAccount.name, transactionSymbol as string);
           setTransactions(refreshed);
           // close editor and return to list
           cancelEdit();
@@ -203,10 +237,14 @@ export function Holdings() {
                 </div>
               </div>
             ) : (
-              (transactionsLoading ? (
-                <div className="loading-msg">Loading transactions...</div>
-              ) : (
-                <table>
+              <>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+                  <button className="toggle-btn" onClick={openNew}>Add Transaction</button>
+                </div>
+                {transactionsLoading ? (
+                  <div className="loading-msg">Loading transactions...</div>
+                ) : (
+                  <table>
                   <thead>
                     <tr>
                       <th>Date</th>
@@ -233,9 +271,10 @@ export function Holdings() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
-              ))
-            )}
+                    </table>
+                  )}
+                </>
+              )}
           </div>
         </div>
       );
