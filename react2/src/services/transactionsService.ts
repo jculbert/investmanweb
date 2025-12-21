@@ -56,3 +56,19 @@ export async function createTransaction(transaction: TransactionItem): Promise<T
     throw error;
   }
 }
+
+export async function deleteTransaction(transactionId: number): Promise<void> {
+  try {
+    const url = `${API_BASE_URL}${encodeURIComponent(String(transactionId))}/`;
+    const response = await fetch(url, {
+      method: 'DELETE',
+    });
+    if (!response.ok && response.status !== 204) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    return;
+  } catch (error) {
+    console.error('Failed to delete transaction:', error);
+    throw error;
+  }
+}

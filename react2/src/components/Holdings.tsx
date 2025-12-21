@@ -4,7 +4,7 @@ import type { HoldingItem } from '../types/HoldingItem';
 import type { TransactionItem } from '../types/TransactionItem';
 import { fetchAccounts } from '../services/holdingsService';
 import { fetchHoldingsByAccount } from '../services/holdingsDetailService';
-import { fetchTransactionsByAccountAndSymbol, updateTransaction, createTransaction } from '../services/transactionsService';
+import { fetchTransactionsByAccountAndSymbol, updateTransaction, createTransaction, deleteTransaction } from '../services/transactionsService';
 import './Holdings.css';
 
 export function Holdings() {
@@ -25,6 +25,8 @@ export function Holdings() {
   const [originalTransaction, setOriginalTransaction] = useState<TransactionItem | null>(null);
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deletingError, setDeletingError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAccounts = async () => {
@@ -238,6 +240,7 @@ export function Holdings() {
               </div>
             ) : (
               <>
+                {deletingError && <div className="error-msg">{deletingError}</div>}
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
                   <button className="toggle-btn" onClick={openNew}>Add Transaction</button>
                 </div>
@@ -265,9 +268,33 @@ export function Holdings() {
                         <td>{t.price != null ? t.price.toFixed(2) : '-'}</td>
                         <td>{t.amount != null ? t.amount.toFixed(2) : '-'}</td>
                         <td className="txn-note">{t.note || '-'}</td>
-                        <td>
-                          <button className="details-link" onClick={() => openEdit(t)}>Details</button>
-                        </td>
+                            <td style={{ width: 36 }}>
+                              <button
+                                className="details-link"
+                                onClick={async () => {
+                                  const ok = window.confirm(`Delete transaction #${t.id}? This action cannot be undone.`);
+                                  if (!ok) return;
+                                  try {
+                                    setDeletingId(t.id);
+                                    setDeletingError(null);
+                                    await deleteTransaction(t.id);
+                                    const refreshed = await fetchTransactionsByAccountAndSymbol(selectedAccount.name, transactionSymbol as string);
+                                    setTransactions(refreshed);
+                                  } catch (err) {
+                                    setDeletingError(err instanceof Error ? err.message : 'Failed to delete transaction');
+                                  } finally {
+                                    setDeletingId(null);
+                                  }
+                                }}
+                                disabled={deletingId === t.id}
+                                title="Delete"
+                              >
+                                <strong>X</strong>
+                              </button>
+                            </td>
+                            <td>
+                              <button className="details-link" onClick={() => openEdit(t)}>Details</button>
+                            </td>
                       </tr>
                     ))}
                   </tbody>
