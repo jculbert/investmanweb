@@ -5,6 +5,8 @@ import type { TransactionItem } from '../types/TransactionItem';
 import { fetchAccounts } from '../services/holdingsService';
 import { fetchHoldingsByAccount } from '../services/holdingsDetailService';
 import { fetchTransactionsByAccountAndSymbol, updateTransaction, createTransaction, deleteTransaction } from '../services/transactionsService';
+import TransactionList from './TransactionList';
+import TransactionEditor from './TransactionEditor';
 import './Holdings.css';
 
 export function Holdings() {
@@ -180,6 +182,20 @@ export function Holdings() {
         }
       };
 
+      const handleDelete = async (id: number) => {
+        try {
+          setDeletingId(id);
+          setDeletingError(null);
+          await deleteTransaction(id);
+          const refreshed = await fetchTransactionsByAccountAndSymbol(selectedAccount.name, transactionSymbol as string);
+          setTransactions(refreshed);
+        } catch (err) {
+          setDeletingError(err instanceof Error ? err.message : 'Failed to delete transaction');
+        } finally {
+          setDeletingId(null);
+        }
+      };
+
       return (
         <div className="account-list">
           <button className="back-btn" onClick={closeTransactions}>← Back</button>
@@ -187,128 +203,26 @@ export function Holdings() {
             <h2>Transactions for {transactionSymbol} — {selectedAccount.name}</h2>
             {transactionsError && <div className="error-msg">{transactionsError}</div>}
             {editingTransaction ? (
-              <div className="symbol-details">
-                <h3>Transaction #{editingTransaction.id}</h3>
-                {saveError && <div className="error-msg">{saveError}</div>}
-                <div className="details-grid">
-                  <div className="detail-row">
-                    <label>Date</label>
-                    <input value={editingTransaction.date ?? ''} onChange={(e) => handleFieldChange('date', e.target.value)} />
-                  </div>
-                  <div className="detail-row">
-                    <label>Type</label>
-                    <input value={editingTransaction.type ?? ''} onChange={(e) => handleFieldChange('type', e.target.value)} />
-                  </div>
-                  <div className="detail-row">
-                    <label>Quantity</label>
-                    <input type="number" step="any" value={editingTransaction.quantity ?? ''} onChange={(e) => handleFieldChange('quantity', e.target.value === '' ? null : parseFloat(e.target.value))} />
-                  </div>
-                  <div className="detail-row">
-                    <label>Price</label>
-                    <input type="number" step="any" value={editingTransaction.price ?? ''} onChange={(e) => handleFieldChange('price', e.target.value === '' ? null : parseFloat(e.target.value))} />
-                  </div>
-                  <div className="detail-row">
-                    <label>Amount</label>
-                    <input type="number" step="any" value={editingTransaction.amount ?? ''} onChange={(e) => handleFieldChange('amount', e.target.value === '' ? null : parseFloat(e.target.value))} />
-                  </div>
-                  <div className="detail-row">
-                    <label>Fee</label>
-                    <input type="number" step="any" value={editingTransaction.fee ?? ''} onChange={(e) => handleFieldChange('fee', e.target.value === '' ? null : parseFloat(e.target.value))} />
-                  </div>
-                  <div className="detail-row">
-                    <label>Capital Return</label>
-                    <input type="number" step="any" value={editingTransaction.capital_return ?? ''} onChange={(e) => handleFieldChange('capital_return', e.target.value === '' ? null : parseFloat(e.target.value))} />
-                  </div>
-                  <div className="detail-row">
-                    <label>Capital Gain</label>
-                    <input type="number" step="any" value={editingTransaction.capital_gain ?? ''} onChange={(e) => handleFieldChange('capital_gain', e.target.value === '' ? null : parseFloat(e.target.value))} />
-                  </div>
-                  <div className="detail-row">
-                    <label>ACB</label>
-                    <input type="number" step="any" value={editingTransaction.acb ?? ''} onChange={(e) => handleFieldChange('acb', e.target.value === '' ? null : parseFloat(e.target.value))} />
-                  </div>
-                  <div className="detail-row">
-                    <label>Note</label>
-                    <textarea rows={6} value={editingTransaction.note ?? ''} onChange={(e) => handleFieldChange('note', e.target.value)} />
-                  </div>
-                </div>
-                <div style={{ marginTop: 12 }}>
-                  <button className="back-btn" onClick={cancelEdit} disabled={saveLoading}>Back</button>
-                  <button className="toggle-btn" onClick={doSave} disabled={!isDirty() || saveLoading} style={{ marginLeft: 8 }}>
-                    {saveLoading ? 'Saving...' : 'Save'}
-                  </button>
-                </div>
-              </div>
+              <TransactionEditor
+                transaction={editingTransaction}
+                onChange={handleFieldChange}
+                onSave={doSave}
+                onCancel={cancelEdit}
+                isSaving={saveLoading}
+                isDirty={isDirty()}
+                error={saveError}
+              />
             ) : (
-              <>
-                {deletingError && <div className="error-msg">{deletingError}</div>}
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
-                  <button className="toggle-btn" onClick={openNew}>Add Transaction</button>
-                </div>
-                {transactionsLoading ? (
-                  <div className="loading-msg">Loading transactions...</div>
-                ) : (
-                  <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Type</th>
-                      <th>Quantity</th>
-                      <th>Price</th>
-                      <th>Amount</th>
-                      <th>Note</th>
-                      <th>Details</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.map((t) => (
-                      <tr key={t.id}>
-                        <td>{t.date}</td>
-                        <td>{t.type}</td>
-                        <td>{t.quantity != null ? t.quantity.toFixed(2) : '-'}</td>
-                        <td>{t.price != null ? t.price.toFixed(2) : '-'}</td>
-                        <td>{t.amount != null ? t.amount.toFixed(2) : '-'}</td>
-                        <td className="txn-note">{t.note || '-'}</td>
-                            <td style={{ width: 36 }}>
-                              <button
-                                className="details-link"
-                                onClick={async () => {
-                                  const ok = window.confirm(`Delete transaction #${t.id}? This action cannot be undone.`);
-                                  if (!ok) return;
-                                  try {
-                                    setDeletingId(t.id);
-                                    setDeletingError(null);
-                                    await deleteTransaction(t.id);
-                                    const refreshed = await fetchTransactionsByAccountAndSymbol(selectedAccount.name, transactionSymbol as string);
-                                    setTransactions(refreshed);
-                                  } catch (err) {
-                                    setDeletingError(err instanceof Error ? err.message : 'Failed to delete transaction');
-                                  } finally {
-                                    setDeletingId(null);
-                                  }
-                                }}
-                                disabled={deletingId === t.id}
-                                title="Delete"
-                              >
-                                <strong>X</strong>
-                              </button>
-                            </td>
-                            <td>
-                              <button
-                                className="details-link"
-                                onClick={() => openEdit(t)}
-                                aria-label={`Open transaction ${t.id} details`}
-                              >
-                              <strong>-&gt;</strong>
-                            </button>
-                            </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                    </table>
-                  )}
-                </>
-              )}
+              <TransactionList
+                transactions={transactions}
+                loading={transactionsLoading}
+                error={deletingError || transactionsError}
+                deletingId={deletingId}
+                onAdd={openNew}
+                onEdit={openEdit}
+                onDelete={handleDelete}
+              />
+            )}
           </div>
         </div>
       );
