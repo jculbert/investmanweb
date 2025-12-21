@@ -49,6 +49,11 @@ class HoldingsViewSet(APIView):
             t_list = Transaction.objects.filter(account__name=account).order_by('symbol', 'date')
 
         holdings = []
+        if len(t_list) == 0:
+            # No transactions for account
+            serializer = HoldingSerializer(instance=holdings, many=True)
+            return Response(serializer.data)
+
         symbol = None
         currency = None
         accounts = {}
