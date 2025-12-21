@@ -195,3 +195,10 @@ table td:first-child {
   white-space: nowrap;
   min-width: 100px;
 }
+
+.toggle-btn:disabled,
+.toggle-btn[disabled] {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}

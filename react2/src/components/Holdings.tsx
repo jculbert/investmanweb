@@ -56,6 +56,7 @@ export function Holdings() {
         setHoldingsError(null);
       } catch (err) {
         setHoldingsError(err instanceof Error ? err.message : 'Failed to load holdings');
+        setHoldings([]);
       } finally {
         setHoldingsLoading(false);
       }
@@ -319,9 +320,11 @@ export function Holdings() {
         <div className="holdings-details">
           <div className="holdings-header">
             <h2>Holdings for {selectedAccount.name}</h2>
-            <button 
+            <button
               className={`toggle-btn ${hideZeroAmount ? 'active' : ''}`}
               onClick={() => setHideZeroAmount(!hideZeroAmount)}
+              disabled={holdingsLoading}
+              title={holdingsLoading ? 'Loading holdings...' : (hideZeroAmount ? 'Hiding zeros' : 'Showing zeros')}
             >
               {hideZeroAmount ? 'Hiding' : 'Showing'} zeros
             </button>
