@@ -202,3 +202,18 @@ table td:first-child {
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* Account links used in AllHoldingsTable: reduce padding and spacing between them */
+.account-link {
+  background: transparent;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  padding: 2px 6px;
+  margin-right: 6px;
+  text-decoration: underline;
+  font-size: 13px;
+}
+.account-link:last-child {
+  margin-right: 0;
+}

@@ -5,6 +5,7 @@ import type { TransactionItem } from '../types/TransactionItem';
 import { fetchAccounts } from '../services/holdingsService';
 import { fetchHoldingsByAccount } from '../services/holdingsDetailService';
 import HoldingsTable from './HoldingsTable';
+import AllHoldingsTable from './AllHoldingsTable';
 import { fetchTransactionsByAccountAndSymbol, updateTransaction, createTransaction, deleteTransaction } from '../services/transactionsService';
 import TransactionList from './TransactionList';
 import TransactionEditor from './TransactionEditor';
@@ -30,6 +31,11 @@ export function Holdings() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deletingError, setDeletingError] = useState<string | null>(null);
+  const [showAllHoldings, setShowAllHoldings] = useState(false);
+  const [allHoldings, setAllHoldings] = useState<HoldingItem[]>([]);
+  const [allHoldingsLoading, setAllHoldingsLoading] = useState(false);
+  const [allHoldingsError, setAllHoldingsError] = useState<string | null>(null);
+  const [cameFromAllHoldings, setCameFromAllHoldings] = useState(false);
 
   useEffect(() => {
     const loadAccounts = async () => {
@@ -229,9 +235,18 @@ export function Holdings() {
       );
     }
 
+    const handleBackFromAccount = () => {
+      // if we navigated here from the All Holdings view, return there
+      setSelectedAccount(null);
+      if (cameFromAllHoldings) {
+        setShowAllHoldings(true);
+        setCameFromAllHoldings(false);
+      }
+    };
+
     return (
       <div className="account-list">
-        <button className="back-btn" onClick={() => setSelectedAccount(null)}>← Back</button>
+        <button className="back-btn" onClick={handleBackFromAccount}>← Back</button>
         <div className="holdings-details">
           <div className="holdings-header">
             <h2>Holdings for {selectedAccount.name}</h2>
@@ -270,7 +285,48 @@ export function Holdings() {
 
   return (
     <div className="account-list">
-      <h2>Holdings</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <h2>Holdings</h2>
+        <button className="all-holdings-btn" onClick={async () => {
+          // open aggregated holdings view (backend supports account=All)
+          setShowAllHoldings(true);
+          setAllHoldingsLoading(true);
+          setAllHoldingsError(null);
+          try {
+            const data = await fetchHoldingsByAccount('All');
+            setAllHoldings(data);
+          } catch (err) {
+            setAllHoldingsError(err instanceof Error ? err.message : 'Failed to load all holdings');
+            setAllHoldings([]);
+          } finally {
+            setAllHoldingsLoading(false);
+          }
+        }}>All Holdings</button>
+      </div>
+
+      {showAllHoldings ? (
+        <div className="holdings-details">
+          <button className="back-btn" onClick={() => { setShowAllHoldings(false); setAllHoldings([]); setAllHoldingsError(null); }}>← Back</button>
+          <h2>All Holdings</h2>
+          {allHoldingsError && <div className="error-msg">{allHoldingsError}</div>}
+          {allHoldingsLoading ? (
+            <div className="loading-msg">Loading all holdings...</div>
+          ) : (
+            <AllHoldingsTable
+              holdings={allHoldings}
+              onOpenAccountHoldings={(acct) => {
+                // find the account object and open its holdings
+                const found = accounts.find(a => a.name === acct);
+                if (found) {
+                  setCameFromAllHoldings(true);
+                  setShowAllHoldings(false);
+                  setSelectedAccount(found);
+                }
+              }}
+            />
+          )}
+        </div>
+      ) : null}
       {Object.entries(groupedAccounts).map(([owner, ownerAccounts]) => (
         <div key={owner} className="owner-group">
           <h3>{owner}'s Accounts</h3>
