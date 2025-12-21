@@ -293,7 +293,13 @@ export function Holdings() {
                               </button>
                             </td>
                             <td>
-                              <button className="details-link" onClick={() => openEdit(t)}>Details</button>
+                              <button
+                                className="details-link"
+                                onClick={() => openEdit(t)}
+                                aria-label={`Open transaction ${t.id} details`}
+                              >
+                              <strong>-&gt;</strong>
+                            </button>
                             </td>
                       </tr>
                     ))}
