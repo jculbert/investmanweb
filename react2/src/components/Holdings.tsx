@@ -4,6 +4,7 @@ import type { HoldingItem } from '../types/HoldingItem';
 import type { TransactionItem } from '../types/TransactionItem';
 import { fetchAccounts } from '../services/holdingsService';
 import { fetchHoldingsByAccount } from '../services/holdingsDetailService';
+import HoldingsTable from './HoldingsTable';
 import { fetchTransactionsByAccountAndSymbol, updateTransaction, createTransaction, deleteTransaction } from '../services/transactionsService';
 import TransactionList from './TransactionList';
 import TransactionEditor from './TransactionEditor';
@@ -246,33 +247,8 @@ export function Holdings() {
           {holdingsError && <div className="error-msg">{holdingsError}</div>}
           {holdingsLoading ? (
             <div className="loading-msg">Loading holdings...</div>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Symbol</th>
-                  <th>Quantity</th>
-                  <th>Amount</th>
-                  <th>US Amount</th>
-                  <th>Transactions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredHoldings.map((h) => (
-                  <tr key={h.symbol.name}>
-                    <td className="symbol-name">{h.symbol.name}</td>
-                    <td>{h.quantity.toFixed(2)}</td>
-                    <td>{h.amount.toFixed(2)}</td>
-                    <td>{h.us_amount != null ? h.us_amount.toFixed(2) : '-'}</td>
-                    <td>
-                      <button className="details-link" onClick={() => openTransactions(h.symbol.name)}>
-                        Transactions
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            ) : (
+              <HoldingsTable holdings={filteredHoldings} onOpenTransactions={(symbol) => openTransactions(symbol)} />
           )}
         </div>
       </div>
