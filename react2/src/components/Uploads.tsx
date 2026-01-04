@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { Upload } from '../types/Upload';
-import { fetchUploads } from '../services/uploadsService';
+import { fetchUploads, uploadFile } from '../services/uploadsService';
 import './Uploads.css';
 import UploadDetails from './UploadDetails';
+ 
 
 export default function Uploads() {
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedUploadId, setSelectedUploadId] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -54,6 +56,38 @@ export default function Uploads() {
   return (
     <div className="uploads-list">
       <h2>Uploads</h2>
+      <div className="uploads-controls">
+        <button
+          className="add-btn"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          Add
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          style={{ display: 'none' }}
+          onChange={async (e) => {
+            const f = e.target.files?.[0];
+            if (!f) return;
+            try {
+              // optimistic: show loading state while uploading
+              setLoading(true);
+              const uploaded = await uploadFile(f);
+              // open details view for the returned upload
+              setSelectedUploadId(uploaded.id);
+              // refresh list in background
+              reload().catch(() => {});
+            } catch (err) {
+              setError(err instanceof Error ? err.message : 'Upload failed');
+            } finally {
+              // clear file input so same file can be reselected
+              (e.target as HTMLInputElement).value = '';
+              setLoading(false);
+            }
+          }}
+        />
+      </div>
       {loading ? (
         <div className="loading-msg">Loading uploads...</div>
       ) : error ? (

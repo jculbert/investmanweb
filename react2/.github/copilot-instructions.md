@@ -5,152 +5,61 @@
 This is a React + TypeScript + Vite web application for managing and displaying investment accounts. The app fetches account data from a REST API and displays accounts grouped by owner with currency indicators.
 
 **Architecture Pattern:** Frontend (React/Vite) + Backend (Express/Node) with REST API communication.
+# Investment Manager — AI agent quick guide
 
-## Tech Stack
+This repo is a frontend React + TypeScript app (Vite) that renders holdings, uploads, symbols and transactions. There is no bundled backend in this workspace; services call a backend under `/api/v1/*` and the Vite dev proxy is expected to forward those requests.
 
-- **Frontend:** React 19, TypeScript, Vite 7
-- **Backend:** Express.js with CORS support
-- **Build:** TypeScript compiler + Vite
-- **Package Manager:** npm
+Keep guidance concise and actionable for code edits, feature work, or debugging.
 
-## Project Structure & Key Files
+Key commands
 
-```
-src/
-  components/AccountList.tsx    # Main table component - fetches & displays accounts
-  services/accountService.ts    # API layer - fetchAccounts() function
-  types/Account.ts              # TypeScript interface for Account { name, currency }
-  App.tsx                       # Root component, renders AccountList
-  App.css                       # Header styling (gradient background)
-server.js                       # Express backend - serves GET /api/accounts
-package.json                    # Scripts: dev, server, dev:all
-```
+- Start dev server: `npm run dev` (Vite, default: http://localhost:5173)
+- Build: `npm run build` (runs `tsc -b` then `vite build`)
+- Lint: `npm run lint`
+- Preview production build: `npm run preview`
 
-## Critical Workflows & Commands
+API & proxy expectations
 
-### Local Development
+- Services use relative endpoints like `/api/v1/holdings/` and `/api/v1/uploads/` (see `src/services/*`).
+- Configure or run a backend that exposes the `/api/v1/*` endpoints. Dev proxy is in `vite.config.ts` under `server.proxy` — update `target` to point at your backend host.
 
-**Start everything (recommended):**
-```bash
-npm run dev:all
-```
-Runs Vite frontend (http://localhost:5173) and Express backend (http://localhost:3001) concurrently.
+Primary files & patterns (what to open first)
 
-**Troubleshooting:** If one fails, run separately:
-- `npm run dev` - Vite frontend only
-- `npm run server` - Express backend only (requires separate terminal)
+- Entry + app layout: [src/App.tsx](src/App.tsx#L1)
+- Main feature: `src/components/Holdings.tsx` — orchestrates accounts, holdings, transactions and uses services.
+- Table components: `src/components/HoldingsTable.tsx`, `src/components/AllHoldingsTable.tsx` (presentation only)
+- Transactions editor/list: `src/components/TransactionEditor.tsx`, `src/components/TransactionList.tsx`
+- Uploads UI: `src/components/Uploads.tsx`, `src/components/UploadDetails.tsx`
+- Services: `src/services/*.ts` — `holdingsService.ts`, `holdingsDetailService.ts`, `transactionsService.ts`, `symbolService.ts`, `uploadsService.ts`.
+- Types: `src/types/*.ts` define the shape of `HoldingItem`, `TransactionItem`, `Upload`, `SymbolItem`, `Account`.
 
-### Testing & Validation
+Service conventions (important)
 
-```bash
-npm run lint          # ESLint - checks for code issues
-npm run build         # TypeScript + Vite build
-npm run preview       # Test production build locally
-```
+- All service functions use native `fetch` and throw an Error when `response.ok` is false. Callers expect rejected promises and handle errors with try/catch.
+- API URLs are relative (e.g. `const API_URL = '/api/v1/holdings/'`) so tests/dev rely on Vite proxy or a mounted backend.
+- CRUD endpoints follow Django/DRF-style trailing-slash patterns (e.g. `GET /api/v1/uploads/`, `PUT /api/v1/uploads/{id}/`).
 
-## Project-Specific Conventions
+Component conventions
 
-### Data Flow
+- Functional components with React hooks (`useState`, `useEffect`) and local UI state.
+- Loading / error strings are rendered inline — preserve or reuse existing `loading` and `error` state shapes when adding features.
+- Pass handler callbacks down to presentation components (e.g., `onOpenTransactions` on `HoldingsTable`).
 
-1. **AccountList component** calls `fetchAccounts()` on mount (useEffect)
-2. **accountService** calls `http://localhost:3001/api/accounts`
-3. **server.js** returns hardcoded account array
-4. Component groups accounts by owner name (first word: "Barb", "Jeff")
+When adding features or backend changes
 
-### Component Pattern
+- Update `src/services/*` first with the exact endpoint and response shape.
+- Adjust `vite.config.ts` proxy during local development to point to your backend host.
+- Preserve type definitions in `src/types/*` and update callers when changing shapes.
 
-- Functional components with hooks (useState, useEffect)
-- Async data fetching with try/catch error handling
-- Loading/error states rendered conditionally
+Quick examples
+
+- To fetch holdings for an account: use `fetchHoldingsByAccount(accountName)` (see `src/services/holdingsDetailService.ts`).
+- To update a transaction: use `updateTransaction(transaction)` which PUTs to `/api/v1/transactions/{id}/`.
+
+Notes & gotchas
+
+- There is no `dev:all` script or included Express server here — earlier templates referenced an Express backend; check repo deps but assume backend runs separately.
+- Proxy target in `vite.config.ts` may point to an internal host; update it to `http://localhost:3001` (or your backend) for local testing.
+
+If anything in this guide is unclear or you'd like me to include more examples (e.g., a small backend stub or a docker-compose for the API), tell me which part to expand.
 - CSS Modules/inline styling for component styles
-
-### API Design
-
-- REST endpoint: `GET /api/accounts`
-- Returns: Array of `{ name: string, currency: string }`
-- Error handling: 404/500 responses logged to console
-- CORS enabled for localhost:5173
-
-## Integration Points
-
-### Frontend → Backend
-
-- **Service:** `src/services/accountService.ts`
-- **Function:** `fetchAccounts()` - uses native `fetch()` API
-- **Endpoint:** `http://localhost:3001/api/accounts`
-- **Error:** Throws error if response not OK, caught by component
-
-### Backend → Data
-
-- **File:** `server.js` line 7-25
-- **Modification:** Edit `accounts` array to change data
-- **Restart required:** Yes, server must restart
-
-## Common Tasks
-
-### Adding a New Account
-
-Edit `server.js` accounts array:
-```javascript
-{ "name": "John RRSP", "currency": "CA" }
-```
-Restart server with `npm run server`.
-
-### Modifying Table Display
-
-Edit `AccountList.tsx`:
-- Column headers: lines 42-49 (thead)
-- Row rendering: lines 50-58 (tbody)
-- Owner grouping logic: lines 28-36
-
-### Styling Changes
-
-- Header: `src/App.css` (gradient background)
-- Table: `src/components/AccountList.css` (comprehensive table styling)
-- Color scheme: CA = green (#2e7d32), US = blue (#0066cc)
-
-### Adding New API Endpoint
-
-1. Add route in `server.js` (Express syntax)
-2. Create service function in `src/services/accountService.ts`
-3. Call from component and handle state
-
-## Known Constraints & Gotchas
-
-1. **Hardcoded API URL:** `http://localhost:3001` in `accountService.ts` - won't work in production
-2. **CORS:** Backend has CORS enabled for all origins (dev-only, restrict in production)
-3. **Mock Data:** Account data is hardcoded in server.js - replace with database for production
-4. **No Persistence:** No data modifications supported (no POST/PUT/DELETE endpoints)
-
-## Debugging Tips
-
-- **App shows "Loading..." forever:** Check that `npm run server` is running
-- **CORS errors:** Ensure backend runs on port 3001 and CORS middleware is active
-- **TypeScript errors:** Run `npm run build` to see full type issues
-- **Stale data:** Browser cache or check Network tab - API always returns fresh data
-
-## Performance Considerations
-
-- Accounts array is small (17 items) - no pagination needed
-- Component groups accounts in-memory (fast for this dataset)
-- No caching - fetches on every mount
-- No optimizations needed unless dataset grows >1000 items
-
-## Testing Strategy
-
-Manual testing workflow:
-1. Start app: `npm run dev:all`
-2. Open http://localhost:5173
-3. Verify accounts display grouped by owner
-4. Check currency colors (green/blue)
-5. Verify loading/error states (stop server to test)
-
-## Future Enhancement Ideas
-
-- Filter/search by account name or owner
-- Sort by currency or account type
-- Add account details modal
-- Connect to real database
-- Authentication/authorization
-- Balance/holdings display
-- Transaction history

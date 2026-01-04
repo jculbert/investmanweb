@@ -23,3 +23,16 @@ export async function updateUpload(upload: Upload): Promise<Upload> {
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
+
+export async function uploadFile(file: File): Promise<Upload> {
+  const form = new FormData();
+  form.append('file', file);
+
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    body: form,
+  });
+
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
