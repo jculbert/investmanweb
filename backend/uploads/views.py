@@ -14,7 +14,7 @@ from backend.db_util import add_transaction
 
 # Create your views here.
 class UploadViewSet(viewsets.ModelViewSet):
-    queryset = Upload.objects.order_by('date') # Only used for URL mapping?
+    queryset = Upload.objects.order_by('id') # Only used for URL mapping?
     serializer_class = UploadDetailSerializer # Only used for URL mappong
 
     def get_serializer_class(self):
