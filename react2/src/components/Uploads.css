@@ -25,8 +25,8 @@
 /* Date column */
 .uploads-list th.col-date,
 .uploads-list td.col-date {
-  width: 10%;
-  max-width: 10%;
+  width: 15%;
+  max-width: 15%;
 }
 
 /* File column: make wide (50%) */
@@ -41,8 +41,8 @@
 .uploads-list td.col-txns,
 .uploads-list th.col-result,
 .uploads-list td.col-result {
-  width: 10%;
-  max-width: 10%;
+  width: 9%;
+  max-width: 9%;
 }
 
 .uploads-list th,

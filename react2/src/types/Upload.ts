@@ -4,4 +4,6 @@ export interface Upload {
   file_name: string;
   num_transactions: number;
   result: string;
+  notes?: string;
+  content?: string;
 }
