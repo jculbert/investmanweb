@@ -1,0 +1,65 @@
+.uploads-list {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.uploads-list h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.uploads-list table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* respect explicit column widths */
+}
+
+/* ID column: reduce width by ~50% of a typical small id column */
+.uploads-list th.col-id,
+.uploads-list td.col-id {
+  width: 10%;
+  max-width: 10%;
+}
+
+/* Date column */
+.uploads-list th.col-date,
+.uploads-list td.col-date {
+  width: 10%;
+  max-width: 10%;
+}
+
+/* File column: make wide (50%) */
+.uploads-list th.col-file,
+.uploads-list td.col-file {
+  width: 50%;
+  max-width: 50%;
+}
+
+/* Txns and Result columns: 10% each */
+.uploads-list th.col-txns,
+.uploads-list td.col-txns,
+.uploads-list th.col-result,
+.uploads-list td.col-result {
+  width: 10%;
+  max-width: 10%;
+}
+
+.uploads-list th,
+.uploads-list td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.loading-msg {
+  color: #666;
+  padding: 12px 0;
+}
+
+.error-msg {
+  color: #d32f2f;
+  background: #ffebee;
+  padding: 8px;
+  border-radius: 4px;
+}

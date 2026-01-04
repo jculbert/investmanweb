@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Holdings } from './components/Holdings'
 import SymbolList from './components/SymbolList'
+import Uploads from './components/Uploads'
 import './App.css'
 
-type TabKey = 'accounts' | 'symbols'
+type TabKey = 'accounts' | 'symbols' | 'uploads'
 type Tab = { id: string; key: TabKey; title: string }
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
       return
     }
     const id = `tab-${key}-${Date.now()}`
-    const title = key === 'accounts' ? 'Accounts' : 'Symbols'
+    const title = key === 'accounts' ? 'Accounts' : key === 'symbols' ? 'Symbols' : 'Uploads'
     const newTab: Tab = { id, key, title }
     setTabs((s) => [...s, newTab])
     setActiveId(id)
@@ -48,6 +49,9 @@ function App() {
           <button className="nav-btn" onClick={() => openTab('symbols')}>
             Symbols
           </button>
+          <button className="nav-btn" onClick={() => openTab('uploads')}>
+            Uploads
+          </button>
         </nav>
       </aside>
 
@@ -68,6 +72,7 @@ function App() {
         <main>
           {activeTab.key === 'accounts' && <Holdings />}
           {activeTab.key === 'symbols' && <SymbolList />}
+          {activeTab.key === 'uploads' && <Uploads />}
         </main>
       </div>
     </div>
