@@ -54,6 +54,10 @@ export default function TransactionEditor({ transaction, onChange, onSave, onCan
           <input type="number" step="any" value={transaction.acb ?? ''} onChange={(e) => onChange('acb', e.target.value === '' ? null : parseFloat(e.target.value))} />
         </div>
         <div className="detail-row">
+          <label>Upload ID</label>
+          <input type="number" step="1" value={transaction.upload_id ?? ''} onChange={(e) => onChange('upload_id', e.target.value === '' ? null : parseInt(e.target.value, 10))} />
+        </div>
+        <div className="detail-row">
           <label>Note</label>
           <textarea rows={6} value={transaction.note ?? ''} onChange={(e) => onChange('note', e.target.value)} />
         </div>
