@@ -48,7 +48,8 @@ export function SymbolList() {
         await updateSymbol(selectedSymbol.name, editedSymbol);
         // Update the symbols list and reset edit state
         setSymbols((s) => s.map((sym) => (sym.name === editedSymbol.name ? editedSymbol : sym)));
-        setSelectedSymbol(editedSymbol);
+        // After saving, close the details view and return to the list
+        setSelectedSymbol(null);
         setEditedSymbol(null);
       } catch (err) {
         setSaveError(err instanceof Error ? err.message : 'Failed to save symbol');
