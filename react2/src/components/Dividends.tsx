@@ -15,6 +15,25 @@ function formatAmount(value: number | null): string {
   return value.toFixed(2);
 }
 
+function formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getEndDateForStart(start: string): string | null {
+  const parts = start.split('-');
+  if (parts.length < 2) return null;
+  const year = Number(parts[0]);
+  const monthIndex = Number(parts[1]) - 1;
+  if (!Number.isFinite(year) || !Number.isFinite(monthIndex)) return null;
+
+  const targetMonthIndex = monthIndex + 3;
+  const lastDay = new Date(year, targetMonthIndex, 0);
+  return formatDate(lastDay);
+}
+
 export default function Dividends() {
   const [startDate, setStartDate] = useState<string>(DEFAULT_START);
   const [endDate, setEndDate] = useState<string>(DEFAULT_END);
@@ -58,7 +77,14 @@ export default function Dividends() {
           <input
             type="date"
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            onChange={(e) => {
+              const nextStart = e.target.value;
+              setStartDate(nextStart);
+              const nextEnd = nextStart ? getEndDateForStart(nextStart) : null;
+              if (nextEnd) {
+                setEndDate(nextEnd);
+              }
+            }}
           />
         </label>
         <label className="date-control">
