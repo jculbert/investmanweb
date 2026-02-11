@@ -1,65 +1,72 @@
-# Investment Manager - AI Agent Instructions
-
-## Project Overview
-
-This is a React + TypeScript + Vite web application for managing and displaying investment accounts. The app fetches account data from a REST API and displays accounts grouped by owner with currency indicators.
-
-**Architecture Pattern:** Frontend (React/Vite) + Backend (Express/Node) with REST API communication.
 # Investment Manager — AI agent quick guide
 
-This repo is a frontend React + TypeScript app (Vite) that renders holdings, uploads, symbols and transactions. There is no bundled backend in this workspace; services call a backend under `/api/v1/*` and the Vite dev proxy is expected to forward those requests.
+## Purpose
 
-Keep guidance concise and actionable for code edits, feature work, or debugging.
+Frontend-only React + TypeScript (Vite) app that renders holdings, uploads, symbols and transactions. There is no bundled backend here — the app calls a REST API under `/api/v1/*`. The Vite dev proxy is used in development to forward `/api` requests to a backend service.
 
-Key commands
+## Quick commands
 
-- Start dev server: `npm run dev` (Vite, default: http://localhost:5173)
-- Build: `npm run build` (runs `tsc -b` then `vite build`)
-- Lint: `npm run lint`
-- Preview production build: `npm run preview`
+- `npm run dev` — starts Vite dev server (default: http://localhost:5173)
+- `npm run build` — runs `tsc -b` then `vite build`
+- `npm run lint` — runs `eslint .`
+- `npm run preview` — preview production build
 
-API & proxy expectations
+See `package.json` scripts for exact behavior.
 
-- Services use relative endpoints like `/api/v1/holdings/` and `/api/v1/uploads/` (see `src/services/*`).
-- Configure or run a backend that exposes the `/api/v1/*` endpoints. Dev proxy is in `vite.config.ts` under `server.proxy` — update `target` to point at your backend host.
+## Key architecture notes
 
-Primary files & patterns (what to open first)
+- Single-page React app. Top-level routing/tab UI: [src/App.tsx](src/App.tsx#L1).
+- Main feature area: `Holdings` component coordinates accounts, holdings and transactions: [src/components/Holdings.tsx](src/components/Holdings.tsx#L1).
+- Presentation components live under `src/components/` (e.g., `HoldingsTable`, `AllHoldingsTable`, `TransactionList`, `TransactionEditor`, `Uploads`).
+- Services in `src/services/` perform all network I/O. Types live in `src/types/` and are authoritative for payload shapes.
 
-- Entry + app layout: [src/App.tsx](src/App.tsx#L1)
-- Main feature: `src/components/Holdings.tsx` — orchestrates accounts, holdings, transactions and uses services.
-- Table components: `src/components/HoldingsTable.tsx`, `src/components/AllHoldingsTable.tsx` (presentation only)
-- Transactions editor/list: `src/components/TransactionEditor.tsx`, `src/components/TransactionList.tsx`
-- Uploads UI: `src/components/Uploads.tsx`, `src/components/UploadDetails.tsx`
-- Services: `src/services/*.ts` — `holdingsService.ts`, `holdingsDetailService.ts`, `transactionsService.ts`, `symbolService.ts`, `uploadsService.ts`.
-- Types: `src/types/*.ts` define the shape of `HoldingItem`, `TransactionItem`, `Upload`, `SymbolItem`, `Account`.
+## Dev proxy / backend
 
-Service conventions (important)
+- Proxy config: [vite.config.ts](vite.config.ts#L1). Dev proxy forwards `/api` to the configured backend (example target currently `http://localhost/investmanbackend`). Update `server.proxy['/api'].target` to your running backend (commonly `http://localhost:3001`).
+- Services expect relative URLs such as `/api/v1/holdings/` so auth/CORS are handled by proxy in dev.
 
-- All service functions use native `fetch` and throw an Error when `response.ok` is false. Callers expect rejected promises and handle errors with try/catch.
-- API URLs are relative (e.g. `const API_URL = '/api/v1/holdings/'`) so tests/dev rely on Vite proxy or a mounted backend.
-- CRUD endpoints follow Django/DRF-style trailing-slash patterns (e.g. `GET /api/v1/uploads/`, `PUT /api/v1/uploads/{id}/`).
+## Service conventions (concrete)
 
-Component conventions
+- All services use native `fetch`. On non-OK responses they throw an Error (callers use try/catch). Example: `src/services/holdingsService.ts`.
+- Endpoints consistently use trailing slashes and DRF-style patterns, e.g.:
+	- `GET /api/v1/accounts/` — fetch account list (`fetchAccounts`)
+	- `GET /api/v1/holdings/?account=AccountName` — fetch holdings for an account (`fetchHoldingsByAccount`)
+	- `POST /api/v1/uploads/` — file upload using `FormData` (`uploadFile` in `uploadsService.ts`)
+	- `POST /api/v1/transactions/` and `PUT /api/v1/transactions/{id}/` — create/update transactions (`transactionsService.ts`)
+- When changing API shapes: update `src/services/*` first, then update callers and types in `src/types/*`.
 
-- Functional components with React hooks (`useState`, `useEffect`) and local UI state.
-- Loading / error strings are rendered inline — preserve or reuse existing `loading` and `error` state shapes when adding features.
-- Pass handler callbacks down to presentation components (e.g., `onOpenTransactions` on `HoldingsTable`).
+## Component patterns and expectations
 
-When adding features or backend changes
+- Components are functional and hook-based. Local UI state (loading/error flags, editing buffers) is used extensively (see `Holdings.tsx` for examples of optimistic UI flows and edit buffers).
+- Error and loading UI are simple strings or small placeholders rendered inline — preserve those shapes when adding features so callers can display messages consistently.
+- Pass event handlers down into presentation-only components (e.g., `onOpenTransactions` on `HoldingsTable`).
 
-- Update `src/services/*` first with the exact endpoint and response shape.
-- Adjust `vite.config.ts` proxy during local development to point to your backend host.
-- Preserve type definitions in `src/types/*` and update callers when changing shapes.
+## Files to open first (practical entry points)
 
-Quick examples
+- [src/App.tsx](src/App.tsx#L1) — app shell and tab logic
+- [src/components/Holdings.tsx](src/components/Holdings.tsx#L1) — main orchestration for accounts/transactions
+- [src/services/holdingsService.ts](src/services/holdingsService.ts#L1) and [src/services/holdingsDetailService.ts](src/services/holdingsDetailService.ts#L1) — network call examples
+- [src/services/transactionsService.ts](src/services/transactionsService.ts#L1) — create/update/delete patterns
+- [src/services/uploadsService.ts](src/services/uploadsService.ts#L1) — file upload via `FormData`
+- [src/types](src/types) — canonical TypeScript interfaces used across components
 
-- To fetch holdings for an account: use `fetchHoldingsByAccount(accountName)` (see `src/services/holdingsDetailService.ts`).
-- To update a transaction: use `updateTransaction(transaction)` which PUTs to `/api/v1/transactions/{id}/`.
+## Integration notes / gotchas discovered in code
 
-Notes & gotchas
+- There is no local backend in this repo. Expect to run or configure a backend that exposes `/api/v1/*` endpoints, or update `vite.config.ts` proxy to a test stub.
+- The proxy in `vite.config.ts` currently targets `http://localhost/investmanbackend` and rewrites `/api` to `/api`. Change this to the host/port where your backend is reachable (e.g., `http://localhost:3001`).
+- Services throw on non-OK responses. UI components rely on thrown errors to drive error messages; do not change this global behavior without updating all callers.
 
-- There is no `dev:all` script or included Express server here — earlier templates referenced an Express backend; check repo deps but assume backend runs separately.
-- Proxy target in `vite.config.ts` may point to an internal host; update it to `http://localhost:3001` (or your backend) for local testing.
+## When you edit code
 
-If anything in this guide is unclear or you'd like me to include more examples (e.g., a small backend stub or a docker-compose for the API), tell me which part to expand.
-- CSS Modules/inline styling for component styles
+- Start with the relevant service in `src/services/` when backend shape changes.
+- Update or add types in `src/types/` and then update components that consume them.
+- Run `npm run dev` to test UI against your backend (ensure proxy target is correct).
+
+## If you want me to add more
+
+Tell me whether you want any of the following added to this file:
+- Minimal backend stub (Express) and dev:all script to run both frontend and backend concurrently.
+- Docker-compose example wiring backend + frontend proxy.
+- Example tests or a small test harness for service functions.
+
+If anything below is unclear or missing, tell me which area to expand.

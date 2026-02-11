@@ -1,0 +1,66 @@
+.dividends-view {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.dividends-view h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.dividends-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.date-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+.date-control input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.dividends-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dividends-table th,
+.dividends-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.symbol-cell {
+  font-weight: 600;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #666;
+  padding: 16px;
+}
+
+.loading-msg {
+  color: #666;
+  padding: 12px 0;
+}
+
+.error-msg {
+  color: #d32f2f;
+  background: #ffebee;
+  padding: 8px;
+  border-radius: 4px;
+}

@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Holdings } from './components/Holdings'
 import SymbolList from './components/SymbolList'
 import Uploads from './components/Uploads'
+import Dividends from './components/Dividends'
 import './App.css'
 
-type TabKey = 'accounts' | 'symbols' | 'uploads'
+type TabKey = 'accounts' | 'symbols' | 'uploads' | 'dividends'
 type Tab = { id: string; key: TabKey; title: string }
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
       return
     }
     const id = `tab-${key}-${Date.now()}`
-    const title = key === 'accounts' ? 'Accounts' : key === 'symbols' ? 'Symbols' : 'Uploads'
+    const title = key === 'accounts' ? 'Holdings' : key === 'symbols' ? 'Symbols' : key === 'uploads' ? 'Uploads' : 'Dividends'
     const newTab: Tab = { id, key, title }
     setTabs((s) => [...s, newTab])
     setActiveId(id)
@@ -37,20 +38,24 @@ function App() {
   }
 
   const activeTab = tabs.find((t) => t.id === activeId) || tabs[0]
+  const activeKey = activeTab?.key
 
   return (
     <div className="app-container">
       <aside className="app-nav">
         <div className="nav-title">Investments</div>
         <nav>
-          <button className="nav-btn" onClick={() => openTab('accounts')}>
+          <button className={`nav-btn ${activeKey === 'accounts' ? 'active' : ''}`} onClick={() => openTab('accounts')}>
             Holdings
           </button>
-          <button className="nav-btn" onClick={() => openTab('symbols')}>
+          <button className={`nav-btn ${activeKey === 'symbols' ? 'active' : ''}`} onClick={() => openTab('symbols')}>
             Symbols
           </button>
-          <button className="nav-btn" onClick={() => openTab('uploads')}>
+          <button className={`nav-btn ${activeKey === 'uploads' ? 'active' : ''}`} onClick={() => openTab('uploads')}>
             Uploads
+          </button>
+          <button className={`nav-btn ${activeKey === 'dividends' ? 'active' : ''}`} onClick={() => openTab('dividends')}>
+            Dividends
           </button>
         </nav>
       </aside>
@@ -73,6 +78,7 @@ function App() {
           {activeTab.key === 'accounts' && <Holdings />}
           {activeTab.key === 'symbols' && <SymbolList />}
           {activeTab.key === 'uploads' && <Uploads />}
+          {activeTab.key === 'dividends' && <Dividends />}
         </main>
       </div>
     </div>
