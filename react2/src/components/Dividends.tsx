@@ -43,6 +43,23 @@ export default function Dividends() {
 
   const startCompact = useMemo(() => (startDate ? toCompactDate(startDate) : ''), [startDate]);
   const endCompact = useMemo(() => (endDate ? toCompactDate(endDate) : ''), [endDate]);
+  const totals = useMemo(
+    () =>
+      dividends.reduce(
+        (acc, row) => {
+          const amount = row.amount ?? 0;
+          acc.total += amount;
+          if (row.us_amount !== null && row.us_amount !== undefined) {
+            acc.us += row.us_amount;
+          } else {
+            acc.ca += amount;
+          }
+          return acc;
+        },
+        { total: 0, ca: 0, us: 0 }
+      ),
+    [dividends]
+  );
 
   useEffect(() => {
     if (!startCompact || !endCompact) {
@@ -102,30 +119,37 @@ export default function Dividends() {
       ) : error ? (
         <div className="error-msg">Error: {error}</div>
       ) : (
-        <table className="dividends-table">
-          <thead>
-            <tr>
-              <th>Symbol</th>
-              <th>Amount</th>
-              <th>US Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dividends.length === 0 ? (
+        <div className="dividends-results">
+          <table className="dividends-table">
+            <thead>
               <tr>
-                <td colSpan={3} className="empty-cell">No dividends found.</td>
+                <th>Symbol</th>
+                <th>Amount</th>
+                <th>US Amount</th>
               </tr>
-            ) : (
-              dividends.map((row) => (
-                <tr key={row.symbol}>
-                  <td className="symbol-cell">{row.symbol}</td>
-                  <td>{formatAmount(row.amount)}</td>
-                  <td>{formatAmount(row.us_amount)}</td>
+            </thead>
+            <tbody>
+              {dividends.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="empty-cell">No dividends found.</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                dividends.map((row) => (
+                  <tr key={row.symbol}>
+                    <td className="symbol-cell">{row.symbol}</td>
+                    <td>{formatAmount(row.amount)}</td>
+                    <td>{formatAmount(row.us_amount)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+          <div className="dividends-totals">
+            <div>CA Total: {formatAmount(totals.ca)}</div>
+            <div>US Total: {formatAmount(totals.us)}</div>
+            <div>Total: {formatAmount(totals.total)}</div>
+          </div>
+        </div>
       )}
     </div>
   );
