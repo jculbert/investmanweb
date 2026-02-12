@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
 import type { SymbolItem } from '../types/SymbolItem';
 import { fetchSymbols, updateSymbol } from '../services/symbolService';
+import { fetchDividendsBySymbol } from '../services/dividendsService';
+import type { SymbolDividendsResponse } from '../types/DividendItem';
 import './SymbolList.css';
+
+function formatMetric(value: number | null | undefined): string {
+  if (value === null || value === undefined) return '-';
+  return value.toFixed(2);
+}
 
 export function SymbolList() {
   const [symbols, setSymbols] = useState<SymbolItem[]>([]);
@@ -11,6 +18,10 @@ export function SymbolList() {
   const [editedSymbol, setEditedSymbol] = useState<SymbolItem | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [detailsView, setDetailsView] = useState<'details' | 'dividends'>('details');
+  const [dividendsData, setDividendsData] = useState<SymbolDividendsResponse | null>(null);
+  const [dividendsLoading, setDividendsLoading] = useState(false);
+  const [dividendsError, setDividendsError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -27,6 +38,26 @@ export function SymbolList() {
     };
     load();
   }, []);
+
+  useEffect(() => {
+    if (!selectedSymbol || detailsView !== 'dividends') return;
+
+    const loadDividends = async () => {
+      try {
+        setDividendsLoading(true);
+        const data = await fetchDividendsBySymbol(selectedSymbol.name);
+        setDividendsData(data);
+        setDividendsError(null);
+      } catch (err) {
+        setDividendsError(err instanceof Error ? err.message : 'Failed to load dividends');
+        setDividendsData(null);
+      } finally {
+        setDividendsLoading(false);
+      }
+    };
+
+    loadDividends();
+  }, [detailsView, selectedSymbol]);
 
   if (loading) return <div className="symbol-list loading">Loading symbols...</div>;
   if (error) return <div className="symbol-list error">Error: {error}</div>;
@@ -58,11 +89,78 @@ export function SymbolList() {
       }
     };
 
+    if (detailsView === 'dividends') {
+      const growths = dividendsData?.growths ?? [];
+      return (
+        <div className="symbol-list">
+          <button className="back-btn" onClick={() => setDetailsView('details')}>← Back</button>
+          <div className="symbol-details">
+            <div className="symbol-details-header">
+              <h2>{current.name}</h2>
+              <button className="details-link" onClick={() => setDetailsView('details')}>Details</button>
+            </div>
+            <h3 className="symbol-dividends-title">Dividends</h3>
+            {dividendsLoading ? (
+              <div className="loading-msg">Loading dividends...</div>
+            ) : dividendsError ? (
+              <div className="error-msg">Error: {dividendsError}</div>
+            ) : (
+              <div className="symbol-dividends-view">
+                <div className="symbol-dividends-summary">
+                  <div className="symbol-dividends-card">
+                    <h4>Growths</h4>
+                    <ul>
+                      <li>Growth 1 Year: {formatMetric(growths[0])}</li>
+                      <li>Growth 2 Year: {formatMetric(growths[1])}</li>
+                      <li>Growth All: {formatMetric(growths[2])}</li>
+                    </ul>
+                  </div>
+                  <div className="symbol-dividends-card">
+                    <h4>Yield</h4>
+                    <ul>
+                      <li>Yield: {formatMetric(dividendsData?.yeeld)}</li>
+                    </ul>
+                  </div>
+                </div>
+                <table className="symbol-dividends-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Account</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dividendsData?.dividends?.length ? (
+                      dividendsData.dividends.map((row) => (
+                        <tr key={`${row.date}-${row.account}-${row.amount}`}>
+                          <td>{row.date}</td>
+                          <td>{row.account}</td>
+                          <td>{row.amount.toFixed(3)}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={3} className="empty-cell">No dividends found.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="symbol-list">
-        <button className="back-btn" onClick={() => { setSelectedSymbol(null); setEditedSymbol(null); }}>← Back</button>
+        <button className="back-btn" onClick={() => { setSelectedSymbol(null); setEditedSymbol(null); setDetailsView('details'); }}>← Back</button>
         <div className="symbol-details">
-          <h2>{current.name}</h2>
+          <div className="symbol-details-header">
+            <h2>{current.name}</h2>
+            <button className="details-link" onClick={() => setDetailsView('dividends')}>Dividends</button>
+          </div>
           {saveError && <div className="error-msg">{saveError}</div>}
           <div className="details-grid">
             <div className="detail-row">
@@ -154,7 +252,10 @@ export function SymbolList() {
               <td>{s.last_price_date ?? '-'}</td>
               <td className="symbol-desc">{s.description ?? '-'}</td>
               <td>
-                <button className="details-link" onClick={() => setSelectedSymbol(s)}>
+                <button
+                  className="details-link"
+                  onClick={() => { setSelectedSymbol(s); setEditedSymbol(null); setDetailsView('details'); }}
+                >
                   Details
                 </button>
               </td>

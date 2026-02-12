@@ -1,4 +1,4 @@
-import type { DividendItem } from '../types/DividendItem';
+import type { DividendItem, SymbolDividendsResponse } from '../types/DividendItem';
 
 const API_BASE_URL = '/api/v1/dividends/';
 
@@ -27,6 +27,21 @@ export async function fetchDividendsSummary(startdate: string, enddate: string):
     return await response.json();
   } catch (error) {
     console.error('Failed to fetch dividends summary:', error);
+    throw error;
+  }
+}
+
+export async function fetchDividendsBySymbol(symbol: string): Promise<SymbolDividendsResponse> {
+  try {
+    const query = new URLSearchParams({ symbol });
+    const url = `${API_BASE_URL}?${query.toString()}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch dividends for symbol:', error);
     throw error;
   }
 }

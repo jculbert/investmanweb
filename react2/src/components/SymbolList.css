@@ -61,6 +61,17 @@ th, td {
   font-size: 28px;
 }
 
+.symbol-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.symbol-details-header h2 {
+  margin-bottom: 0;
+}
+
 .error-msg {
   background: #ffebee;
   color: #d32f2f;
@@ -68,6 +79,17 @@ th, td {
   border-radius: 4px;
   margin-bottom: 16px;
   font-size: 14px;
+}
+
+.loading-msg {
+  color: #666;
+  padding: 12px 0;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #666;
+  padding: 16px;
 }
 
 .details-grid {
@@ -129,6 +151,49 @@ th, td {
 
 .save-btn:not(.disabled):hover {
   background: #764ba2;
+}
+
+.symbol-dividends-title {
+  margin: 8px 0 16px;
+  font-size: 20px;
+}
+
+.symbol-dividends-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.symbol-dividends-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.symbol-dividends-card {
+  flex: 1 1 300px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: #fff;
+}
+
+.symbol-dividends-card h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.symbol-dividends-card ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.symbol-dividends-table th,
+.symbol-dividends-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
 }
 
 
