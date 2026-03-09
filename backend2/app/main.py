@@ -80,16 +80,24 @@ def sanitize_payload(table: Table, payload: dict[str, Any]) -> dict[str, Any]:
 def list_transactions(account_id: str, db: Session) -> list[dict[str, Any]]:
     transactions_table = get_table_or_404("transactions_transaction")
     symbols_table = get_table_or_404("symbols_symbol")
+    accounts_table = get_table_or_404("accounts_account")
     symbol_columns = [
         column.label(f"symbol_{column.name}")
         for column in symbols_table.columns
     ]
+    account_columns = [
+        column.label(f"account_{column.name}")
+        for column in accounts_table.columns
+    ]
     joined_tables = transactions_table.join(
         symbols_table,
         transactions_table.c.symbol_id == symbols_table.c.name,
+    ).join(
+        accounts_table,
+        transactions_table.c.account_id == accounts_table.c.name,
     )
     stmt = (
-        select(transactions_table, *symbol_columns)
+        select(transactions_table, *symbol_columns, *account_columns)
         .select_from(joined_tables)
         .where(transactions_table.c.account_id == account_id)
         .order_by(symbols_table.c.name, transactions_table.c.date)
@@ -103,6 +111,12 @@ def list_transactions(account_id: str, db: Session) -> list[dict[str, Any]]:
         for key in symbol_keys:
             symbol[key[len("symbol_"):]] = item.pop(key)
         item["symbol"] = symbol
+
+        account = {}
+        account_keys = [key for key in item if key.startswith("account_")]
+        for key in account_keys:
+            account[key[len("account_"):]] = item.pop(key)
+        item["account"] = account
         items.append(item)
     return items
 

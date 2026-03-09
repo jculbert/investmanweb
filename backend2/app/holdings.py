@@ -10,7 +10,7 @@ from app.main import list_transactions
 
 router = APIRouter()
 
-def add_holding(self, symbol, currency, accounts, holdings):
+def add_holding(symbol, currency, accounts, holdings):
     
     account_list = []
     total = 0.0
@@ -22,9 +22,8 @@ def add_holding(self, symbol, currency, accounts, holdings):
     holding = {"symbol": symbol, "quantity": round(total, 2)}
     holding['accounts'] = account_list
 
- #   if symbol.last_price:
-    if None:
-        amount = total * symbol.last_price
+    if symbol['last_price']:
+        amount = total * symbol['last_price']
     else:
         amount = 0.0
     holding['amount'] = round(amount/0.75, 2) if currency == 'US' else amount
@@ -61,18 +60,18 @@ def holdings(
                 quantity = -t['quantity']
             case 'SPLIT':
                 # Update previous account quantity according to split factor
-                if t['account_id'] in accounts:
-                    accounts[t['account_id']] = accounts[t['account_id']] * t['amount']
+                if t['account']['name'] in accounts:
+                    accounts[t['account']['name']] = accounts[t['account']['name']] * t['amount']
                 continue
             case _:
                 continue
 
         if symbol:
             if t['symbol']['name'] == symbol['name']:
-                if not t['account_id'] in accounts:
-                    accounts[t['account_id']] = quantity
+                if not t['account']['name'] in accounts:
+                    accounts[t['account']['name']] = quantity
                 else:
-                    accounts[t.account_id] += quantity
+                    accounts[t['account']['name']] += quantity
                 continue
 
             # New symbol, complete the previous
@@ -80,7 +79,7 @@ def holdings(
 
         symbol = t['symbol']
         currency = t['account']['currency']
-        accounts = {t['account_id']: quantity}
+        accounts = {t['account']['name']: quantity}
 
     # Need to complete the last symbol upon loop exit
     add_holding(symbol, currency, accounts, holdings)
