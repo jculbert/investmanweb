@@ -77,6 +77,41 @@ def sanitize_payload(table: Table, payload: dict[str, Any]) -> dict[str, Any]:
     return filtered
 
 
+def list_transactions(account_id: str, db: Session) -> list[dict[str, Any]]:
+    transactions_table = get_table_or_404("transactions_transaction")
+    symbols_table = get_table_or_404("symbols_symbol")
+    symbol_columns = [
+        column.label(f"symbol_{column.name}")
+        for column in symbols_table.columns
+    ]
+    joined_tables = transactions_table.join(
+        symbols_table,
+        transactions_table.c.symbol_id == symbols_table.c.name,
+    )
+    stmt = (
+        select(transactions_table, *symbol_columns)
+        .select_from(joined_tables)
+        .where(transactions_table.c.account_id == account_id)
+        .order_by(symbols_table.c.name, transactions_table.c.date)
+    )
+    rows = db.execute(stmt).mappings().all()
+    items = []
+    for row in rows:
+        item = serialize_row(row)
+        symbol = {}
+        symbol_keys = [key for key in item if key.startswith("symbol_")]
+        for key in symbol_keys:
+            symbol[key[len("symbol_"):]] = item.pop(key)
+        item["symbol"] = symbol
+        items.append(item)
+    return items
+
+
+from app.holdings import router as holdings_router
+
+app.include_router(holdings_router)
+
+
 @app.on_event("startup")
 def startup_event() -> None:
     refresh_metadata()
