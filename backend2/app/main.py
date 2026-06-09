@@ -18,7 +18,6 @@ class RecordPayload(BaseModel):
 
 app = FastAPI(title="InvestmanWeb API", version="1.0.0")
 
-
 def get_table_or_404(table_name: str) -> Table:
     table = metadata.tables.get(table_name)
     if table is None:
@@ -34,7 +33,6 @@ def get_single_pk_column(table: Table):
             detail=f"Table {table.name} is not supported because it does not have a single-column primary key.",
         )
     return pk_columns[0]
-
 
 def coerce_pk(pk_column, raw_value: str):
     try:
@@ -120,15 +118,15 @@ def list_transactions(account_id: str, db: Session) -> list[dict[str, Any]]:
         items.append(item)
     return items
 
-
-from app.holdings import router as holdings_router
-
-app.include_router(holdings_router)
-
-
 @app.on_event("startup")
 def startup_event() -> None:
     refresh_metadata()
+
+from app.holdings import router as holdings_router
+app.include_router(holdings_router)
+
+from app.accounts import router as accounts_router
+app.include_router(accounts_router)
 
 
 @app.get("/health")
@@ -156,15 +154,18 @@ def list_records(
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
-) -> dict[str, Any]:
+#) -> dict[str, Any]:
+) -> list[dict[str, Any]]:
     table = get_table_or_404(table_name)
     stmt = select(table).limit(limit).offset(offset)
     rows = db.execute(stmt).mappings().all()
-    return {
-        "table": table_name,
-        "count": len(rows),
-        "items": [jsonable_encoder(serialize_row(row)) for row in rows],
-    }
+#    return {
+#        "table": table_name,
+#        "count": len(rows),
+#        "items": [jsonable_encoder(serialize_row(row)) for row in rows],
+#    }
+#    return {[jsonable_encoder(serialize_row(row)) for row in rows]}
+    return rows
 
 
 @app.get("/{table_name}/{record_id}")
@@ -260,3 +261,4 @@ def delete_record(table_name: str, record_id: str, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="Record not found")
 
     return {"table": table_name, "deleted": True, "id": record_id}
+

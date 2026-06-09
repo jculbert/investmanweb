@@ -1,6 +1,6 @@
 import type { HoldingItem } from '../types/HoldingItem';
 
-const API_URL = '/api/v1/holdings/';
+const API_URL = '/backend/holdings/';
 
 export async function fetchHoldingsByAccount(accountName: string): Promise<HoldingItem[]> {
   try {

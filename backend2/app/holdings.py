@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.main import list_transactions
 
-
 router = APIRouter()
 
 def add_holding(symbol, currency, accounts, holdings):
@@ -32,7 +31,8 @@ def add_holding(symbol, currency, accounts, holdings):
     holdings.append(holding)
 
 @router.get("/xxx/", include_in_schema=False)
-def holdings(
+@router.get("/xxx", include_in_schema=False)
+def holdingsx(
     account: str = Query(...),
     db: Session = Depends(get_db),
 ) -> list[dict[str, Any]]:

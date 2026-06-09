@@ -1,0 +1,204 @@
+{
+    "tables": [
+        {
+            "name": "accounts_account",
+            "primary_keys": [
+                "name"
+            ],
+            "columns": [
+                "name",
+                "account_number",
+                "currency"
+            ]
+        },
+        {
+            "name": "auth_group",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "name"
+            ]
+        },
+        {
+            "name": "auth_user",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "password",
+                "last_login",
+                "is_superuser",
+                "username",
+                "first_name",
+                "last_name",
+                "email",
+                "is_staff",
+                "is_active",
+                "date_joined"
+            ]
+        },
+        {
+            "name": "django_content_type",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "app_label",
+                "model"
+            ]
+        },
+        {
+            "name": "django_migrations",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "app",
+                "name",
+                "applied"
+            ]
+        },
+        {
+            "name": "django_session",
+            "primary_keys": [
+                "session_key"
+            ],
+            "columns": [
+                "session_key",
+                "session_data",
+                "expire_date"
+            ]
+        },
+        {
+            "name": "symbols_symbol",
+            "primary_keys": [
+                "name"
+            ],
+            "columns": [
+                "name",
+                "last_price",
+                "last_price_date",
+                "description",
+                "notes",
+                "reviewed_date",
+                "review_result"
+            ]
+        },
+        {
+            "name": "uploads_upload",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "date",
+                "num_transactions",
+                "result",
+                "content",
+                "file_name",
+                "notes"
+            ]
+        },
+        {
+            "name": "auth_permission",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "name",
+                "content_type_id",
+                "codename"
+            ]
+        },
+        {
+            "name": "auth_user_groups",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "user_id",
+                "group_id"
+            ]
+        },
+        {
+            "name": "django_admin_log",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "action_time",
+                "object_id",
+                "object_repr",
+                "action_flag",
+                "change_message",
+                "content_type_id",
+                "user_id"
+            ]
+        },
+        {
+            "name": "prices_price",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "date",
+                "price",
+                "symbol_id"
+            ]
+        },
+        {
+            "name": "transactions_transaction",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "date",
+                "type",
+                "quantity",
+                "price",
+                "amount",
+                "hash",
+                "note",
+                "account_id",
+                "symbol_id",
+                "capital_return",
+                "acb",
+                "capital_gain",
+                "fee",
+                "upload_id"
+            ]
+        },
+        {
+            "name": "auth_group_permissions",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "group_id",
+                "permission_id"
+            ]
+        },
+        {
+            "name": "auth_user_user_permissions",
+            "primary_keys": [
+                "id"
+            ],
+            "columns": [
+                "id",
+                "user_id",
+                "permission_id"
+            ]
+        }
+    ]
+}

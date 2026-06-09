@@ -1,7 +1,7 @@
 import type { Account } from '../types/Account';
 
 // Use relative path so Vite proxy handles CORS in dev.
-const API_URL = '/api/v1/accounts/';
+const API_URL = '/backend/accounts/';
 
 export async function fetchAccounts(): Promise<Account[]> {
   try {
