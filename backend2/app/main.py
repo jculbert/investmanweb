@@ -128,11 +128,12 @@ app.include_router(holdings_router)
 from app.accounts import router as accounts_router
 app.include_router(accounts_router)
 
+from app.transactions import router as transactions_router
+app.include_router(transactions_router)
 
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
-
 
 @app.get("/tables")
 def list_tables() -> dict[str, Any]:
