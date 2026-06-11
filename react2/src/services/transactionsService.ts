@@ -1,7 +1,7 @@
 import type { TransactionItem } from '../types/TransactionItem';
 
 // Use relative path so Vite proxy handles CORS in dev.
-const API_BASE_URL = '/api/v1/transactions/';
+const API_BASE_URL = 'backend/transactions/';
 
 export async function fetchTransactionsByAccountAndSymbol(
   accountName: string,
