@@ -1,12 +1,13 @@
 from typing import Any
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException, Body
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from sqlalchemy import select, cast, Float
-
+from sqlalchemy import select, cast, Float, update
+from sqlalchemy.exc import IntegrityError
 from app.database import get_db
 
-from app.main import app, get_table_or_404
+from app.main import app, get_table_or_404, coerce_pk, get_single_pk_column, sanitize_payload, serialize_row, RecordPayload
 
 router = APIRouter()
 
@@ -52,3 +53,39 @@ def list_transactions(
     )
     rows = db.execute(stmt).mappings().all()
     return rows
+
+@app.put("/transactions/{record_id}")
+@app.put("/transactions/{record_id}/")
+def update_transaction(
+    record_id: str, payload: Any = Body(...), db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    table = get_table_or_404("transactions_transaction")
+    pk_column = get_single_pk_column(table)
+
+    try:
+        pk_value = coerce_pk(pk_column, record_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    # support both wrapped payloads (RecordPayload with `.data`) and
+    # bare JSON objects sent directly in the request body
+    body_data = getattr(payload, "data", None) if not isinstance(payload, dict) else payload
+    if body_data is None and hasattr(payload, "__dict__"):
+        body_data = getattr(payload, "__dict__", None)
+    values = sanitize_payload(table, body_data)
+    if pk_column.name in values and values[pk_column.name] != pk_value:
+        raise HTTPException(status_code=422, detail="Changing primary key is not supported")
+
+    try:
+        result = db.execute(update(table).where(pk_column == pk_value).values(**values))
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(status_code=409, detail=str(exc.orig)) from exc
+
+    if result.rowcount == 0:
+        raise HTTPException(status_code=404, detail="Record not found")
+
+    stmt = select(table).where(pk_column == pk_value)
+    updated = db.execute(stmt).mappings().first()
+    return updated
