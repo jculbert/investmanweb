@@ -1,3 +1,4 @@
+import hashlib
 from typing import Any
 
 from fastapi import APIRouter, Depends, Query, HTTPException, Body
@@ -63,7 +64,7 @@ def get_transactions(
 
 def update_transaction(
     _id: int, values: dict[str, Any], db: Session
-) -> dict[str, Any]:
+) -> None:
     print(f"Updating transaction with ID {_id} and values: {values}")
     table = get_table_or_404("transactions_transaction")
 
@@ -77,44 +78,83 @@ def update_transaction(
     if result.rowcount == 0:
         raise HTTPException(status_code=404, detail="Record not found")
 
-    stmt = select(table).where(table.c.id == _id)
-    updated = db.execute(stmt).mappings().first()
-    return updated
+    return None
 
-def update_acb(
+def update_hash(id: int, db: Session) -> None:
+    table = get_table_or_404("transactions_transaction")
+    stmt = select(table).where(table.c.id == id)
+    trans = db.execute(stmt).mappings().first()
+    if not trans:
+        raise HTTPException(status_code=404, detail="Record not found: update_hash")
+
+    # Serialize the row to JSON and compute the hash
+    m = hashlib.md5()
+    if 'account_id' in trans:
+        print(trans['account_id'])
+        m.update(trans['account_id'].encode('ascii'))
+    if 'symbol_id' in trans:
+        print(trans['symbol_id'])
+        m.update(trans['symbol_id'].encode('ascii'))
+    if 'date' in trans:
+        print(trans['date'].strftime("%Y%m%d"))
+        m.update(trans['date'].strftime("%Y%m%d").encode('ascii'))
+    if 'type' in trans:
+        print(trans['type'])
+        m.update(trans['type'].encode('ascii'))
+    if 'quantity' in trans:
+        print(type(trans['quantity']))
+        print(str(trans['quantity']))
+        m.update(str(trans['quantity']).encode('ascii'))
+    if 'price' in trans:
+        print(str(trans['price']))
+        m.update(str(trans['price']).encode('ascii'))
+    if 'amount' in trans:
+        print(str(trans['amount']))
+        m.update(str(trans['amount']).encode('ascii'))
+
+    # Update the hash in the database
+    update_transaction(id, {"hash": m.hexdigest()}, db)
+
+# Iterate all transactions for a given account and symbol, updating the ACB and capital gain for each transaction
+def update_transaction_acbs(
         account: str, symbol: str, db: Session
 ) -> None:
     acb = 0.0
     shares = 0
-    t_list = query_transactions(account, symbol)
+    t_list = query_transactions(account, symbol, db)
+    print(f"Updating ACB for account: {account}, symbol: {symbol}. Total transactions: {len(t_list)}")  
     for t in t_list:
-        if t.type == 'BUY':
-            acb = acb + t.price * t.quantity
-            if t.fee:
-                acb = acb + t.fee
-            shares = shares + t.quantity
-        elif t.type == 'SELL':
+        if 'type' not in t or not t['type']:
+            print(f"Skipping transaction with ID {t.get('id')} due to missing or empty 'type' field.")
+            continue
+        has_price_and_quantity = 'price' in t and t['price'] and 'quantity' in t and t['quantity']
+
+        if t['type'] == 'BUY' and has_price_and_quantity:
+            acb = acb + t['price'] * t['quantity']
+            if 'fee' in t and t['fee']:
+                acb = acb + t['fee']
+            shares = shares + t['quantity']
+            update_transaction(t['id'], {"acb": acb}, db)
+        elif t['type'] == 'SELL' and has_price_and_quantity:
             if shares <= 0:
                 # Something is wrong in the transaction history
                 # reset ACB and capital gain to 0
+                print(f"Invalid transaction history for ID {t.get('id')}")
                 acb = 0.0
                 shares = 0
-                t.acb = 0.0
-                t.capital_gain = 0.0
-                t.save()
+                update_transaction(t['id'], {"acb": 0.0, "capital_gain": 0.0}, db)
                 continue
-            t.capital_gain = t.price * t.quantity - (acb / shares) * t.quantity
-            if t.fee:
-                t.capital_gain = t.capital_gain - t.fee
+            capital_gain = t['price'] * t['quantity'] - (acb / shares) * t['quantity']
+            if 'fee' in t and t['fee']:
+                capital_gain = capital_gain - t['fee']
 
-            acb = acb * (shares - t.quantity) / shares
+            acb = acb * (shares - t['quantity']) / shares
 
-            shares = shares - t.quantity
-        elif t.type == 'DIST_D' and t.capital_return:
-            acb = acb - t.capital_return
-
-        t.acb = acb
-        update_transaction(t.id, {"acb": acb, "capital_gain": t.capital_gain}, db)
+            shares = shares - t['quantity']
+            update_transaction(t['id'], {"acb": acb, "capital_gain": capital_gain}, db)
+        elif t['type'] == 'DIST_D' and 'capital_return' in t and t['capital_return']:
+            acb = acb - t['capital_return']
+            update_transaction(t['id'], {"acb": acb}, db)
 
     return
 
@@ -140,7 +180,17 @@ def put_transaction(
     if table.c.id.name in values and values[table.c.id.name] != _id:
         raise HTTPException(status_code=422, detail="Changing primary key is not supported")
     
-    return update_transaction(_id, values, db)
+    update_transaction(_id, values, db)
+    update_hash(_id, db)
+
+    #stmt = select(table).where(table.c.id == _id)
+    stmt = select(table.c.account_id, table.c.symbol_id).where(table.c.id == _id)
+    updated = db.execute(stmt).mappings().first()
+    update_transaction_acbs(updated.get("account_id"), updated.get("symbol_id"), db)
+
+    stmt = select(table).where(table.c.id == _id)
+    updated = db.execute(stmt).mappings().first()
+    return updated
 
 @app.post("/transactions")
 @app.post("/transactions/")
