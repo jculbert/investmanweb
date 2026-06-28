@@ -1,10 +1,10 @@
 import hashlib
 from typing import Any
 
-from fastapi import APIRouter, Depends, Query, HTTPException, Body
+from fastapi import APIRouter, Depends, Query, HTTPException, Body, Response
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from sqlalchemy import insert, select, cast, Float, update
+from sqlalchemy import insert, select, cast, Float, update, delete
 from sqlalchemy.exc import IntegrityError
 from app.database import get_db
 
@@ -76,9 +76,25 @@ def update_transaction(
         raise HTTPException(status_code=409, detail=str(exc.orig)) from exc
 
     if result.rowcount == 0:
-        raise HTTPException(status_code=404, detail="Record not found")
+        raise HTTPException(status_code=404, detail="Record not found - update_transaction")
 
     return None
+
+# Function to convert decimal to string like Python 2's str() function
+# For compatibility with django backend
+def decimal_to_py2_string(d):
+    s = format(d, 'f')          # Fixed-point, no scientific notation
+
+    if '.' in s:
+        # Remove trailing zeros
+        s = s.rstrip('0')
+
+        # If we removed everything after the decimal point,
+        # leave a single zero.
+        if s.endswith('.'):
+            s += '0'
+
+    return s
 
 def update_hash(id: int, db: Session) -> None:
     table = get_table_or_404("transactions_transaction")
@@ -90,30 +106,25 @@ def update_hash(id: int, db: Session) -> None:
     # Serialize the row to JSON and compute the hash
     m = hashlib.md5()
     if 'account_id' in trans:
-        print(trans['account_id'])
         m.update(trans['account_id'].encode('ascii'))
     if 'symbol_id' in trans:
-        print(trans['symbol_id'])
         m.update(trans['symbol_id'].encode('ascii'))
     if 'date' in trans:
-        print(trans['date'].strftime("%Y%m%d"))
         m.update(trans['date'].strftime("%Y%m%d").encode('ascii'))
     if 'type' in trans:
-        print(trans['type'])
         m.update(trans['type'].encode('ascii'))
     if 'quantity' in trans:
-        print(type(trans['quantity']))
-        print(str(trans['quantity']))
-        m.update(str(trans['quantity']).encode('ascii'))
+        m.update(decimal_to_py2_string(trans['quantity']).encode('ascii'))
     if 'price' in trans:
-        print(str(trans['price']))
-        m.update(str(trans['price']).encode('ascii'))
+        m.update(decimal_to_py2_string(trans['price']).encode('ascii'))
     if 'amount' in trans:
-        print(str(trans['amount']))
-        m.update(str(trans['amount']).encode('ascii'))
+        m.update(decimal_to_py2_string(trans['amount']).encode('ascii'))
 
-    # Update the hash in the database
-    update_transaction(id, {"hash": m.hexdigest()}, db)
+    # Update the hash in the database if changed
+    digest = m.hexdigest()
+    if trans.get('hash') != digest:
+        print(f"Updating hash for transaction ID {id} to {digest}")
+        update_transaction(id, {"hash": m.hexdigest()}, db)
 
 # Iterate all transactions for a given account and symbol, updating the ACB and capital gain for each transaction
 def update_transaction_acbs(
@@ -158,12 +169,20 @@ def update_transaction_acbs(
 
     return
 
+# Transaction fields account and symbol are presented as account and symbol in the API,
+# but are stored as account_id and symbol_id in the database. This mapping is used to translate between the two.
+def map_fields(values: dict[str, Any]
+) -> None:
+    if "account" in values:
+        values["account_id"] = values.pop("account")
+    if "symbol" in values:
+        values["symbol_id"] = values.pop("symbol")
+    
 @app.put("/transactions/{record_id}")
 @app.put("/transactions/{record_id}/")
 def put_transaction(
     record_id: str, payload: Any = Body(...), db: Session = Depends(get_db)
 ) -> dict[str, Any]:
-    print("Received payload:", payload)
     table = get_table_or_404("transactions_transaction")
 
     try:
@@ -176,20 +195,27 @@ def put_transaction(
     body_data = getattr(payload, "data", None) if not isinstance(payload, dict) else payload
     if body_data is None and hasattr(payload, "__dict__"):
         body_data = getattr(payload, "__dict__", None)
+
+    map_fields(body_data) #Remove account and symbol fields, replace with account_id and symbol_id
     values = sanitize_payload(table, body_data)
+
     if table.c.id.name in values and values[table.c.id.name] != _id:
         raise HTTPException(status_code=422, detail="Changing primary key is not supported")
     
     update_transaction(_id, values, db)
     update_hash(_id, db)
 
-    #stmt = select(table).where(table.c.id == _id)
+    # Update ACB and capital gain for the account and symbol
     stmt = select(table.c.account_id, table.c.symbol_id).where(table.c.id == _id)
     updated = db.execute(stmt).mappings().first()
+    if not updated:
+        raise HTTPException(status_code=404, detail="Record not found: get account and symbol")
     update_transaction_acbs(updated.get("account_id"), updated.get("symbol_id"), db)
 
     stmt = select(table).where(table.c.id == _id)
     updated = db.execute(stmt).mappings().first()
+    if not updated:
+        raise HTTPException(status_code=404, detail="Record not found: return result")
     return updated
 
 @app.post("/transactions")
@@ -205,17 +231,57 @@ def post_transaction(
     if body_data is None and hasattr(payload, "__dict__"):
         body_data = getattr(payload, "__dict__", None)
 
+    map_fields(body_data) #Remove account and symbol fields, replace with account_id and symbol_id
     values = sanitize_payload(table, body_data)
+
+    # Set hash to a dummy value, will get updated after insert
+    values["hash"] = "dummy_hash"
+    # Remove the primary key from the values if present, as it will be auto-generated
+    if table.c.id.name in values:
+        del values[table.c.id.name]
     print("Sanitized values:", values)
 
     try:
         result = db.execute(insert(table).values(**values))
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Record not found - post_transaction")
+        _id = result.inserted_primary_key[0]
         db.commit()
-        pk_value = result.inserted_primary_key[0]
-        pk_column = get_single_pk_column(table)
-        stmt = select(table).where(pk_column == pk_value)
-        created = db.execute(stmt).mappings().first()
-        return created
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(status_code=409, detail=str(exc.orig)) from exc
+
+    update_hash(_id, db)
+
+    # Update ACB and capital gain for the account and symbol
+    stmt = select(table.c.account_id, table.c.symbol_id).where(table.c.id == _id)
+    updated = db.execute(stmt).mappings().first()
+    if not updated:
+        raise HTTPException(status_code=404, detail="Record not found: get account and symbol")
+    update_transaction_acbs(updated.get("account_id"), updated.get("symbol_id"), db)
+
+    stmt = select(table).where(table.c.id == _id)
+    created = db.execute(stmt).mappings().first()
+    if not created:
+        raise HTTPException(status_code=404, detail="Record not found: return result")
+    return created
+
+@app.delete("/transactions/{record_id}")
+@app.delete("/transactions/{record_id}/")
+def delete_record(record_id: str, db: Session = Depends(get_db)
+) -> Response:
+    table = get_table_or_404("transactions_transaction")
+
+    try:
+        _id = coerce_pk(table.c.id, record_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    result = db.execute(delete(table).where(table.c.id == _id))
+    db.commit()
+
+    if result.rowcount == 0:
+        raise HTTPException(status_code=404, detail="Record not found")
+
+    return Response(status_code=204)
+
