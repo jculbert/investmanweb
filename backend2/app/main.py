@@ -131,6 +131,9 @@ app.include_router(accounts_router)
 from app.transactions import router as transactions_router
 app.include_router(transactions_router)
 
+from app.notes import router as notes_router
+app.include_router(notes_router)
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
