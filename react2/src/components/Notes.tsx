@@ -1,9 +1,30 @@
 import { useEffect, useState } from 'react';
 import type { Note } from '../types/Note';
-import { fetchNotes, updateNote } from '../services/noteService';
+import { createNote, fetchNotes, updateNote } from '../services/noteService';
 import { fetchAccounts } from '../services/holdingsService';
 import { fetchSymbols } from '../services/symbolService';
 import './Notes.css';
+
+function getTodayDate(): string {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = `${today.getMonth() + 1}`.padStart(2, '0');
+  const day = `${today.getDate()}`.padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function createEmptyNote(): Note {
+  return {
+    id: 0,
+    date: getTodayDate(),
+    account: '',
+    symbol1: null,
+    symbol2: null,
+    review_result: null,
+    note: '',
+  };
+}
 
 export default function Notes() {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -46,14 +67,23 @@ export default function Notes() {
     setEditedNote({ ...editedNote, [field]: value });
   };
 
+  const handleAddNote = () => {
+    const newNote = createEmptyNote();
+    setSelectedNote(newNote);
+    setEditedNote({ ...newNote });
+    setSaveError(null);
+  };
+
   const handleSave = async () => {
     if (!hasChanges || !editedNote || !selectedNote) return;
 
     try {
       setSaving(true);
       setSaveError(null);
-      const savedNote = await updateNote(selectedNote.id, editedNote);
-      setNotes((current) => current.map((note) => (note.id === savedNote.id ? savedNote : note)));
+      const isNewNote = selectedNote.id === 0;
+      const savedNote = isNewNote ? await createNote(editedNote) : await updateNote(selectedNote.id, editedNote);
+
+      setNotes((current) => (isNewNote ? [savedNote, ...current] : current.map((note) => (note.id === savedNote.id ? savedNote : note))));
       setSelectedNote(null);
       setEditedNote(null);
     } catch (err) {
@@ -88,7 +118,7 @@ export default function Notes() {
 
         <div className="notes-details">
           <div className="notes-details-header">
-            <h3>Note: {current.id}</h3>
+            <h3>{current.id === 0 ? 'New Note' : `Note: ${current.id}`}</h3>
             <button
               className={`notes-save-btn ${hasChanges ? 'active' : 'disabled'}`}
               onClick={handleSave}
@@ -184,6 +214,13 @@ export default function Notes() {
 
   return (
     <div className="notes-list">
+      <div className="notes-list-header">
+        <h2>Notes</h2>
+        <button className="notes-add-btn" onClick={handleAddNote}>
+          Add Note
+        </button>
+      </div>
+
       {notes.length === 0 ? (
         <div className="notes-empty">No notes found.</div>
       ) : (

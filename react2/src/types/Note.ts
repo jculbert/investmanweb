@@ -4,5 +4,6 @@ export interface Note {
   account: string;
   symbol1: string | null;
   symbol2: string | null;
+  review_result: string | null;
   note: string | null;
 }
