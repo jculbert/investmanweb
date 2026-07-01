@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Note } from '../types/Note';
 import { fetchNotes, updateNote } from '../services/noteService';
+import { fetchAccounts } from '../services/holdingsService';
 import './Notes.css';
 
 export default function Notes() {
@@ -11,14 +12,16 @@ export default function Notes() {
   const [editedNote, setEditedNote] = useState<Note | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [accountNames, setAccountNames] = useState<string[]>([]);
 
   useEffect(() => {
     async function loadNotes() {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchNotes();
-        setNotes(data);
+        const [notesData, accountsData] = await Promise.all([fetchNotes(), fetchAccounts()]);
+        setNotes(notesData);
+        setAccountNames(accountsData.map((account) => account.name));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load notes');
       } finally {
@@ -102,11 +105,18 @@ export default function Notes() {
 
             <div className="notes-detail-row">
               <label className="notes-detail-label">Account:</label>
-              <input
+              <select
                 className="notes-detail-input"
                 value={current.account ?? ''}
                 onChange={(e) => handleFieldChange('account', e.target.value)}
-              />
+              >
+                <option value="">Select account</option>
+                {accountNames.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="notes-detail-row">
