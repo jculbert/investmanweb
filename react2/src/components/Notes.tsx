@@ -148,7 +148,25 @@ export default function Notes() {
         <div className="notes-empty">No notes found.</div>
       ) : (
         notes.map((note) => (
-          <div key={note.id} className="notes-card">
+          <div
+            key={note.id}
+            className="notes-card"
+            onClick={() => {
+              setSelectedNote(note);
+              setEditedNote({ ...note });
+              setSaveError(null);
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setSelectedNote(note);
+                setEditedNote({ ...note });
+                setSaveError(null);
+              }
+            }}
+          >
             <div className="notes-card-summary">
               <div><strong>ID:</strong> {note.id}</div>
               <div><strong>Date:</strong> {note.date}</div>
@@ -160,17 +178,6 @@ export default function Notes() {
             <div className="notes-card-note">
               <textarea readOnly value={note.note ?? ''} rows={6} />
             </div>
-
-            <button
-              className="details-link"
-              onClick={() => {
-                setSelectedNote(note);
-                setEditedNote({ ...note });
-                setSaveError(null);
-              }}
-            >
-              Details
-            </button>
           </div>
         ))
       )}

@@ -18,18 +18,24 @@
   align-items: flex-start;
   justify-content: space-between;
   background: #fff;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .notes-card-summary {
   min-width: 220px;
+  flex-shrink: 0;
 }
 
 .notes-card-note {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .notes-card-note textarea {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   resize: vertical;
   border: 1px solid #ccc;
   border-radius: 4px;
