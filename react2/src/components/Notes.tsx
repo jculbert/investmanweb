@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Note } from '../types/Note';
 import { fetchNotes, updateNote } from '../services/noteService';
 import { fetchAccounts } from '../services/holdingsService';
+import { fetchSymbols } from '../services/symbolService';
 import './Notes.css';
 
 export default function Notes() {
@@ -13,15 +14,21 @@ export default function Notes() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [accountNames, setAccountNames] = useState<string[]>([]);
+  const [symbolNames, setSymbolNames] = useState<string[]>([]);
 
   useEffect(() => {
     async function loadNotes() {
       try {
         setLoading(true);
         setError(null);
-        const [notesData, accountsData] = await Promise.all([fetchNotes(), fetchAccounts()]);
+        const [notesData, accountsData, symbolsData] = await Promise.all([
+          fetchNotes(),
+          fetchAccounts(),
+          fetchSymbols(),
+        ]);
         setNotes(notesData);
         setAccountNames(accountsData.map((account) => account.name));
+        setSymbolNames(symbolsData.map((symbol) => symbol.name));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load notes');
       } finally {
@@ -121,20 +128,34 @@ export default function Notes() {
 
             <div className="notes-detail-row">
               <label className="notes-detail-label">Symbol 1:</label>
-              <input
+              <select
                 className="notes-detail-input"
                 value={current.symbol1 ?? ''}
                 onChange={(e) => handleFieldChange('symbol1', e.target.value || null)}
-              />
+              >
+                <option value="">Select symbol</option>
+                {symbolNames.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="notes-detail-row">
               <label className="notes-detail-label">Symbol 2:</label>
-              <input
+              <select
                 className="notes-detail-input"
                 value={current.symbol2 ?? ''}
                 onChange={(e) => handleFieldChange('symbol2', e.target.value || null)}
-              />
+              >
+                <option value="">Select symbol</option>
+                {symbolNames.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="notes-detail-row" style={{ gridColumn: '1 / -1' }}>
