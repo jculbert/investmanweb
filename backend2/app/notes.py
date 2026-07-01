@@ -13,13 +13,13 @@ router = APIRouter()
 
 @app.get("/notes/")
 @app.get("/notes/")
-def list_notes(
+def get_notes(
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
 ) -> list[dict[str, Any]]:
     table = get_table_or_404("notes")
-    stmt = select(table).limit(limit).offset(offset)
+    stmt = select(table).order_by(table.c.date.desc()).limit(limit).offset(offset)
     rows = db.execute(stmt).mappings().all()
     return rows
 
