@@ -3,9 +3,10 @@ import { Holdings } from './components/Holdings'
 import SymbolList from './components/SymbolList'
 import Uploads from './components/Uploads'
 import Dividends from './components/Dividends'
+import Notes from './components/Notes'
 import './App.css'
 
-type TabKey = 'accounts' | 'symbols' | 'uploads' | 'dividends'
+type TabKey = 'accounts' | 'symbols' | 'uploads' | 'dividends' | 'notes'
 type Tab = { id: string; key: TabKey; title: string }
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
       return
     }
     const id = `tab-${key}-${Date.now()}`
-    const title = key === 'accounts' ? 'Holdings' : key === 'symbols' ? 'Symbols' : key === 'uploads' ? 'Uploads' : 'Dividends'
+    const title = key === 'accounts' ? 'Holdings' : key === 'symbols' ? 'Symbols' : key === 'uploads' ? 'Uploads' : key === 'dividends' ? 'Dividends' : 'Notes'
     const newTab: Tab = { id, key, title }
     setTabs((s) => [...s, newTab])
     setActiveId(id)
@@ -57,6 +58,9 @@ function App() {
           <button className={`nav-btn ${activeKey === 'dividends' ? 'active' : ''}`} onClick={() => openTab('dividends')}>
             Dividends
           </button>
+          <button className={`nav-btn ${activeKey === 'notes' ? 'active' : ''}`} onClick={() => openTab('notes')}>
+            Notes
+          </button>
         </nav>
       </aside>
 
@@ -79,6 +83,7 @@ function App() {
           {activeTab.key === 'symbols' && <SymbolList />}
           {activeTab.key === 'uploads' && <Uploads />}
           {activeTab.key === 'dividends' && <Dividends />}
+          {activeTab.key === 'notes' && <Notes />}
         </main>
       </div>
     </div>
