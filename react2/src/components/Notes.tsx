@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Note } from '../types/Note';
 import { fetchNotes, updateNote } from '../services/noteService';
+import './Notes.css';
 
 export default function Notes() {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -59,81 +60,80 @@ export default function Notes() {
   };
 
   if (loading) {
-    return <div>Loading notes...</div>;
+    return <div className="notes-list">Loading notes...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="notes-list">{error}</div>;
   }
 
   if (selectedNote) {
     const current = editedNote ?? selectedNote;
 
     return (
-      <div>
-        <button onClick={handleBack} style={{ marginBottom: '12px' }}>
+      <div className="notes-list">
+        <button className="notes-back-btn" onClick={handleBack}>
           ← Back
         </button>
 
-        <div style={{ backgroundColor: '#f3f3f3', border: '1px solid #ddd', borderRadius: '6px', padding: '16px', maxWidth: '900px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h3 style={{ margin: 0 }}>{current.account || 'Note Details'}</h3>
-            <button onClick={handleSave} disabled={!hasChanges || saving}>
+        <div className="notes-details">
+          <div className="notes-details-header">
+            <h3>Note: {current.id}</h3>
+            <button
+              className={`notes-save-btn ${hasChanges ? 'active' : 'disabled'}`}
+              onClick={handleSave}
+              disabled={!hasChanges || saving}
+            >
               {saving ? 'Saving...' : 'Save'}
             </button>
           </div>
 
-          {saveError && <div style={{ color: 'crimson', marginBottom: '8px' }}>{saveError}</div>}
+          {saveError && <div className="notes-error">{saveError}</div>}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '12px' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px' }}>ID</label>
-              <input value={current.id} disabled style={{ width: '100%' }} />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px' }}>Date</label>
+          <div className="notes-details-grid">
+            <div className="notes-detail-row">
+              <label className="notes-detail-label">Date:</label>
               <input
+                className="notes-detail-input"
                 value={current.date ?? ''}
                 onChange={(e) => handleFieldChange('date', e.target.value)}
-                style={{ width: '100%' }}
               />
             </div>
 
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px' }}>Account</label>
+            <div className="notes-detail-row">
+              <label className="notes-detail-label">Account:</label>
               <input
+                className="notes-detail-input"
                 value={current.account ?? ''}
                 onChange={(e) => handleFieldChange('account', e.target.value)}
-                style={{ width: '100%' }}
               />
             </div>
 
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px' }}>Symbol 1</label>
+            <div className="notes-detail-row">
+              <label className="notes-detail-label">Symbol 1:</label>
               <input
+                className="notes-detail-input"
                 value={current.symbol1 ?? ''}
                 onChange={(e) => handleFieldChange('symbol1', e.target.value || null)}
-                style={{ width: '100%' }}
               />
             </div>
 
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px' }}>Symbol 2</label>
+            <div className="notes-detail-row">
+              <label className="notes-detail-label">Symbol 2:</label>
               <input
+                className="notes-detail-input"
                 value={current.symbol2 ?? ''}
                 onChange={(e) => handleFieldChange('symbol2', e.target.value || null)}
-                style={{ width: '100%' }}
               />
             </div>
 
-            <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ display: 'block', marginBottom: '4px' }}>Note</label>
+            <div className="notes-detail-row" style={{ gridColumn: '1 / -1' }}>
+              <label className="notes-detail-label">Note:</label>
               <textarea
+                className="notes-detail-textarea"
                 value={current.note ?? ''}
                 rows={10}
                 onChange={(e) => handleFieldChange('note', e.target.value || null)}
-                style={{ width: '100%', resize: 'vertical' }}
               />
             </div>
           </div>
@@ -143,25 +143,13 @@ export default function Notes() {
   }
 
   return (
-    <div>
+    <div className="notes-list">
       {notes.length === 0 ? (
-        <div>No notes found.</div>
+        <div className="notes-empty">No notes found.</div>
       ) : (
         notes.map((note) => (
-          <div
-            key={note.id}
-            style={{
-              display: 'flex',
-              gap: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              padding: '12px',
-              marginBottom: '12px',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div style={{ minWidth: '220px' }}>
+          <div key={note.id} className="notes-card">
+            <div className="notes-card-summary">
               <div><strong>ID:</strong> {note.id}</div>
               <div><strong>Date:</strong> {note.date}</div>
               <div><strong>Account:</strong> {note.account}</div>
@@ -169,16 +157,18 @@ export default function Notes() {
               <div><strong>Symbol 2:</strong> {note.symbol2 ?? '—'}</div>
             </div>
 
-            <div style={{ flex: 1 }}>
-              <textarea
-                readOnly
-                value={note.note ?? ''}
-                rows={6}
-                style={{ width: '100%', resize: 'vertical' }}
-              />
+            <div className="notes-card-note">
+              <textarea readOnly value={note.note ?? ''} rows={6} />
             </div>
 
-            <button onClick={() => { setSelectedNote(note); setEditedNote({ ...note }); setSaveError(null); }}>
+            <button
+              className="details-link"
+              onClick={() => {
+                setSelectedNote(note);
+                setEditedNote({ ...note });
+                setSaveError(null);
+              }}
+            >
               Details
             </button>
           </div>
