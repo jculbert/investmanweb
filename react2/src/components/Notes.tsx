@@ -158,6 +158,15 @@ export default function Notes() {
               </select>
             </div>
 
+            <div className="notes-detail-row">
+              <label className="notes-detail-label">Review Result:</label>
+              <input
+                className="notes-detail-input"
+                value={current.review_result ?? ''}
+                onChange={(e) => handleFieldChange('review_result', e.target.value || null)}
+              />
+            </div>
+
             <div className="notes-detail-row" style={{ gridColumn: '1 / -1' }}>
               <label className="notes-detail-label">Note:</label>
               <textarea
@@ -199,11 +208,11 @@ export default function Notes() {
             }}
           >
             <div className="notes-card-summary">
-              <div><strong>ID:</strong> {note.id}</div>
               <div><strong>Date:</strong> {note.date}</div>
               <div><strong>Account:</strong> {note.account}</div>
               <div><strong>Symbol 1:</strong> {note.symbol1 ?? '—'}</div>
               <div><strong>Symbol 2:</strong> {note.symbol2 ?? '—'}</div>
+              <div><strong>Review Result:</strong> {note.review_result ?? '—'}</div>
             </div>
 
             <div className="notes-card-note">
