@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Note } from '../types/Note';
-import { createNote, fetchNotes, updateNote } from '../services/noteService';
+import { createNote, deleteNote, fetchNotes, updateNote } from '../services/noteService';
 import { fetchAccounts } from '../services/holdingsService';
 import { fetchSymbols } from '../services/symbolService';
 import './Notes.css';
@@ -93,6 +93,26 @@ export default function Notes() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!selectedNote || selectedNote.id === 0) return;
+
+    const confirmed = window.confirm('Delete this note?');
+    if (!confirmed) return;
+
+    try {
+      setSaving(true);
+      setSaveError(null);
+      await deleteNote(selectedNote.id);
+      setNotes((current) => current.filter((note) => note.id !== selectedNote.id));
+      setSelectedNote(null);
+      setEditedNote(null);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to delete note');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleBack = () => {
     setSelectedNote(null);
     setEditedNote(null);
@@ -119,13 +139,22 @@ export default function Notes() {
         <div className="notes-details">
           <div className="notes-details-header">
             <h3>{current.id === 0 ? 'New Note' : `Note: ${current.id}`}</h3>
-            <button
-              className={`notes-save-btn ${hasChanges ? 'active' : 'disabled'}`}
-              onClick={handleSave}
-              disabled={!hasChanges || saving}
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </button>
+            <div className="notes-details-actions">
+              <button
+                className="notes-delete-btn"
+                onClick={handleDelete}
+                disabled={saving || current.id === 0}
+              >
+                {saving ? 'Deleting...' : 'Delete'}
+              </button>
+              <button
+                className={`notes-save-btn ${hasChanges ? 'active' : 'disabled'}`}
+                onClick={handleSave}
+                disabled={!hasChanges || saving}
+              >
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+            </div>
           </div>
 
           {saveError && <div className="notes-error">{saveError}</div>}

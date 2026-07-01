@@ -44,3 +44,13 @@ export async function updateNote(id: number, note: Note): Promise<Note> {
 
   return response.json();
 }
+
+export async function deleteNote(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}${id}/`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status}`);
+  }
+}
