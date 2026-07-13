@@ -36,6 +36,7 @@ export default function Notes() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [accountNames, setAccountNames] = useState<string[]>([]);
   const [symbolNames, setSymbolNames] = useState<string[]>([]);
+  const [selectedSymbol, setSelectedSymbol] = useState('');
 
   useEffect(() => {
     async function loadNotes() {
@@ -43,7 +44,7 @@ export default function Notes() {
         setLoading(true);
         setError(null);
         const [notesData, accountsData, symbolsData] = await Promise.all([
-          fetchNotes(),
+          fetchNotes(selectedSymbol || undefined),
           fetchAccounts(),
           fetchSymbols(),
         ]);
@@ -58,7 +59,7 @@ export default function Notes() {
     }
 
     void loadNotes();
-  }, []);
+  }, [selectedSymbol]);
 
   const hasChanges = Boolean(selectedNote && editedNote && JSON.stringify(editedNote) !== JSON.stringify(selectedNote));
 
@@ -244,7 +245,21 @@ export default function Notes() {
   return (
     <div className="notes-list">
       <div className="notes-list-header">
-        <h2>Notes</h2>
+        <div className="notes-list-controls">
+          <h2>Notes</h2>
+          <select
+            className="notes-symbol-filter"
+            value={selectedSymbol}
+            onChange={(event) => setSelectedSymbol(event.target.value)}
+          >
+            <option value="">All symbols</option>
+            {symbolNames.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
         <button className="notes-add-btn" onClick={handleAddNote}>
           Add Note
         </button>
@@ -274,10 +289,10 @@ export default function Notes() {
             }}
           >
             <div className="notes-card-summary">
-              <div><strong>Date:</strong> {note.date}</div>
-              <div><strong>Account:</strong> {note.account}</div>
               <div><strong>Symbol 1:</strong> {note.symbol1 ?? '—'}</div>
               <div><strong>Symbol 2:</strong> {note.symbol2 ?? '—'}</div>
+              <div><strong>Account:</strong> {note.account}</div>
+              <div><strong>Date:</strong> {note.date}</div>
               <div><strong>Review Result:</strong> {note.review_result ?? '—'}</div>
             </div>
 

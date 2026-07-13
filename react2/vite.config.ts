@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: ['linux1'],
     proxy: {
       // Proxy dev requests from the front-end to the backend service to avoid CORS.
       // Rewrites paths like /investmanbackend/api/v1/... -> http://localhost:3001/api/...

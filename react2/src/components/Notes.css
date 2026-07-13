@@ -16,6 +16,21 @@
   margin-bottom: 12px;
 }
 
+.notes-list-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.notes-symbol-filter {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 180px;
+}
+
 .notes-add-btn {
   padding: 10px 16px;
   background: #2e7d32;
