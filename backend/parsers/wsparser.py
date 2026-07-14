@@ -18,7 +18,8 @@ symbolMapDict = { # Mainly for US stocks held in $C
 # Transaction type mapping
 typeDict = {
     "DIV": "DIST_D",
-    "BUY": "BUY"
+    "BUY": "BUY",
+    "SELL": "SELL"
 }
 
 # Filename example: Barb_TFSA_monthly-statement-transactions-HQ8D3J5K6CAD-2025-06-01.csv
@@ -26,6 +27,9 @@ filename_pattern = re.compile(".*monthly-statement-transactions-(.*)-\d{4}-\d{2}
 
 # Buy row description: "CSH.UN - Chartwell Retirement Residences: Bought 557.0000 shares (executed at 2025-06-10)"
 buy_desc_pattern = re.compile("(.+) - .*: Bought (.+) shares .*")
+
+# Buy row description: "CSH.UN - Chartwell Retirement Residences: Bought 557.0000 shares (executed at 2025-06-10)"
+sell_desc_pattern = re.compile("(.+) - .*: Sold (.+) shares .*")
 
 # Dividend description: "PPL - Pembina Pipeline Corporation: Cash dividend distribution, received on 2025-06-30, record date of 2025-06-16"
 div_desc_pattern = re.compile("(.+) - .+:.+")
@@ -57,6 +61,8 @@ class transaction():
 
         if self.type == "BUY":
             self.parse_buy_description(row[2])
+        elif self.type == "SELL":
+            self.parse_sell_description(row[2])
         elif self.type == "DIST_D":
             self.parse_div_description(row[2])
 
@@ -67,6 +73,15 @@ class transaction():
 
     def parse_buy_description(self, desc):
         match = buy_desc_pattern.match(desc)
+        if not match:
+            return
+        
+        self.symbol = match.group(1)
+        self.count = float(match.group(2))
+        self.price = round(self.amount / self.count, 2)
+
+    def parse_sell_description(self, desc):
+        match = sell_desc_pattern.match(desc)
         if not match:
             return
         
