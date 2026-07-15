@@ -37,9 +37,11 @@ def query_transactions_for_account(
     stmt = (
         select(transactions_table, *symbol_columns, *account_columns)
         .select_from(joined_tables)
-        .where(transactions_table.c.account_id == account_id)
         .order_by(symbols_table.c.name, transactions_table.c.date)
-    )
+    )    
+    if account_id != "All":
+        stmt = stmt.where(transactions_table.c.account_id == account_id)
+        
     rows = db.execute(stmt).mappings().all()
     items = []
     for row in rows:
