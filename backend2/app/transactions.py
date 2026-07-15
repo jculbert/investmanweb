@@ -12,7 +12,53 @@ from app.main import app, get_table_or_404, coerce_pk, get_single_pk_column, san
 
 router = APIRouter()
 
-def query_transactions(
+def query_transactions_for_account(
+    account_id: str,
+    db: Session
+) -> list[dict[str, Any]]:
+    transactions_table = get_table_or_404("transactions_transaction")
+    symbols_table = get_table_or_404("symbols_symbol")
+    accounts_table = get_table_or_404("accounts_account")
+    symbol_columns = [
+        column.label(f"symbol_{column.name}")
+        for column in symbols_table.columns
+    ]
+    account_columns = [
+        column.label(f"account_{column.name}")
+        for column in accounts_table.columns
+    ]
+    joined_tables = transactions_table.join(
+        symbols_table,
+        transactions_table.c.symbol_id == symbols_table.c.name,
+    ).join(
+        accounts_table,
+        transactions_table.c.account_id == accounts_table.c.name,
+    )
+    stmt = (
+        select(transactions_table, *symbol_columns, *account_columns)
+        .select_from(joined_tables)
+        .where(transactions_table.c.account_id == account_id)
+        .order_by(symbols_table.c.name, transactions_table.c.date)
+    )
+    rows = db.execute(stmt).mappings().all()
+    items = []
+    for row in rows:
+        item = serialize_row(row)
+        symbol = {}
+        symbol_keys = [key for key in item if key.startswith("symbol_")]
+        for key in symbol_keys:
+            symbol[key[len("symbol_"):]] = item.pop(key)
+        item["symbol"] = symbol
+
+        account = {}
+        account_keys = [key for key in item if key.startswith("account_")]
+        for key in account_keys:
+            account[key[len("account_"):]] = item.pop(key)
+        item["account"] = account
+        items.append(item)
+    return items
+
+def query_transactions_for_account_and_symbol(
     account: str,
     symbol: str,
     db: Session,
@@ -60,7 +106,7 @@ def get_transactions(
     symbol: str = Query(...),
     db: Session = Depends(get_db),
 ) -> list[dict[str, Any]]:
-    return query_transactions(account, symbol, db)  
+    return query_transactions_for_account_and_symbol(account, symbol, db)
 
 def update_transaction(
     _id: int, values: dict[str, Any], db: Session
@@ -132,7 +178,7 @@ def update_transaction_acbs(
 ) -> None:
     acb = 0.0
     shares = 0
-    t_list = query_transactions(account, symbol, db)
+    t_list = query_transactions_for_account_and_symbol(account, symbol, db)
     print(f"Updating ACB for account: {account}, symbol: {symbol}. Total transactions: {len(t_list)}")  
     for t in t_list:
         if 'type' not in t or not t['type']:

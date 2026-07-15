@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.main import list_transactions
+from app.transactions import query_transactions_for_account
 
 router = APIRouter()
 
@@ -30,14 +30,6 @@ def add_holding(symbol, currency, accounts, holdings):
 
     holdings.append(holding)
 
-@router.get("/xxx/", include_in_schema=False)
-@router.get("/xxx", include_in_schema=False)
-def holdingsx(
-    account: str = Query(...),
-    db: Session = Depends(get_db),
-) -> list[dict[str, Any]]:
-    return list_transactions(account_id=account, db=db)
-
 @router.get("/holdings")
 @router.get("/holdings/", include_in_schema=False)
 def holdings(
@@ -45,7 +37,7 @@ def holdings(
     db: Session = Depends(get_db),
 ) -> list[dict[str, Any]]:
     
-    t_list = list_transactions(account_id=account, db=db)
+    t_list = query_transactions_for_account(account, db=db)
 
     holdings = []
     symbol = None
