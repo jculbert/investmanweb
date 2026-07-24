@@ -165,6 +165,11 @@ export function Holdings() {
     [hideZeroAmount, holdingsState.data],
   );
 
+  const filteredAllHoldings = useMemo(
+    () => (hideZeroAmount ? allHoldings.filter((h) => h.amount !== 0.0) : allHoldings),
+    [hideZeroAmount, allHoldings],
+  );
+
   const groupedAccounts = useMemo(
     () =>
       accountsState.data.reduce((acc, account) => {
@@ -385,12 +390,22 @@ export function Holdings() {
           }}>
             ← Back
           </button>
-          <h2>All Holdings</h2>
+          <div className="holdings-header">
+            <h2>All Holdings</h2>
+            <button
+              className={`toggle-btn ${hideZeroAmount ? 'active' : ''}`}
+              onClick={() => setHideZeroAmount((value) => !value)}
+              disabled={allHoldingsLoading}
+              title={allHoldingsLoading ? 'Loading holdings...' : hideZeroAmount ? 'Hiding zeros' : 'Showing zeros'}
+            >
+              {hideZeroAmount ? 'Hiding' : 'Showing'} zeros
+            </button>
+          </div>
           {allHoldingsError && <div className="error-msg">{allHoldingsError}</div>}
           {allHoldingsLoading ? (
             <div className="loading-msg">Loading all holdings...</div>
           ) : (
-            <AllHoldingsTable holdings={allHoldings} onOpenAccountHoldings={openAccountFromAllHoldings} />
+            <AllHoldingsTable holdings={filteredAllHoldings} onOpenAccountHoldings={openAccountFromAllHoldings} />
           )}
         </div>
       ) : null}
