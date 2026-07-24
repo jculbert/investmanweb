@@ -68,8 +68,10 @@ class transaction():
 
         if self.symbol in symbolMapDict:
             self.symbol = symbolMapDict[self.symbol]
-        elif self.currency == "CAD":
-            self.symbol += ".TO"
+        else:
+            self.symbol = self.symbol.replace(".", "-")
+            if self.currency == "CAD":
+                self.symbol += ".TO"
 
     def parse_buy_description(self, desc):
         match = buy_desc_pattern.match(desc)
