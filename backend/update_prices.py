@@ -24,7 +24,7 @@ log.addHandler(logHandler)
 # Get latest price for each symbol
 # Limit API call rate to 5 per second
 
-av_params = {"function": "GLOBAL_QUOTE", "apikey": "LGK04YBYGJND5R6N"}
+av_params = {"function": "GLOBAL_QUOTE", "apikey": "X"}
 
 symbols = Symbol.objects.order_by('name')
 for s in symbols:
