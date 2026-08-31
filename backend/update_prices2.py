@@ -5,8 +5,6 @@ import mysql.connector
 # Import API key from local module
 from api_key import API_KEY
 
-# List of Canadian tickers you want to fetch
-symbols = ["BMO.TO", "ENB.TO", "SHOP.TO", "BEP.UN.TO"]
 
 def fetch_json_array(url):
     """
@@ -124,10 +122,23 @@ def fetch_stock_prices(symbol_list):
     """
     base_url = "http://api.marketstack.com/v1/eod/latest"
 
+    # Convert any `.TO` suffix symbols to `.XTSE` for the API call,
+    # but keep a mapping so we can return results keyed by the
+    # original symbol names (e.g., `SOMETHING.TO`).
+    orig_to_api = {}
+    for s in symbol_list:
+        if isinstance(s, str) and s.endswith('.TO'):
+            api_s = s[:-3] + '.XTSE'
+        else:
+            api_s = s
+        orig_to_api[s] = api_s
+
+    api_symbols = list(orig_to_api.values())
+
     # API accepts comma-separated symbol list
     params = {
         "access_key": API_KEY,
-        "symbols": ",".join(symbol_list)
+        "symbols": ",".join(api_symbols)
     }
 
     response = requests.get(base_url, params=params)
@@ -136,12 +147,18 @@ def fetch_stock_prices(symbol_list):
 
     result = {}
 
+    # Reverse map api symbol -> original symbol where applicable
+    api_to_orig = {api: orig for orig, api in orig_to_api.items()}
+
     # Marketstack wraps results under "data"
     for item in data.get("data", []):
-        symbol = item["symbol"]
-        close_price = item["close"]
-        timestamp = item["date"]
-        result[symbol] = (close_price, timestamp)
+        api_symbol = item.get("symbol")
+        close_price = item.get("close")
+        timestamp = item.get("date")
+
+        # Map back to the original symbol name if we transformed it
+        orig_symbol = api_to_orig.get(api_symbol, api_symbol)
+        result[orig_symbol] = (close_price, timestamp)
 
     return result
 
@@ -286,8 +303,10 @@ def main():
     result = update_symbol_prices_from_url(url)
     print("Result:", result)
 
-    #result = fetch_symbol_names_from_url(url)
-    #print(str(result))
+    #symbols = ["BMO.TO", "ENB.TO", "ABBV", "BEP-UN.TO"]
+    #result = fetch_stock_prices(symbols)
+    #print("Result:", result)
+
 
 if __name__ == '__main__':
     main()
