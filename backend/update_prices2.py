@@ -1,5 +1,5 @@
 import requests
-from datetime import datetime
+from datetime import datetime, time
 import mysql.connector
 
 # Import API key from local module
@@ -231,6 +231,7 @@ def update_symbol_prices_from_url(url):
     update_sql = f"UPDATE {table_name} SET last_price = %s, last_price_date = %s WHERE name = %s"
 
     for i in range(0, len(symbol_names), chunk_size):
+ 
         chunk = symbol_names[i:i + chunk_size]
         try:
             prices = fetch_stock_prices(chunk)
@@ -295,8 +296,11 @@ def main():
     import os
     import sys
 
-    url = "http://linux1/investmanbackend/api/v1/holdings/?account=All"
+    url = "http://linux1:8000/holdings/?account=All"
+    #url = "http://linux1/investmanbackend/api/v1/holdings/?account=All"
     #url = "http://linux1/investmanbackend/api/v1/holdings/?account=Barb%20RBC"
+    #result = fetch_symbol_names_from_url(url)
+    #print("Fetched symbol names:", result)
 
     # Hard-coded URL to fetch holdings from
     print(f"Updating symbol prices from: {url}")
